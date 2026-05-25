@@ -3,8 +3,8 @@ import pandas as pd
 import requests
 import random
 import time
-import urllib.parse
-import re
+import smtplib
+from email.mime.text import MIMEText
 
 # Page Config
 st.set_page_config(page_title="Mani Rewards Portal", page_icon="💰", layout="centered")
@@ -41,8 +41,26 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- GOOGLE SHEET WEB APP URL (Mani Bhai Ka Live Engine) ---
+# --- GOOGLE SHEET WEB APP URL ---
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-qngxwhZhlH07e6-wROfPnOd9jLGBfavoBoVcCfPqgk_AxiUnQTLOsr3CbLficPIMwQ/exec"
+
+# --- REAL EMAIL OTP CONFIG (Mani Bhai Ki Asli Gmail Details) ---
+ADMIN_GMAIL = "apnireal12@gmail.com"
+ADMIN_APP_PASSWORD = "HkFeHJSRWxqt_2"
+
+def send_real_otp(receiver_email, otp_code):
+    msg = MIMEText(f"💰 Salam!\n\nMani Rewards Portal par account active karne ke liye aapka verification code yeh hai:\n\n🔥 CODE: {otp_code}\n\nYeh code kisi ke sath share na karein.\n\nRegards,\nMani Rajput Network Ltd.")
+    msg['Subject'] = '🔒 Account OTP Code - Mani Rewards'
+    msg['From'] = ADMIN_GMAIL
+    msg['To'] = receiver_email
+    
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(ADMIN_GMAIL, ADMIN_APP_PASSWORD)
+            server.sendmail(ADMIN_GMAIL, receiver_email, msg.as_string())
+        return True
+    except Exception as e:
+        return False
 
 # Session States Manager
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
@@ -60,7 +78,7 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# Live Ticker (Yaqeen Dilaney Wali Patti)
+# Live Ticker
 names_pool = ["Faisal", "Billa", "Ubaid Rajput", "Zeeshan", "Ali", "Zahid"]
 cities_pool = ["Pindi Amolak", "Zafrwal", "Sialkot", "Narowal"]
 st.markdown(f"""
@@ -164,7 +182,13 @@ else:
                         st.session_state.temp_reg_data = {
                             "name": r_name, "email": r_email, "phone": r_phone, "password": r_pwd, "referred_by": ref_code
                         }
-                        st.success(f"📩 Testing OTP (Sent to your Email): {otp}")
+                        
+                        with st.spinner("Sending real verification code to email..."):
+                            mail_sent = send_real_otp(r_email, otp)
+                            if mail_sent:
+                                st.success("📩 Code aapki Email par bhej diya gaya hai!")
+                            else:
+                                st.error("❌ Email bhejney me masla aya. Settings check krein.")
                         st.rerun()
                 else:
                     st.warning("Saari fields fill karein.")
