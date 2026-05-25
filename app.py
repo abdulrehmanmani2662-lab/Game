@@ -3,8 +3,8 @@ import pandas as pd
 import requests
 import random
 import time
-import smtplib
-from email.mime.text import MIMEText
+import urllib.parse
+import re
 
 # Page Config
 st.set_page_config(page_title="Mani Rewards Portal", page_icon="💰", layout="centered")
@@ -43,24 +43,6 @@ st.markdown("""
 
 # --- GOOGLE SHEET WEB APP URL ---
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-qngxwhZhlH07e6-wROfPnOd9jLGBfavoBoVcCfPqgk_AxiUnQTLOsr3CbLficPIMwQ/exec"
-
-# --- REAL EMAIL OTP CONFIG (Mani Bhai Ki Asli Gmail Details) ---
-ADMIN_GMAIL = "apnireal12@gmail.com"
-ADMIN_APP_PASSWORD = "HkFeHJSRWxqt_2"
-
-def send_real_otp(receiver_email, otp_code):
-    msg = MIMEText(f"💰 Salam!\n\nMani Rewards Portal par account active karne ke liye aapka verification code yeh hai:\n\n🔥 CODE: {otp_code}\n\nYeh code kisi ke sath share na karein.\n\nRegards,\nMani Rajput Network Ltd.")
-    msg['Subject'] = '🔒 Account OTP Code - Mani Rewards'
-    msg['From'] = ADMIN_GMAIL
-    msg['To'] = receiver_email
-    
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(ADMIN_GMAIL, ADMIN_APP_PASSWORD)
-            server.sendmail(ADMIN_GMAIL, receiver_email, msg.as_string())
-        return True
-    except Exception as e:
-        return False
 
 # Session States Manager
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
@@ -182,18 +164,13 @@ else:
                         st.session_state.temp_reg_data = {
                             "name": r_name, "email": r_email, "phone": r_phone, "password": r_pwd, "referred_by": ref_code
                         }
-                        
-                        with st.spinner("Sending real verification code to email..."):
-                            mail_sent = send_real_otp(r_email, otp)
-                            if mail_sent:
-                                st.success("📩 Code aapki Email par bhej diya gaya hai!")
-                            else:
-                                st.error("❌ Email bhejney me masla aya. Settings check krein.")
+                        st.success(f"📩 Verification Code: {otp}")
                         st.rerun()
                 else:
                     st.warning("Saari fields fill karein.")
         else:
-            st.info(f"Code aapki email ({st.session_state.temp_reg_data['email']}) par bhej diya gaya hai.")
+            st.info(f"Neeche box me code enter kr k account active krein.")
+            st.success(f"🔥 YOUR CODE IS: {st.session_state.generated_otp}")
             ent_otp = st.text_input("Enter 4-Digit Code:")
             if st.button("🎯 ACTIVE MY ACCOUNT"):
                 if ent_otp == st.session_state.generated_otp:
