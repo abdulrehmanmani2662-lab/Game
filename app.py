@@ -155,7 +155,7 @@ else:
                         try:
                             check = requests.post(WEB_APP_URL, json={"action": "check_user", "phone": r_phone, "email": r_email}).json()
                             if check["status"] == "exists":
-                                .error("⚠️ Is Number ya Email par pehle hi account bana hua hai!")
+                                st.error("⚠️ Is Number ya Email par pehle hi account bana hua hai!")
                                 st.stop()
                         except: pass
                         
