@@ -3,13 +3,11 @@ import pandas as pd
 import requests
 import random
 import time
-import urllib.parse
-import re
 
 # Page Config
 st.set_page_config(page_title="Mani Rewards Portal", page_icon="💰", layout="centered")
 
-# --- CUSTOM CSS: PRO VIP SYSTEM ---
+# --- CUSTOM CSS: PREMIUM OFFICIAL MOBILE INTERFACE ---
 st.markdown("""
     <style>
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
@@ -29,9 +27,13 @@ st.markdown("""
         border: 1px solid #ffeeba; font-size: 14px;
     }
     .task-card {
-        background: white; padding: 20px; border-radius: 12px;
+        background: white; padding: 18px; border-radius: 12px;
         border-left: 8px solid #FFD700; margin-bottom: 15px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: black;
+    }
+    .action-card {
+        background: #1e1e1e; padding: 18px; border-radius: 12px;
+        border: 1px solid #333; margin-bottom: 15px; color: white;
     }
     .vip-btn {
         background: linear-gradient(135deg, #FFD700 0%, #b8860b 100%);
@@ -47,7 +49,6 @@ WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-qngxwhZhlH07e6-wROfPnO
 # Session States Manager
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'user_data' not in st.session_state: st.session_state.user_data = None
-if 'view' not in st.session_state: st.session_state.view = "Login"
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = None
 if 'temp_reg_data' not in st.session_state: st.session_state.temp_reg_data = None
 
@@ -73,6 +74,7 @@ st.markdown(f"""
 if st.session_state.logged_in:
     u = st.session_state.user_data
     
+    # Wallet Display
     st.markdown(f"""
     <div style="background:#111; padding:20px; border-radius:12px; border:2px solid #FFD700; color:white; margin-bottom:20px;">
         <span style="color:#aaa; font-weight:bold; font-size:12px;">📊 USER DASHBOARD</span><br>
@@ -83,29 +85,97 @@ if st.session_state.logged_in:
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("### 🎯 Your Daily Tasks")
-    st.write("Neeche diye gaye task ko poora karein aur har kamyab entry par Rs. 10 kamaein:")
+    # --- NEW: TRANSACTION HUB (DEPOSIT & WITHDRAW) ---
+    st.markdown("### 💳 Financial Hub")
+    menu = st.radio("Select Action:", ["🎯 Daily Tasks", "➕ Deposit Money", "➖ Withdraw Funds"], horizontal=True)
     
-    st.markdown(f"""
-    <div class="task-card">
-        <h4>Task 1: Blood Portal Par Naya Donor Join Karwayen</h4>
-        <p>Hamari official Blood Website kholein, kisi bhi dost ya ilaqe ke bande ka real data register karein. Register karne ke baad uska naam niche proof mein likhein.</p>
-        <a href="https://punjab-blood.streamlit.app/" target="_blank" class="vip-btn">🔗 OPEN BLOOD PORTAL</a>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    with st.form("task_submit_form"):
-        proof_name = st.text_input("Enter Registered Donor Name (Proof):", placeholder="e.g. Faisal Rajput")
-        if st.form_submit_button("SUBMIT PROOF"):
-            if proof_name:
-                st.success("🎯 Proof Submitted! Admin verify kar ke Rs. 10 aapke wallet mein add kar dega.")
-            else:
-                st.warning("Proof likhna laazmi hai.")
-                
-    st.markdown("### 👥 Invite & Earn (Rs. 100 Per Friend)")
-    ref_link = f"https://mani-rewards.streamlit.app/?ref={u['phone']}"
-    st.info(f"Apna referral link doston ko bhejein, jab wo 50/- deposit karenge toh aapko Rs. 100 direct milenge:\n`{ref_link}`")
+    # 1. TASKS VIEW
+    if menu == "🎯 Daily Tasks":
+        st.markdown(f"""
+        <div class="task-card">
+            <h4>Task 1: Blood Portal Par Naya Donor Join Karwayen</h4>
+            <p>Hamari official Blood Website kholein, kisi bhi dost ya ilaqe ke bande ka real data register karein. Register karne ke baad uska naam niche proof mein likhein.</p>
+            <a href="https://punjab-blood.streamlit.app/" target="_blank" class="vip-btn">🔗 OPEN BLOOD PORTAL</a>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        with st.form("task_submit_form"):
+            proof_name = st.text_input("Enter Registered Donor Name (Proof):", placeholder="e.g. Faisal Rajput")
+            if st.form_submit_button("SUBMIT PROOF"):
+                if proof_name:
+                    try:
+                        requests.post(WEB_APP_URL, json={"action": "submit_task", "phone": u['phone'], "proof": proof_name})
+                    except: pass
+                    st.success("🎯 Proof Submitted! Admin verify kar ke Rs. 10 aapke wallet mein add kar dega.")
+                else:
+                    st.warning("Proof likhna laazmi hai.")
+                    
+        st.markdown("### 👥 Invite & Earn (Rs. 100 Per Friend)")
+        ref_link = f"https://mani-rewards.streamlit.app/?ref={u['phone']}"
+        st.info(f"Apna referral link doston ko bhejein, jab wo Account Active karenge toh aapko Rs. 100 direct milenge:\n`{ref_link}`")
 
+    # 2. DEPOSIT VIEW
+    elif menu == "➕ Deposit Money":
+        st.markdown("""
+        <div class="action-card">
+            <h4 style="color:#FFD700; margin-top:0;">📥 How To Active Account / Deposit</h4>
+            <p style="font-size:14px; margin-bottom:5px;">Neeche diye gaye nambar par <b>Rs. 50</b> send karein aur details submit karein:</p>
+            <hr style="border-color:#333; margin:10px 0;">
+            🔹 <b>EasyPaisa / JazzCash:</b> <span style="color:#FFD700; font-size:16px;">0300-1234567</span><br>
+            🔹 <b>Account Title:</b> MANI RAJPUT
+        </div>
+        """, unsafe_allow_html=True)
+        
+        with st.form("deposit_form"):
+            d_method = st.selectbox("Select Payment Method:", ["EasyPaisa", "JazzCash"])
+            d_amount = st.number_input("Amount Sent (Rs.):", min_value=50, step=50, value=50)
+            d_tid = st.text_input("Enter Transaction ID (TID):", placeholder="e.g. 50021345678")
+            d_sender = st.text_input("Your Account Name / Number:", placeholder="e.g. Faisal EasyPaisa")
+            
+            if st.form_submit_button("🔥 SUBMIT DEPOSIT PROOF"):
+                if d_tid and d_sender:
+                    with st.spinner("Submitting request..."):
+                        try:
+                            requests.post(WEB_APP_URL, json={
+                                "action": "deposit", "phone": u['phone'], "name": u['name'],
+                                "method": d_method, "amount": d_amount, "tid": d_tid, "sender": d_sender
+                            })
+                        except: pass
+                        st.success("🎉 Deposit Proof Submitted! Admin 10-15 mint me check kr k balance add kr dega.")
+                else:
+                    st.error("Saari fields fill krna laazmi hain!")
+
+    # 3. WITHDRAW VIEW
+    elif menu == "➖ Withdraw Funds":
+        st.markdown("""
+        <div class="action-card">
+            <h4 style="color:#FFD700; margin-top:0;">📤 Withdraw Rules</h4>
+            <p style="font-size:14px;">Kam se kam withdraw <b>Rs. 500</b> hai. Request lagane ke baad 1 ghante ke andar cash transfer ho jata hai.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        with st.form("withdraw_form"):
+            w_method = st.selectbox("Select Receiving Method:", ["EasyPaisa", "JazzCash"])
+            w_num = st.text_input("Enter Mobile Number Where You Want Cash:", value=u['phone'])
+            w_name = st.text_input("Account Title Name:")
+            w_amount = st.number_input("Withdraw Amount (Rs.):", min_value=500, step=100, value=500)
+            
+            if st.form_submit_button("💸 REQUEST WITHDRAWAL"):
+                if float(u['balance']) < w_amount:
+                    st.error(f"❌ Aapka balance kam hai! Current balance: Rs. {u['balance']}")
+                elif w_num and w_name:
+                    with st.spinner("Processing request..."):
+                        try:
+                            requests.post(WEB_APP_URL, json={
+                                "action": "withdraw", "phone": u['phone'], "name": u['name'],
+                                "method": w_method, "w_phone": w_num, "w_name": w_name, "amount": w_amount
+                            })
+                        except: pass
+                        st.success("🚀 Withdrawal Request Sent! Aapke account me paise jald transfer kr diye jayenge.")
+                else:
+                    st.error("Saari fields enter karein.")
+
+    st.write("---")
     if st.button("🚪 Logout Account"):
         st.session_state.logged_in = False
         st.session_state.user_data = None
@@ -164,7 +234,6 @@ else:
                         st.session_state.temp_reg_data = {
                             "name": r_name, "email": r_email, "phone": r_phone, "password": r_pwd, "referred_by": ref_code
                         }
-                        st.success(f"📩 Verification Code: {otp}")
                         st.rerun()
                 else:
                     st.warning("Saari fields fill karein.")
@@ -187,8 +256,6 @@ else:
                         except: pass
                         st.success("🎉 Account Verified & Active! Rs. 100 Sign-up Bonus Added.")
                         st.session_state.generated_otp = None
-                        st.session_state.view = "Login"
-                        time.sleep(2)
                         st.rerun()
                 else:
                     st.error("Ghalat code!")
