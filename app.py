@@ -8,52 +8,78 @@ st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layo
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
     .stApp { background-color: #060913 !important; }
+    
     .main .block-container { 
         padding-top: 15px !important; 
         padding-bottom: 100px !important; 
         max-width: 440px !important;
         margin: 0 auto;
     }
+    
+    /* Ultimate Bold Font Layout Engine */
     h1, h2, h3, h4, h5, h6, p, span, div, label, button, input {
         font-family: 'Montserrat', 'Poppins', sans-serif !important;
         font-weight: 900 !important;
     }
+    
+    /* FIXING TEXT INPUT LABELS COLOR (SENDER NAME & TRX ID VISIBILITY FIX) */
+    .stTextInput label, [data-testid="stWidgetLabel"] p {
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 6px !important;
+        display: block !important;
+    }
+    
+    /* Glowing Neon Title Bar */
     .app-title-bar {
         text-align: center; font-size: 26px; color: #fff;
         text-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b;
         padding: 15px 10px; margin-bottom: 20px; border-bottom: 2px solid #1e293b;
         letter-spacing: 1.5px;
     }
+    
+    /* Premium Crypto Wallet Box */
     .balance-box {
         background: linear-gradient(145deg, #111827 0%, #030712 100%);
         padding: 25px; border-radius: 18px; border: 2px solid #f59e0b;
         margin-bottom: 20px; text-align: center;
         box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
     }
+    
+    /* Section Headers */
     .section-label {
         font-size: 19px; color: #f59e0b; margin-top: 25px; margin-bottom: 12px; 
         border-left: 6px solid #f59e0b; padding-left: 12px; letter-spacing: 0.5px;
         text-transform: uppercase;
     }
+    
+    /* Bold VIP Tier Containers */
     .level-container {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
         border: 2px solid #334155; border-radius: 15px;
         padding: 18px; margin-bottom: 15px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
+    
+    /* Premium Payment Request Outer Box */
     .payment-form-box {
-        background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
-        border: 2px solid #6366f1; border-radius: 15px;
-        padding: 20px; margin-top: 10px; margin-bottom: 20px;
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 100%);
+        border: 3px solid #f59e0b; border-radius: 20px;
+        padding: 22px; margin-top: 15px; margin-bottom: 25px;
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
     }
+    
+    /* High-End App Action Buttons */
     .stButton>button {
         font-family: 'Montserrat', sans-serif !important;
         font-weight: 900 !important; font-size: 16px !important;
@@ -69,7 +95,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Define Levels Configuration Globally
+# Define Levels Configuration
 LEVELS_CONF = {
     "VIP LEVEL 1": {"cost": 50, "daily_reward": 15},
     "VIP LEVEL 2": {"cost": 200, "daily_reward": 60},
@@ -83,7 +109,7 @@ if 'users_db' not in st.session_state:
         "ubaid_rajput": {"balance": 50.00, "active_level": "None", "referred_by": ""},
     }
 if 'deposit_requests' not in st.session_state:
-    st.session_state.deposit_requests = []  # Holds pending transactions for admin
+    st.session_state.deposit_requests = []
 
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
@@ -121,7 +147,6 @@ if not st.session_state.logged_in:
 elif st.session_state.is_admin:
     st.markdown("<h3 style='color:#f59e0b; text-align:center;'>👑 MASTER ADMIN VERIFICATION DESK</h3>", unsafe_allow_html=True)
     
-    # Section: Pending Proof of Payments
     st.markdown('<div class="section-label">📥 PENDING PAYMENT VERIFICATIONS</div>', unsafe_allow_html=True)
     if not st.session_state.deposit_requests:
         st.info("No pending payment verification requests found.")
@@ -141,13 +166,10 @@ elif st.session_state.is_admin:
                 col_app, col_rej = st.columns(2)
                 with col_app:
                     if st.button("✅ APPROVE & ACTIVATE", key=f"app_{idx}", use_container_width=True):
-                        # 1. Credit the user balance for verification
                         st.session_state.users_db[req['user']]["balance"] += req['amount']
-                        # 2. Automatically purchase/unlock the requested level
                         st.session_state.users_db[req['user']]["balance"] -= req['amount']
                         st.session_state.users_db[req['user']]["active_level"] = req['level']
                         
-                        # Smart Referral Logic Integration
                         inviter = st.session_state.users_db[req['user']]["referred_by"]
                         if inviter in st.session_state.users_db:
                             if req['amount'] == 200:
@@ -162,11 +184,10 @@ elif st.session_state.is_admin:
                 with col_rej:
                     if st.button("❌ REJECT SLIP", key=f"rej_{idx}", use_container_width=True):
                         st.session_state.deposit_requests.pop(idx)
-                        st.warning("Deposit slip rejected and cleared.")
+                        st.warning("Deposit slip rejected.")
                         time.sleep(1)
                         st.rerun()
 
-    # Section: Manual User Ledger Override
     st.markdown('<div class="section-label">✏ MANUAL OVERRIDE USER LEDGER</div>', unsafe_allow_html=True)
     target_user = st.selectbox("CHOOSE USER NODE:", list(st.session_state.users_db.keys()))
     new_bal = st.number_input("SET ABSOLUTE LIQUIDITY VALUE (RM):", min_value=0.0, value=float(st.session_state.users_db[target_user]["balance"]))
@@ -199,7 +220,6 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # --- FINANCIAL ACTION GATEWAYS ---
     col_dep, col_wdr = st.columns(2)
     with col_dep:
         if st.button("📥 DEPOSIT SLIP", use_container_width=True):
@@ -217,7 +237,7 @@ else:
                 st.error("❌ LEDGER ERROR: INSUBSTANTIAL CAPITAL BALANCES DETECTED")
             else:
                 st.session_state.users_db[current_user]["balance"] -= w_amt
-                st.success(f"🚀 SUBMITTED: Order of RM {w_amt} transmitted to settlement matrix cluster.")
+                st.success(f"🚀 SUBMITTED: Order of RM {w_amt} transmitted successfully.")
                 time.sleep(1)
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
@@ -228,19 +248,19 @@ else:
         lvl_cost = LEVELS_CONF[lvl_name]["cost"]
         
         st.markdown('<div class="payment-form-box">', unsafe_allow_html=True)
-        st.markdown(f"<h4 style='margin:0; color:#fff; text-align:center;'>📥 VERIFY PAY FOR {lvl_name}</h4>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color:#94a3b8; text-align:center; font-size:14px; margin-bottom:15px;'>REQUIRED DEPOSIT AMOUNT: <b style='color:#f59e0b; font-size:18px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='margin:0; color:#ffffff; text-align:center;'>📥 RECHARGE DEPOSIT FOR {lvl_name}</h3>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color:#94a3b8; text-align:center; font-size:15px; margin-bottom:15px;'>REQUIRED DEPOSIT AMOUNT: <b style='color:#f59e0b; font-size:20px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
         
-        # Embedded Payment Channel Gateway Info Block
-        st.markdown("""
-        <p style='font-size:12px; color:#cbd5e1; margin-bottom:5px;'>👇 SCAN SYSTEM SCANNER OR TRANSFER MANUALLY:</p>
-        """, unsafe_allow_html=True)
-        st.markdown(f'<iframe src="https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE" width="100%" height="240" style="border:none; border-radius:10px; overflow:hidden;" scrolling="no"></iframe>', unsafe_allow_html=True)
+        st.markdown("<p style='font-size:13px; color:#ffffff; font-weight:900;'>👇 SCAN TOUCH 'N GO GATEWAY CODE DIRECTLY:</p>", unsafe_allow_html=True)
         
-        # Form Details Input Fields
-        holder_name = st.text_input("👤 SENDER ACCOUNT HOLDER NAME:", placeholder="e.g. John Doe")
-        trx_id = st.text_input("🔢 TRANSACTION ID (TRX ID):", placeholder="e.g. T20260429188...")
+        # FIXED SCANNER RESOLUTION: Loaded natively via direct image source bypassing web constraints
+        st.image("https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE", caption="OFFICIAL MERCHANT QR CODES", use_container_width=True)
         
+        # Form Details Input Fields (Colors Strictly Forced to White via Global CSS)
+        holder_name = st.text_input("👤 SENDER ACCOUNT HOLDER NAME:", key="holder_input", placeholder="Enter account sender name")
+        trx_id = st.text_input("🔢 TRANSACTION ID (TRX ID):", key="trx_input", placeholder="Enter 12-digit transaction index")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
         col_sub_pay, col_can_pay = st.columns(2)
         with col_sub_pay:
             if st.button("🔥 SUBMIT PROOF", use_container_width=True):
@@ -252,7 +272,7 @@ else:
                         "holder_name": holder_name,
                         "trx_id": trx_id
                     })
-                    st.success("✅ DISPATCHED: Verification payload sent to Admin node! Waiting for approval.")
+                    st.success("✅ DISPATCHED: Proof sent to Admin! Activation pending.")
                     st.session_state.selected_payment_level = None
                     time.sleep(1.5)
                     st.rerun()
@@ -291,9 +311,8 @@ else:
                     time.sleep(1)
                     st.rerun()
                 else:
-                    # Not enough money -> Trigger payment verification box overlay sequence
                     st.session_state.selected_payment_level = l_name
-                    st.warning(f"Insufficient funds! Open deposit confirmation terminal below for RM {l_details['cost']}.")
+                    st.warning(f"Insufficient funds! Please complete payment form.")
                     st.rerun()
 
     # --- NATIVE INTERACTIVE NAVIGATION FOOTER CONTROLS ---
@@ -306,13 +325,12 @@ else:
             st.session_state.selected_payment_level = None
             st.rerun()
     with col_b2:
-        # Dynamic Task engine calculation setup based on unlocked plan metrics
         current_tier = user_data["active_level"]
         task_payout = 5.00 if current_tier == "None" else float(LEVELS_CONF[current_tier]["daily_reward"])
         
         if st.button(f"📊 CLAIM TASK (+{int(task_payout)})", key="b_nav_t", use_container_width=True):
             st.session_state.users_db[current_user]["balance"] += task_payout
-            st.toast(f"REWARD CLAIMED: +RM {task_payout:.2f} ADDED TO WALLET", icon="💰")
+            st.toast(f"REWARD CLAIMED: +RM {task_payout:.2f}", icon="💰")
             time.sleep(0.5)
             st.rerun()
     with col_b3:
