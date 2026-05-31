@@ -1,261 +1,187 @@
 import streamlit as st
 import pandas as pd
-import requests
 import random
 import time
+import requests
 
-# Page Config
-st.set_page_config(page_title="Mani Rewards Portal", page_icon="💰", layout="centered")
+# Page Setup
+st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="centered")
 
-# --- CUSTOM CSS: PREMIUM OFFICIAL MOBILE INTERFACE ---
+# Google Sheet Web App URL (Aapka Google Script Link yahan aayega)
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-qngxwhZhlH07e6-wROfPnOd9jLGBfavoBoVcCfPqgk_AxiUnQTLOsr3CbLficPIMwQ/exec"
+
+# --- PREMIUM DARK THEME CSS ---
 st.markdown("""
     <style>
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
         display: none !important; visibility: hidden !important;
     }
+    body { background-color: #121212; color: white; }
     .main .block-container { padding-top: 10px !important; padding-bottom:60px !important; }
     
-    .gold-box {
-        background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
-        padding: 20px; border-radius: 15px; text-align: center;
-        color: #FFD700; border: 2px solid #FFD700; margin-bottom: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    .gmig-header {
+        background: #1a1a1a; padding: 20px; border-radius: 0 0 20px 20px;
+        text-align: center; border-bottom: 2px solid #b8860b; margin-bottom: 20px;
     }
-    .ticker-wrap {
-        background: #fff3cd; padding: 8px; border-radius: 8px;
-        color: #856404; font-weight: bold; text-align: center; margin-bottom: 15px;
-        border: 1px solid #ffeeba; font-size: 14px;
+    .balance-card {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        padding: 20px; border-radius: 15px; border: 1px solid #374151;
+        margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    .task-card {
-        background: white; padding: 18px; border-radius: 12px;
-        border-left: 8px solid #FFD700; margin-bottom: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: black;
+    .method-box {
+        background: #1e293b; padding: 15px; border-radius: 10px;
+        border: 1px solid #475569; margin-bottom: 15px;
     }
-    .action-card {
-        background: #1e1e1e; padding: 18px; border-radius: 12px;
-        border: 1px solid #333; margin-bottom: 15px; color: white;
-    }
-    .vip-btn {
-        background: linear-gradient(135deg, #FFD700 0%, #b8860b 100%);
-        color: black !important; font-weight: bold; text-align: center;
-        padding: 10px; border-radius: 8px; display: block; text-decoration: none;
+    .qr-container {
+        text-align: center;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px 0;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- GOOGLE SHEET WEB APP URL ---
-WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-qngxwhZhlH07e6-wROfPnOd9jLGBfavoBoVcCfPqgk_AxiUnQTLOsr3CbLficPIMwQ/exec"
-
-# Session States Manager
+# Session States
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
-if 'user_data' not in st.session_state: st.session_state.user_data = None
-if 'generated_otp' not in st.session_state: st.session_state.generated_otp = None
-if 'temp_reg_data' not in st.session_state: st.session_state.temp_reg_data = None
+if 'current_tab' not in st.session_state: st.session_state.current_tab = "Home"
+if 'sub_page' not in st.session_state: st.session_state.sub_page = "Main"
+if 'user_wallet' not in st.session_state: st.session_state.user_wallet = 0.00
+if 'user_phone' not in st.session_state: st.session_state.user_phone = "011-XXXXXXX"
 
-# VIP Header
-st.markdown("""
-    <div class="gold-box">
-        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #fff;">Mani Rajput Network Ltd</span><br>
-        <span style="font-size: 26px; font-weight: 900; font-family: 'Arial Black', sans-serif;">💰 MANI REWARDS</span><br>
-        <span style="font-size: 13px; color: #FFD700;">Promote Blood Welfare & Earn Daily Cash</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Live Ticker
-names_pool = ["Faisal", "Billa", "Ubaid Rajput", "Zeeshan", "Ali", "Zahid"]
-cities_pool = ["Pindi Amolak", "Zafrwal", "Sialkot", "Narowal"]
-st.markdown(f"""
-    <div class="ticker-wrap">
-        🔥 Live Alert: {random.choice(names_pool)} ({random.choice(cities_pool)}) just withdrew Rs. 1,200 via EasyPaisa!
-    </div>
-    """, unsafe_allow_html=True)
-
-# --- DASHBOARD (LOGGED IN VIEW) ---
-if st.session_state.logged_in:
-    u = st.session_state.user_data
-    
-    # Wallet Display
-    st.markdown(f"""
-    <div style="background:#111; padding:20px; border-radius:12px; border:2px solid #FFD700; color:white; margin-bottom:20px;">
-        <span style="color:#aaa; font-weight:bold; font-size:12px;">📊 USER DASHBOARD</span><br>
-        <span style="font-size:20px; font-weight:bold;">Slam, {u['name']}!</span><br><br>
-        <span style="color:#FFD700; font-size:14px;">💵 CURRENT WALLET BALANCE</span><br>
-        <span style="font-size:36px; font-weight:900; color:#fff;">Rs. {u['balance']}</span><br>
-        <div style="margin-top:10px; font-size:14px;">🏅 Level status: <b style="color:#FFD700;">{u['level']}</b></div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # --- NEW: TRANSACTION HUB (DEPOSIT & WITHDRAW) ---
-    st.markdown("### 💳 Financial Hub")
-    menu = st.radio("Select Action:", ["🎯 Daily Tasks", "➕ Deposit Money", "➖ Withdraw Funds"], horizontal=True)
-    
-    # 1. TASKS VIEW
-    if menu == "🎯 Daily Tasks":
-        st.markdown(f"""
-        <div class="task-card">
-            <h4>Task 1: Blood Portal Par Naya Donor Join Karwayen</h4>
-            <p>Hamari official Blood Website kholein, kisi bhi dost ya ilaqe ke bande ka real data register karein. Register karne ke baad uska naam niche proof mein likhein.</p>
-            <a href="https://punjab-blood.streamlit.app/" target="_blank" class="vip-btn">🔗 OPEN BLOOD PORTAL</a>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        with st.form("task_submit_form"):
-            proof_name = st.text_input("Enter Registered Donor Name (Proof):", placeholder="e.g. Faisal Rajput")
-            if st.form_submit_button("SUBMIT PROOF"):
-                if proof_name:
-                    try:
-                        requests.post(WEB_APP_URL, json={"action": "submit_task", "phone": u['phone'], "proof": proof_name})
-                    except: pass
-                    st.success("🎯 Proof Submitted! Admin verify kar ke Rs. 10 aapke wallet mein add kar dega.")
-                else:
-                    st.warning("Proof likhna laazmi hai.")
-                    
-        st.markdown("### 👥 Invite & Earn (Rs. 100 Per Friend)")
-        ref_link = f"https://mani-rewards.streamlit.app/?ref={u['phone']}"
-        st.info(f"Apna referral link doston ko bhejein, jab wo Account Active karenge toh aapko Rs. 100 direct milenge:\n`{ref_link}`")
-
-    # 2. DEPOSIT VIEW
-    elif menu == "➕ Deposit Money":
-        st.markdown("""
-        <div class="action-card">
-            <h4 style="color:#FFD700; margin-top:0;">📥 How To Active Account / Deposit</h4>
-            <p style="font-size:14px; margin-bottom:5px;">Neeche diye gaye nambar par <b>Rs. 50</b> send karein aur details submit karein:</p>
-            <hr style="border-color:#333; margin:10px 0;">
-            🔹 <b>EasyPaisa / JazzCash:</b> <span style="color:#FFD700; font-size:16px;">0300-1234567</span><br>
-            🔹 <b>Account Title:</b> MANI RAJPUT
-        </div>
-        """, unsafe_allow_html=True)
-        
-        with st.form("deposit_form"):
-            d_method = st.selectbox("Select Payment Method:", ["EasyPaisa", "JazzCash"])
-            d_amount = st.number_input("Amount Sent (Rs.):", min_value=50, step=50, value=50)
-            d_tid = st.text_input("Enter Transaction ID (TID):", placeholder="e.g. 50021345678")
-            d_sender = st.text_input("Your Account Name / Number:", placeholder="e.g. Faisal EasyPaisa")
-            
-            if st.form_submit_button("🔥 SUBMIT DEPOSIT PROOF"):
-                if d_tid and d_sender:
-                    with st.spinner("Submitting request..."):
-                        try:
-                            requests.post(WEB_APP_URL, json={
-                                "action": "deposit", "phone": u['phone'], "name": u['name'],
-                                "method": d_method, "amount": d_amount, "tid": d_tid, "sender": d_sender
-                            })
-                        except: pass
-                        st.success("🎉 Deposit Proof Submitted! Admin 10-15 mint me check kr k balance add kr dega.")
-                else:
-                    st.error("Saari fields fill krna laazmi hain!")
-
-    # 3. WITHDRAW VIEW
-    elif menu == "➖ Withdraw Funds":
-        st.markdown("""
-        <div class="action-card">
-            <h4 style="color:#FFD700; margin-top:0;">📤 Withdraw Rules</h4>
-            <p style="font-size:14px;">Kam se kam withdraw <b>Rs. 500</b> hai. Request lagane ke baad 1 ghante ke andar cash transfer ho jata hai.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        with st.form("withdraw_form"):
-            w_method = st.selectbox("Select Receiving Method:", ["EasyPaisa", "JazzCash"])
-            w_num = st.text_input("Enter Mobile Number Where You Want Cash:", value=u['phone'])
-            w_name = st.text_input("Account Title Name:")
-            w_amount = st.number_input("Withdraw Amount (Rs.):", min_value=500, step=100, value=500)
-            
-            if st.form_submit_button("💸 REQUEST WITHDRAWAL"):
-                if float(u['balance']) < w_amount:
-                    st.error(f"❌ Aapka balance kam hai! Current balance: Rs. {u['balance']}")
-                elif w_num and w_name:
-                    with st.spinner("Processing request..."):
-                        try:
-                            requests.post(WEB_APP_URL, json={
-                                "action": "withdraw", "phone": u['phone'], "name": u['name'],
-                                "method": w_method, "w_phone": w_num, "w_name": w_name, "amount": w_amount
-                            })
-                        except: pass
-                        st.success("🚀 Withdrawal Request Sent! Aapke account me paise jald transfer kr diye jayenge.")
-                else:
-                    st.error("Saari fields enter karein.")
-
-    st.write("---")
-    if st.button("🚪 Logout Account"):
-        st.session_state.logged_in = False
-        st.session_state.user_data = None
-        st.rerun()
-
-# --- LOGIN / REGISTRATION SYSTEM ---
+# --- LOGIN ---
+if not st.session_state.logged_in:
+    st.markdown('<div class="gmig-header"><div style="font-size:24px; font-weight:bold; color:#e0533c;">Global Matrix Investment</div><div style="color:#aaa; font-size:12px;">Malaysia VIP Portal</div></div>', unsafe_allow_html=True)
+    with st.form("gmig_login"):
+        email = st.text_input("📧 E-mail / Phone Number", placeholder="Enter your registered account")
+        pwd = st.text_input("🔒 Password", type="password", placeholder="Enter password")
+        if st.form_submit_button("Sign In", use_container_width=True):
+            if email and pwd:
+                st.session_state.logged_in = True
+                st.session_state.user_phone = email
+                st.rerun()
 else:
-    q_params = st.query_params
-    ref_code = q_params.get("ref", "None")
-
-    tab1, tab2 = st.tabs(["🔐 ACCOUNT LOGIN", "📝 CREATE ACCOUNT"])
-    
-    with tab1:
-        l_phone = st.text_input("Mobile Number")
-        l_pwd = st.text_input("Password", type="password")
-        if st.button("🚀 SIGN IN"):
-            if l_phone and l_pwd:
-                with st.spinner("Checking details..."):
-                    try:
-                        res = requests.post(WEB_APP_URL, json={"action": "login", "phone": l_phone, "password": l_pwd}).json()
-                        if res["status"] == "success":
-                            st.session_state.logged_in = True
-                            st.session_state.user_data = res["user"]
-                            st.rerun()
-                        else:
-                            st.error("Nambar ya Password ghalat hai!")
-                    except:
-                        st.session_state.logged_in = True
-                        st.session_state.user_data = {"name": "Mani Rajput", "balance": "100", "level": "Sipahi", "phone": l_phone}
-                        st.rerun()
-            else:
-                st.warning("Dono fields fill karein.")
+    # ----------------- 🏠 HOME TAB -----------------
+    if st.session_state.current_tab == "Home":
+        
+        # RECHARGE PAGE
+        if st.session_state.sub_page == "Recharge":
+            st.markdown("### 📥 Deposit / Recharge Account")
+            if st.button("⬅️ Back to Dashboard"):
+                st.session_state.sub_page = "Main"
+                st.rerun()
                 
-    with tab2:
-        if st.session_state.generated_otp is None:
-            r_name = st.text_input("Full Name")
-            r_email = st.text_input("Gmail Address")
-            r_phone = st.text_input("Mobile Number (EasyPaisa/JazzCash)")
-            r_pwd = st.text_input("Create Password", type="password")
+            dep_method = st.selectbox("Select Deposit Method:", ["Touch 'n Go (TNG eWallet)", "Local Bank Transfer", "Cryptocurrency (USDT-TRC20)"])
             
-            if ref_code != "None":
-                st.success(f"🔗 Referral Code Detected: {ref_code}")
+            if dep_method == "Touch 'n Go (TNG eWallet)":
+                st.markdown("""
+                <div class="method-box">
+                    <h4 style="color:#3b82f6; margin:0 0 10px 0;">📱 Touch 'n Go Payment</h4>
+                    <p><b>Step 1:</b> Scan this official QR code to make your deposit:</p>
+                </div>
+                """, unsafe_allow_html=True)
                 
-            if st.button("🔥 SEND VERIFICATION CODE"):
-                if r_name and r_email and r_phone and r_pwd:
-                    with st.spinner("Verifying duplicate accounts..."):
-                        try:
-                            check = requests.post(WEB_APP_URL, json={"action": "check_user", "phone": r_phone, "email": r_email}).json()
-                            if check["status"] == "exists":
-                                st.error("⚠️ Is Number ya Email par pehle hi account bana hua hai!")
-                                st.stop()
+                # Image embedded directly using your link
+                st.image("https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE", caption="Mani Rajput Official TNG Scanner", width=300)
+                
+                st.markdown("""
+                <div class="method-box">
+                    <p><b>Step 2:</b> After successful transfer, enter your Ref No. and amount below.</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            elif dep_method == "Local Bank Transfer":
+                st.markdown("""
+                <div class="method-box">
+                    <h4 style="color:#f59e0b; margin:0 0 10px 0;">🏦 Malaysia Bank Details</h4>
+                    <p><b>Bank Name:</b> Maybank / CIMB (Aap apna bank daalhein)</p>
+                    <p><b>Account Number:</b> 1234-5678-9012</p>
+                    <p><b>Account Title:</b> MANI RAJPUT</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            elif dep_method == "Cryptocurrency (USDT-TRC20)":
+                st.markdown("""
+                <div class="method-box">
+                    <h4 style="color:#10b981; margin:0 0 10px 0;">🟢 USDT TRC20 Address</h4>
+                    <p><b>Network:</b> TRC20 (Tron)</p>
+                    <code>TY76xXyZ...Aap_Ka_Crypto_Address...789</code>
+                    <p style="font-size:12px; color:#ef4444; margin-top:5px;">*Send only USDT TRC20 tokens, otherwise funds will be lost.</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with st.form("deposit_submit"):
+                amount = st.number_input("Enter Amount Deposited (RM or USDT):", min_value=10, value=50)
+                ref_id = st.text_input("Transaction Reference ID / Ref No:", placeholder="e.g. TNG123456789")
+                if st.form_submit_button("🔥 SUBMIT DEPOSIT PROOF"):
+                    if ref_id:
+                        try: requests.post(WEB_APP_URL, json={"action": "deposit", "phone": st.session_state.user_phone, "method": dep_method, "amount": amount, "ref": ref_id})
                         except: pass
-                        
-                        otp = str(random.randint(1000, 9999))
-                        st.session_state.generated_otp = otp
-                        st.session_state.temp_reg_data = {
-                            "name": r_name, "email": r_email, "phone": r_phone, "password": r_pwd, "referred_by": ref_code
-                        }
-                        st.rerun()
-                else:
-                    st.warning("Saari fields fill karein.")
+                        st.success("🎉 Deposit submitted! Admin will verify and update your balance in 10-15 minutes.")
+                    else: st.error("Please enter Reference ID!")
+
+        # WITHDRAW PAGE
+        elif st.session_state.sub_page == "Withdraw":
+            st.markdown("### 📤 Withdraw Funds")
+            if st.button("⬅️ Back to Dashboard"):
+                st.session_state.sub_page = "Main"
+                st.rerun()
+                
+            with st.form("withdraw_submit"):
+                w_method = st.selectbox("Withdraw To:", ["Touch 'n Go", "Local Bank Transfer", "Crypto (USDT)"])
+                w_acc = st.text_input("Enter Account Number / Phone / Wallet Address:")
+                w_title = st.text_input("Account Holder Name (Title):")
+                w_amount = st.number_input("Amount to Withdraw (Min RM 50):", min_value=50, value=50)
+                
+                if st.form_submit_button("💸 REQUEST WITHDRAWAL"):
+                    if w_acc and w_title:
+                        try: requests.post(WEB_APP_URL, json={"action": "withdraw", "phone": st.session_state.user_phone, "method": w_method, "account": w_acc, "title": w_title, "amount": w_amount})
+                        except: pass
+                        st.success("🚀 Withdrawal request sent successfully! Checking in progress.")
+                    else: st.error("Please fill all details.")
+
+        # MAIN HOME DASHBOARD VIEW
         else:
-            st.info(f"Neeche box me code enter kr k account active krein.")
-            st.success(f"🔥 YOUR CODE IS: {st.session_state.generated_otp}")
-            ent_otp = st.text_input("Enter 4-Digit Code:")
-            if st.button("🎯 ACTIVE MY ACCOUNT"):
-                if ent_otp == st.session_state.generated_otp:
-                    with st.spinner("Creating profile & adding Rs. 100 starting bonus..."):
-                        try:
-                            requests.post(WEB_APP_URL, json={
-                                "action": "register",
-                                "name": st.session_state.temp_reg_data["name"],
-                                "email": st.session_state.temp_reg_data["email"],
-                                "phone": st.session_state.temp_reg_data["phone"],
-                                "password": st.session_state.temp_reg_data["password"],
-                                "referred_by": st.session_state.temp_reg_data["referred_by"]
-                            })
-                        except: pass
-                        st.success("🎉 Account Verified & Active! Rs. 100 Sign-up Bonus Added.")
-                        st.session_state.generated_otp = None
-                        st.rerun()
-                else:
-                    st.error("Ghalat code!")
+            st.markdown(f"""
+            <div class="balance-card">
+                <span style="color:#9ca3af; font-size:13px;">Account: {st.session_state.user_phone}</span><br>
+                <span style="color:#9ca3af; font-size:14px;">Total Balance</span><br>
+                <span style="font-size:32px; font-weight:bold; color:#fff;">RM {st.session_state.user_wallet:.2f}</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            col_dep, col_wit = st.columns(2)
+            with col_dep:
+                if st.button("📥 RECHARGE", use_container_width=True):
+                    st.session_state.sub_page = "Recharge"
+                    st.rerun()
+            with col_wit:
+                if st.button("📤 WITHDRAW", use_container_width=True):
+                    st.session_state.sub_page = "Withdraw"
+                    st.rerun()
+                    
+            st.markdown("### 📺 YouTube Video Tasks")
+            st.info("Watch videos below to claim your daily rewards.")
+            if st.button("✅ CLAIM VIDEO WATCH REWARD (RM 5.00)", use_container_width=True):
+                st.session_state.user_wallet += 5.00
+                st.success("RM 5.00 added!")
+                time.sleep(1)
+                st.rerun()
+
+    # --- PROJECTS TAB ---
+    elif st.session_state.current_tab == "Project":
+        st.markdown("### 💎 Investment Project Hall")
+        st.write("Choose VIP levels to unlock higher daily profit limits.")
+
+    # --- NAVIGATION ACTIONS ---
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        if st.button("🏠 Home"): 
+            st.session_state.current_tab = "Home"
+            st.session_state.sub_page = "Main"
+            st.rerun()
+    with c2:
+        if st.button("📊 Project"): st.session_state.current_tab = "Project"; st.rerun()
+    with c3:
+        if st.button("🚪 Logout"): st.session_state.logged_in = False; st.rerun()
