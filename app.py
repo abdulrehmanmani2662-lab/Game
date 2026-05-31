@@ -5,7 +5,7 @@ import random
 # Page Layout Configuration
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="centered")
 
-# --- HIGH-CONTRAST ULTRA VISIBLE STYLESHEET (MALAYSIA & CRYPTO EDITION) ---
+# --- HIGH-CONTRAST ULTRA VISIBLE STYLESHEET (SECURITY LOCK EDITION) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -164,7 +164,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# Database State Session Initialization
+# Strict Database & State Management Initialization
 if 'users_db' not in st.session_state:
     st.session_state.users_db = {
         "salmanveerm@gmail.com": {"balance": 5.00, "active_level": "None", "referred_by": "727", "ref_code": "2627"},
@@ -179,13 +179,17 @@ if 'google_screen_active' not in st.session_state: st.session_state.google_scree
 if 'admin_video_url' not in st.session_state: st.session_state.admin_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 if 'current_app_tab' not in st.session_state: st.session_state.current_app_tab = "home"
 
+# Fetch and store refer code inside session state immediately to prevent loss on refresh
 query_params = st.query_params
-url_ref = query_params.get("ref", "727")
+if "ref" in query_params:
+    st.session_state["saved_ref"] = query_params["ref"]
+elif "saved_ref" not in st.session_state:
+    st.session_state["saved_ref"] = "727"
 
 st.markdown('<div class="money-animation-box">📈🚨💥</div>', unsafe_allow_html=True)
 st.markdown('<div class="app-title-bar">GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
 
-# --- PHASE 1: LOGIN HUB ---
+# --- STAGE 1: VERIFIED ACCOUNT GATEWAY TUNNEL ---
 if not st.session_state.logged_in:
     
     if st.session_state.google_screen_active:
@@ -228,40 +232,59 @@ if not st.session_state.logged_in:
             
         st.markdown("<p style='text-align:center; color:#64748b; font-size:11px; margin-top:5px; margin-bottom:12px;'>- OR ACCESS USING PLATFORM ENCRYPTED KEY CODE -</p>", unsafe_allow_html=True)
         
-        with st.form("login_form"):
-            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="salmanveerm@gmail.com")
+        with st.form("login_form", clear_on_submit=False):
+            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="", placeholder="Enter admin or client email")
             password = st.text_input("🔒 ENTRY SECURE KEYCODE:", type="password", placeholder="••••••••")
+            submit_login = st.form_submit_button("🚀 INITIALIZE NODE DATABASE ENTRY", use_container_width=True)
             
-            if st.form_submit_button("🚀 INITIALIZE NODE DATABASE ENTRY", use_container_width=True):
-                if username == "admin" and password == "admin123":
+            if submit_login:
+                # Basic input filter sanitization to prevent blank entry access
+                username_clean = username.strip()
+                password_clean = password.strip()
+                
+                if not username_clean or not password_clean:
+                    st.error("❌ VALIDATION ERROR: Entry logs require active string variables!")
+                elif username_clean == "admin" and password_clean == "admin123":
                     st.session_state.logged_in = True
                     st.session_state.is_admin = True
                     st.session_state.current_user = "ADMIN_PANEL"
+                    st.success("👑 Admin clearance token granted.")
+                    time.sleep(0.5)
                     st.rerun()
-                elif username in st.session_state.users_db:
+                elif username_clean in st.session_state.users_db:
                     st.session_state.logged_in = True
                     st.session_state.is_admin = False
-                    st.session_state.current_user = username
+                    st.session_state.current_user = username_clean
                     st.session_state.current_app_tab = "home"
+                    st.success("✔ Secure user node entry authorized.")
+                    time.sleep(0.5)
                     st.rerun()
                 else:
+                    # Register new entry safely if username does not exist
                     new_code = str(random.randint(1000, 9999))
-                    st.session_state.users_db[username] = {"balance": 0.00, "active_level": "None", "referred_by": url_ref, "ref_code": new_code}
+                    st.session_state.users_db[username_clean] = {
+                        "balance": 0.00, 
+                        "active_level": "None", 
+                        "referred_by": st.session_state["saved_ref"], 
+                        "ref_code": new_code
+                    }
                     st.session_state.logged_in = True
                     st.session_state.is_admin = False
-                    st.session_state.current_user = username
+                    st.session_state.current_user = username_clean
                     st.session_state.current_app_tab = "home"
+                    st.success("📥 New network node assigned to system matrix.")
+                    time.sleep(0.5)
                     st.rerun()
 
-# --- PHASE 2: ADMIN PANEL ---
-elif st.session_state.is_admin:
+# --- STAGE 2: ADMIN PANEL VIEW (STRICT CONTAINER BOUNDS) ---
+elif st.session_state.logged_in and st.session_state.is_admin:
     st.markdown("<h3 style='color:#ef4444; text-align:center;'>👑 CENTRAL ADMIN CONTROL ROOM</h3>", unsafe_allow_html=True)
     
     st.markdown('<div class="section-label">📺 BROADCAST VIDEO MANAGEMENT ROUTER</div>', unsafe_allow_html=True)
     new_url = st.text_input("SET STREAM / YOUTUBE URL TASK VIDEO FOR USERS:", value=st.session_state.admin_video_url)
     if st.button("💾 UPDATE ACTIVE TASK STREAM LINK", use_container_width=True):
         st.session_state.admin_video_url = new_url
-        st.success("Target media stream link successfully broadcasted to live node network!")
+        st.success("Target media stream link successfully broadcasted to live network!")
     
     st.markdown('<div class="section-label">📥 USER PENDING DEPOSIT VERIFICATIONS</div>', unsafe_allow_html=True)
     if not st.session_state.deposit_requests:
@@ -293,13 +316,13 @@ elif st.session_state.is_admin:
                         
                         st.session_state.deposit_requests.pop(idx)
                         st.success("Target profile package unlocked successfully!")
-                        time.sleep(1)
+                        time.sleep(0.5)
                         st.rerun()
                 with col_rej:
                     if st.button("❌ REFUSE RECEIPT TRANSCRIPT", key=f"rej_{idx}", use_container_width=True):
                         st.session_state.deposit_requests.pop(idx)
                         st.warning("Receipt log trashed.")
-                        time.sleep(1)
+                        time.sleep(0.5)
                         st.rerun()
 
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -309,13 +332,13 @@ elif st.session_state.is_admin:
         st.session_state.current_user = ""
         st.rerun()
 
-# --- PHASE 3: MAIN APP USER INTERFACE ---
-else:
+# --- STAGE 3: APPLICATION MAIN DASHBOARD INTERFACE (SECURE BLOCK) ---
+elif st.session_state.logged_in and not st.session_state.is_admin:
     current_user = st.session_state.current_user
     user_data = st.session_state.users_db[current_user]
     user_code = user_data.get("ref_code", "727")
     
-    # ------------------ HOME PAGE ------------------
+    # ------------------ TAB ROUTER: HOME ------------------
     if st.session_state.current_app_tab == "home":
         st.markdown(f"""
         <div class="balance-box">
@@ -329,7 +352,7 @@ else:
         col_dep, col_wdr = st.columns(2)
         with col_dep:
             if st.button("📥 INBOUND DEPOSIT", use_container_width=True):
-                st.info("Scroll down karein aur kisi bhi VIP Portfolio par click karke secure checkout panel open karein.")
+                st.info("Neeche scroll karke Exclusive Matrix Portfolios se apne VIP plan par click karein aur payment lock open karein.")
         with col_wdr:
             show_withdraw = st.button("📤 WITHDRAW SYSTEM", use_container_width=True)
 
@@ -348,7 +371,7 @@ else:
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- DYNAMIC MULTI-BANK & CRYPTO DEPOSIT SYSTEM (FIXED SCAN ISSUES) ---
+        # --- DYNAMIC MULTI-BANK & CRYPTO FORM GATEWAY ---
         if st.session_state.selected_payment_level:
             lvl_name = st.session_state.selected_payment_level
             lvl_cost = LEVELS_CONF[lvl_name]["cost"]
@@ -357,11 +380,9 @@ else:
             st.markdown(f"<h3 style='margin:0; color:#ffffff; text-align:center;'>📥 GATEWAY VERIFICATION HUB</h3>", unsafe_allow_html=True)
             st.markdown(f"<p style='color:#e2e8f0; text-align:center; font-size:13px; margin-bottom:15px;'>REQUIRED DEPOSIT SUM: <b style='color:#ef4444; font-size:18px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
             
-            # Choose Payment Method
             pay_method = st.selectbox("SELECT YOUR DEPOSIT METHOD NETWORK:", ["Malaysia Local Bank", "Cryptocurrency (USDT TRC20)"])
             
             if pay_method == "Malaysia Local Bank":
-                # Added All Major Malaysian Banks inside dynamic selection roster
                 target_bank = st.selectbox("CHOOSE TARGET RECEIVING MALAYSIA BANK:", [
                     "Maybank (Malayan Banking Berhad)",
                     "CIMB Bank Berhad",
@@ -379,43 +400,42 @@ else:
                     <p style="color:#fff; font-size:14px; margin:4px 0 0 0;">BANK: <b>{target_bank}</b></p>
                     <p style="color:#fff; font-size:14px; margin:2px 0 0 0;">HOLDER: <b>GLOBAL INVESTMENT HUB</b></p>
                     <p style="color:#fff; font-size:14px; margin:2px 0 0 0;">ACC NO: <b>162485930214</b></p>
-                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Copy these bank numbers to execute dynamic transfer manually.</p>
+                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Copy bank coordinates to execute secure local transfer manually.</p>
                 </div>
                 """, unsafe_allow_html=True)
                 
             else:
-                # Cryptocurrency USDT TRC20 Integration setup
                 st.markdown("""
                 <div style="background:#000; border:2px solid #34d399; padding:15px; border-radius:12px; margin-bottom:15px;">
                     <p style="color:#34d399; font-size:12px; margin:0; font-weight:900;">🌐 SECURE CRYPTO INFLOW PATHWAY (USDT TRC20):</p>
                     <p style="color:#fff; font-size:13px; margin:5px 0; word-break:break-all;">NETWORK: <b>TRON (TRC20)</b></p>
                     <p style="color:#fff; font-size:13px; margin:5px 0; word-break:break-all;">ADDRESS: <code style="color:#34d399;">TYr7272627MatrixSecureCryptoNodeVaultX92</code></p>
-                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Send the matching dollar rate value directly into this cryptoledger node vault sequence.</p>
+                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Send identical currency evaluation rate block to this hash vector.</p>
                 </div>
                 """, unsafe_allow_html=True)
             
-            holder_name = st.text_input("👤 SENDER NAME / ACCOUNT HOLDER TITLE:", placeholder="Enter your card name or profile description")
-            trx_id = st.text_input("🔢 RECEIPT TRANSACTION SERIAL TRX ID:", placeholder="Enter your 12-digit payment trace hash number")
+            holder_name = st.text_input("👤 SENDER NAME / ACCOUNT HOLDER TITLE:", placeholder="Enter your card name or account identity")
+            trx_id = st.text_input("🔢 RECEIPT TRANSACTION SERIAL TRX ID:", placeholder="Enter your 12-digit transaction index sequence")
             
             st.markdown("<br>", unsafe_allow_html=True)
             col_sub_pay, col_can_pay = st.columns(2)
             with col_sub_pay:
                 if st.button("🔥 DISPATCH SIGNED PROOF", use_container_width=True):
-                    if holder_name and trx_id:
+                    if holder_name.strip() and trx_id.strip():
                         st.session_state.deposit_requests.append({
                             "user": current_user,
                             "level": lvl_name,
                             "amount": lvl_cost,
                             "method": pay_method,
-                            "holder_name": holder_name,
-                            "trx_id": trx_id
+                            "holder_name": holder_name.strip(),
+                            "trx_id": trx_id.strip()
                         })
-                        st.success("✔ Verification footprint locked inside admin queue!")
+                        st.success("✔ Verification fingerprint locked inside admin queue!")
                         st.session_state.selected_payment_level = None
                         time.sleep(1)
                         st.rerun()
                     else:
-                        st.error("Input logs require structural text strings!")
+                        st.error("Input logs require validated structure elements!")
             with col_can_pay:
                 if st.button("❌ ABORT ESCROW", use_container_width=True):
                     st.session_state.selected_payment_level = None
@@ -451,7 +471,7 @@ else:
                         time.sleep(1)
                         st.rerun()
 
-        # FIXED CLEAN REFERRAL LINK BOX CODE BASED GENERATION
+        # FIXED CLEAN REFERRAL LINK GENERATOR MAPPED SYSTEM
         st.markdown(f"""
         <div class="invite-earn-box">
             <div style="font-size:17px; color:#ef4444; margin-bottom:4px; font-weight:900;">🤝 INVITE NETWORK FRIENDS & REAP RM 100</div>
@@ -462,7 +482,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-    # ------------------ WATCH VIDEO TASK PAGE ------------------
+    # ------------------ TAB ROUTER: TASK PANEL ------------------
     elif st.session_state.current_app_tab == "task":
         st.markdown("<h3 style='color:#ef4444; text-align:center;'>📺 STREAM ADVERTISING REWARD TERMINAL</h3>", unsafe_allow_html=True)
         
@@ -489,7 +509,7 @@ else:
             st.session_state.current_app_tab = "home"
             st.rerun()
 
-    # --- THREE BUTTONS RED ROW NAVIGATION FOOTER MAPPED HUB ---
+    # --- THREE BUTTONS RED ROW NAVIGATION FOOTER ---
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     
     st.markdown('<div class="bottom-nav-holder">', unsafe_allow_html=True)
