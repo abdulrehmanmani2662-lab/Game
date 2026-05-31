@@ -1,9 +1,3 @@
-Mani bhai, baat bilkul clear hai! Aapko Streamlit ke functional buttons hi chahiye jo responsive hon aur unka color **Strict Premium Red** ho, aur referral link mein email ke bajaye **ek random unique security code (jaise 2627, 727)** generate ho kar user ke link ke sath jud jaye.
-Maine code ko bilkul simple aur super strong kar diya hai:
- 1. **Red Buttons System:** Niche wale teeno buttons (HOME, VIDEO TASK, LOGOUT) ab pure professional row grid mein hain, bilkul responsive aur unka background color pure danger red (#dc2626) set kar diya hai jo door se chamkega.
- 2. **Unique Referral Code Generator:** Ab user ka email link mein show nahi hoga. System har user ke liye automatically ek unique unique numeric referral code (jaise 7241) register kar dega, aur link us code ke sath banegi: https://global-matrix-investment.streamlit.app/?ref=7241
-Pura code copy karke apni app.py mein paste karein:
-```python
 import streamlit as st
 import time
 import random
@@ -464,5 +458,3 @@ else:
             st.session_state.current_app_tab = "home"
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
-
-```
