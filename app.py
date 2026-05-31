@@ -12,7 +12,6 @@ st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@800;900&display=swap" rel="stylesheet">
     
     <style>
-    /* Absolute suppression of standard Streamlit desktop component bars */
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
@@ -105,7 +104,6 @@ st.markdown("""
         box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
     }
     
-    /* UNIVERSAL RED BUTTON SYSTEM FOR NAVIGATION AND ACTIONS */
     .stButton>button {
         font-family: 'Montserrat', sans-serif !important;
         font-weight: 900 !important; font-size: 14px !important;
@@ -129,7 +127,6 @@ st.markdown("""
         border-radius: 16px; padding: 8px; margin-bottom: 15px;
     }
     
-    /* FLOATING BOTTOM BAR MANAGER FOR NAVIGATION OPTIONS */
     .bottom-nav-holder {
         position: fixed;
         bottom: 0; left: 0; right: 0;
@@ -144,14 +141,12 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Central Global Levels Pricing Rules Metrics
 LEVELS_CONF = {
     "VIP LEVEL 1": {"cost": 50, "daily_reward": 15},
     "VIP LEVEL 2": {"cost": 200, "daily_reward": 60},
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# Persistent State Management Configurations
 if 'users_db' not in st.session_state:
     st.session_state.users_db = {
         "salmanveerm@gmail.com": {"balance": 5.00, "active_level": "None", "referred_by": "727", "ref_code": "2627"},
@@ -166,24 +161,28 @@ if 'google_screen_active' not in st.session_state: st.session_state.google_scree
 if 'admin_video_url' not in st.session_state: st.session_state.admin_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 if 'current_app_tab' not in st.session_state: st.session_state.current_app_tab = "home"
 
-# Floating Money Core Brand Header Group
+# Catch referral code from browser URL query param
+query_params = st.query_params
+url_ref = query_params.get("ref", "727")
+
 st.markdown('<div class="money-animation-box">📈🚨💥</div>', unsafe_allow_html=True)
 st.markdown('<div class="app-title-bar">GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
 
-# --- PHASE 1: LOGIN HUB / REALISTIC GOOGLE SCREEN GATEWAY ---
+# --- PHASE 1: LOGIN HUB ---
 if not st.session_state.logged_in:
     
     if st.session_state.google_screen_active:
-        st.markdown("""
+        # FIXED: Apni personal email yahan se permanent hata di hai!
+        st.markdown(f"""
         <div class="google-verification-card">
             <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" width="32px" style="margin-bottom:8px;"/>
             <h3 style="color:#202124; margin:5px 0; font-size:17px;">Verify Identity Corridor</h3>
             <p style="color:#5f6368; font-size:12px; font-weight:bold; margin-bottom:12px;">Confirm secure profile map sync with Google Security Layer</p>
             <div style="background:#f1f3f4; border-radius:12px; padding:10px; display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:15px; border:1px solid #dadce0;">
-                <div style="background:#dc2626; width:28px; height:28px; border-radius:50%; color:white; font-weight:bold; font-size:13px; line-height:28px; text-align:center;">M</div>
+                <div style="background:#dc2626; width:28px; height:28px; border-radius:50%; color:white; font-weight:bold; font-size:13px; line-height:28px; text-align:center;">G</div>
                 <div style="text-align:left;">
-                    <div style="font-size:12px; font-weight:900; color:#3c4043;">Mani Rajput Control Node</div>
-                    <div style="font-size:10px; color:#70757a; font-weight:bold;">abdulrehmanmani2662@gmail.com</div>
+                    <div style="font-size:12px; font-weight:900; color:#3c4043;">Secure Client Gate Node</div>
+                    <div style="font-size:10px; color:#70757a; font-weight:bold;">Authentication via Google Cloud TLS</div>
                 </div>
             </div>
         </div>
@@ -226,19 +225,19 @@ if not st.session_state.logged_in:
                 elif username in st.session_state.users_db:
                     st.session_state.logged_in = True
                     st.session_state.is_admin = False
+                    st.session_state.current_user = username
                     st.session_state.current_app_tab = "home"
                     st.rerun()
                 else:
-                    # Generate a clean unique numeric random code for new users
                     new_code = str(random.randint(1000, 9999))
-                    st.session_state.users_db[username] = {"balance": 0.00, "active_level": "None", "referred_by": "727", "ref_code": new_code}
+                    st.session_state.users_db[username] = {"balance": 0.00, "active_level": "None", "referred_by": url_ref, "ref_code": new_code}
                     st.session_state.logged_in = True
                     st.session_state.is_admin = False
                     st.session_state.current_user = username
                     st.session_state.current_app_tab = "home"
                     st.rerun()
 
-# --- PHASE 2: ADMIN PAYMENT & VIDEO CONTENT MANAGEMENT TERMINAL ---
+# --- PHASE 2: ADMIN PAYMENT & VIDEO MANAGEMENT (FIXED AND ISOLATED) ---
 elif st.session_state.is_admin:
     st.markdown("<h3 style='color:#ef4444; text-align:center;'>👑 CENTRAL ADMIN CONTROL ROOM</h3>", unsafe_allow_html=True)
     
@@ -276,7 +275,7 @@ elif st.session_state.is_admin:
                                 elif req['amount'] == 50: st.session_state.users_db[u_name]["balance"] += 50.00
                         
                         st.session_state.deposit_requests.pop(idx)
-                        st.success("Target profile package unlocked!")
+                        st.success("Target profile package unlocked successfully!")
                         time.sleep(1)
                         st.rerun()
                 with col_rej:
@@ -290,9 +289,10 @@ elif st.session_state.is_admin:
     if st.button("🚪 LOGOUT ADMIN ROOT TERMINAL", use_container_width=True):
         st.session_state.logged_in = False
         st.session_state.is_admin = False
+        st.session_state.current_user = ""
         st.rerun()
 
-# --- PHASE 3: MAIN APP INTERFACE (USER INTERFACE SPLIT VIA TABS) ---
+# --- PHASE 3: MAIN APP USER INTERFACE ---
 else:
     current_user = st.session_state.current_user
     user_data = st.session_state.users_db[current_user]
@@ -398,7 +398,7 @@ else:
                         time.sleep(0.5)
                         st.rerun()
 
-        # DYNAMIC UNIQUE REFERRAL LINK BASED ON CODE (NO EMAIL SHOWING)
+        # DYNAMIC REFS GIVES CLEAN CODE INSTEAD OF USER RAW MAIL ID
         st.markdown(f"""
         <div class="invite-earn-box">
             <div style="font-size:17px; color:#ef4444; margin-bottom:4px; font-weight:900;">🤝 INVITE NETWORK FRIENDS & REAP RM 100</div>
@@ -436,7 +436,7 @@ else:
             st.session_state.current_app_tab = "home"
             st.rerun()
 
-    # --- PURE SECURE RED GRID LAYOUT FOR REAL BOTTOM APP INTERFACE NAVIGATION ---
+    # --- PURE RESPONSIVE RED ROW GRID GRID FOR BOTTOM NAVIGATION ---
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     
     st.markdown('<div class="bottom-nav-holder">', unsafe_allow_html=True)
