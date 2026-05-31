@@ -5,64 +5,111 @@ import requests
 # Page Layout Configuration
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="centered")
 
-# --- PREMIUM APP & ADMIN VIEW STYLESHEET ---
+# --- ULTRA PREMIUM GAMING LOOK & NEXT-LEVEL FONTS STYLESHEET ---
 st.markdown("""
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..0,900;1,100..0,900&family=Poppins:ital,wght@0,100..0,900;1,100..0,900&display=swap" rel="stylesheet">
+    
     <style>
-    /* Hide all native Streamlit bars for absolute mobile app feel */
+    /* Hide all native Streamlit trash UI components */
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
-    .stApp { background-color: #0d1117 !important; }
+    
+    .stApp { background-color: #060913 !important; }
+    
     .main .block-container { 
-        padding-top: 10px !important; 
-        padding-bottom: 90px !important; 
-        max-width: 430px !important;
+        padding-top: 15px !important; 
+        padding-bottom: 100px !important; 
+        max-width: 440px !important;
         margin: 0 auto;
     }
-    /* Bold Bold Typography for Global Language Readability */
-    h1, h2, h3, h4, h5, h6, p, span, div, label {
-        font-family: 'Arial Black', Gadget, sans-serif !important;
+    
+    /* Ultimate Bold Font Layout Engine */
+    h1, h2, h3, h4, h5, h6, p, span, div, label, button, input {
+        font-family: 'Montserrat', 'Poppins', sans-serif !important;
+        font-weight: 900 !important;
     }
+    
+    /* Glowing Neon Title Bar */
     .app-title-bar {
-        text-align: center; font-weight: 900; font-size: 24px; color: #f59e0b;
-        padding: 12px; margin-bottom: 15px; border-bottom: 2px solid #21262d;
-        letter-spacing: 1px;
+        text-align: center; 
+        font-size: 26px; 
+        color: #fff;
+        text-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b;
+        padding: 15px 10px; 
+        margin-bottom: 20px; 
+        border-bottom: 2px solid #1e293b;
+        letter-spacing: 1.5px;
     }
+    
+    /* Premium Crypto Wallet Box */
     .balance-box {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-        padding: 22px; border-radius: 14px; border: 2px solid #30363d;
-        margin-bottom: 18px; text-align: center;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        background: linear-gradient(145deg, #111827 0%, #030712 100%);
+        padding: 25px; 
+        border-radius: 18px; 
+        border: 2px solid #f59e0b;
+        margin-bottom: 20px; 
+        text-align: center;
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
     }
-    .admin-box {
-        background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-        padding: 20px; border-radius: 12px; border: 3px solid #6366f1;
-        margin-bottom: 20px;
-    }
+    
+    /* Section Headers */
     .section-label {
-        font-size: 18px; font-weight: 900; color: #ffffff;
-        margin-top: 20px; margin-bottom: 10px; border-left: 5px solid #f59e0b; padding-left: 10px;
+        font-size: 19px; 
+        color: #f59e0b;
+        margin-top: 25px; 
+        margin-bottom: 12px; 
+        border-left: 6px solid #f59e0b; 
+        padding-left: 12px;
         letter-spacing: 0.5px;
+        text-transform: uppercase;
     }
+    
+    /* Bold VIP Tier Containers */
     .level-container {
-        background: #161b22; border: 2px solid #30363d; border-radius: 12px;
-        padding: 15px; margin-bottom: 12px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+        border: 2px solid #334155; 
+        border-radius: 15px;
+        padding: 18px; 
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
-    .qr-holder {
-        text-align: center; background: white; padding: 15px; border-radius: 16px;
-        margin: 15px auto; width: fit-content; box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    
+    /* Fixed Embedded Image Box */
+    .qr-holder-clean {
+        text-align: center; 
+        background: #ffffff; 
+        padding: 15px; 
+        border-radius: 20px;
+        margin: 15px auto; 
+        width: 90%; 
+        box-shadow: 0 0 25px rgba(255,255,255,0.2);
     }
-    /* Stylized Big Buttons */
+    
+    /* High-End App Action Buttons */
     .stButton>button {
+        font-family: 'Montserrat', sans-serif !important;
         font-weight: 900 !important;
         font-size: 16px !important;
-        border-radius: 10px !important;
-        padding: 10px 0 !important;
+        border-radius: 12px !important;
+        padding: 12px 0 !important;
+        background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%) !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6) !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Initialize Fake Database in Session State
+# Initialize Session Core Database
 if 'users_db' not in st.session_state:
     st.session_state.users_db = {
         "salmanveerm@gmail.com": {"balance": 0.00, "referred_by": "ubaid_rajput"},
@@ -75,14 +122,14 @@ if 'is_admin' not in st.session_state: st.session_state.is_admin = False
 
 st.markdown('<div class="app-title-bar">📈 GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
 
-# --- LOGIN GATEWAY (PURE ENGLISH) ---
+# --- LOGIN HUB ---
 if not st.session_state.logged_in:
-    st.markdown("<h4 style='text-align:center; color:#fff; font-weight:900;'>SECURE MEMBER LOGIN</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align:center; color:#fff; letter-spacing:1px;'>SECURE GATEWAY LOGIN</h4>", unsafe_allow_html=True)
     with st.form("login_form"):
-        username = st.text_input("📱 EMAIL ADDRESS / PHONE NUMBER", value="salmanveerm@gmail.com")
-        password = st.text_input("🔒 PASSWORD", type="password", placeholder="ENTER PASSWORD")
+        username = st.text_input("📱 ACCOUNT EMAIL / PHONE ID", value="salmanveerm@gmail.com")
+        password = st.text_input("🔒 SECURE ACCESS PASSWORD", type="password", placeholder="••••••••")
         
-        if st.form_submit_button("🚀 SIGN IN TO ACCOUNT", use_container_width=True):
+        if st.form_submit_button("🚀 UNLOCK ACCOUNT PORTAL", use_container_width=True):
             if username == "admin" and password == "admin123":
                 st.session_state.logged_in = True
                 st.session_state.is_admin = True
@@ -100,148 +147,145 @@ if not st.session_state.logged_in:
                 st.session_state.current_user = username
                 st.rerun()
 
-# --- IF LOGGED IN AS MASTER ADMIN ---
+# --- ADMIN PANEL LAYER ---
 elif st.session_state.is_admin:
-    st.markdown('<div class="admin-box">', unsafe_allow_html=True)
-    st.markdown("<h3 style='color:#6366f1; text-align:center; margin:0; font-weight:900;'>👑 MASTER ADMIN CONTROL DASHBOARD</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#8b949e; font-size:12px; font-weight:bold;'>SYSTEM MANAGEMENT CONTROL ROOM</p>", unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#f59e0b; text-align:center;'>👑 CENTRAL CONTROL DOCK</h3>", unsafe_allow_html=True)
     
-    # Active Users Registry
-    st.markdown('<div class="section-label">👥 REGISTERED NETWORK MEMBERS PANEL</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">👥 REAL-TIME MEMBERS</div>', unsafe_allow_html=True)
     for u, data in st.session_state.users_db.items():
-        st.text(f"USER ID: {u} | WALLET: RM {data['balance']:.2f} | INVITER: {data['referred_by']}")
+        st.text(f"NODE: {u} | WALLET: RM {data['balance']:.2f}")
         
-    # Manual Override Control Adjustment Core
-    st.markdown('<div class="section-label">✏ ADJUST MEMBER BALANCE MANUALLY</div>', unsafe_allow_html=True)
-    target_user = st.selectbox("SELECT MEMBER ACCOUNT:", list(st.session_state.users_db.keys()))
-    new_bal = st.number_input("ENTER NEW BALANCE VALUE (RM):", min_value=0.0, value=float(st.session_state.users_db[target_user]["balance"]))
+    st.markdown('<div class="section-label">✏ INSTANT OVERRIDE BALANCE</div>', unsafe_allow_html=True)
+    target_user = st.selectbox("CHOOSE USER NODE:", list(st.session_state.users_db.keys()))
+    new_bal = st.number_input("SET ABSOLUTE LIQUIDITY VALUE (RM):", min_value=0.0, value=float(st.session_state.users_db[target_user]["balance"]))
     
-    if st.button("💾 SAVE AND UPDATE WALLET", use_container_width=True):
+    if st.button("💾 OVERRIDE & CREDIT BALANCE", use_container_width=True):
         st.session_state.users_db[target_user]["balance"] = new_bal
-        st.success(f"SUCCESS: {target_user} account value modified to RM {new_bal:.2f}")
+        st.success(f"UPDATED: {target_user} is now set to RM {new_bal:.2f}")
         time.sleep(1)
         st.rerun()
 
-    if st.button("🚪 LOGOUT FROM ADMIN CONTROL PANEL", use_container_width=True):
+    if st.button("🚪 LEAVE CONTROL DOCK", use_container_width=True):
         st.session_state.logged_in = False
         st.session_state.is_admin = False
         st.rerun()
 
-# --- IF LOGGED IN AS REGULAR NETWORK USER (PURE ENGLISH & BOLD) ---
+# --- USER INTERFACE DESIGN CORE ---
 else:
     current_user = st.session_state.current_user
     user_data = st.session_state.users_db[current_user]
     
-    # Total Balance Display Card Panel
+    # Financial Analytics Box Panel
     st.markdown(f"""
     <div class="balance-box">
-        <span style="color:#8b949e; font-size:12px; font-weight:bold;">ACCOUNT ID: {current_user}</span><br>
-        <span style="color:#c9d1d9; font-size:16px; font-weight:bold;">AVAILABLE BALANCE</span><br>
-        <span style="font-size:36px; font-weight:900; color:#ffffff;">RM {user_data['balance']:.2f}</span>
+        <div style="color:#8b949e; font-size:12px; letter-spacing:1px; margin-bottom:5px;">USER CLUSTER NODE ID: {current_user}</div>
+        <div style="color:#e2e8f0; font-size:16px; letter-spacing:0.5px;">TOTAL AVAILABLE WALLET LIQUIDITY</div>
+        <div style="font-size:38px; color:#ffffff; margin-top:5px; text-shadow: 0 0 8px rgba(255,255,255,0.2);">RM {user_data['balance']:.2f}</div>
     </div>
     """, unsafe_allow_html=True)
 
-    # --- SECTION 1: FINANCIAL OPERATION ACTION GATEWAY ---
+    # --- ACTION GRID TRIGGER ROUTERS ---
     col_dep, col_wdr = st.columns(2)
     with col_dep:
-        show_deposit = st.button("📥 RECHARGE / DEPOSIT", use_container_width=True)
+        show_deposit = st.button("📥 DEPOSIT SLIP", use_container_width=True)
     with col_wdr:
-        show_withdraw = st.button("📤 WITHDRAW FUNDS", use_container_width=True)
+        show_withdraw = st.button("📤 WITHDRAW", use_container_width=True)
 
-    # Deposit Workflow Mechanism Logic Loop
+    # Deposit Engine Simulation Block
     if show_deposit:
         st.markdown("<div class='level-container'>", unsafe_allow_html=True)
-        st.markdown("<h5 style='color:#10b981; font-weight:900;'>MOCK PAYMENT ACTION (FOR SYSTEM TESTING)</h5>", unsafe_allow_html=True)
-        test_dep_amount = st.radio("SELECT DEPOSIT SLIP PLAN VALUE:", [50, 200])
+        st.markdown("<h5 style='color:#f59e0b;'>SIMULATE NETWORK DEPOSIT APPROVAL</h5>", unsafe_allow_html=True)
+        test_dep_amount = st.radio("CHOOSE INSTANT TRANSFER PLAN VALUE:", [50, 200])
         
-        if st.button("🔥 TRANSMIT PAYMENT RECEIPT PROOF"):
+        if st.button("🔥 SEND VERIFICATION RECEIPT"):
             st.session_state.users_db[current_user]["balance"] += test_dep_amount
             
-            # Referral Bonus Distribution Logic Engine Execution
+            # Smart Automated Multi-Tier Referral Payout Router
             inviter = user_data["referred_by"]
             if inviter in st.session_state.users_db:
                 if test_dep_amount == 200:
                     st.session_state.users_db[inviter]["balance"] += 100.00
-                    st.toast(f"REFERRAL BONUS TRIGGERED: RM 100 CREDITED TO YOUR INVITER {inviter}", icon="🎁")
+                    st.toast(f"REFERRAL REWARD: RM 100 CREDITED TO {inviter}", icon="🎁")
                 elif test_dep_amount == 50:
                     st.session_state.users_db[inviter]["balance"] += 50.00
-                    st.toast(f"REFERRAL BONUS TRIGGERED: RM 50 CREDITED TO YOUR INVITER {inviter}", icon="🎁")
+                    st.toast(f"REFERRAL REWARD: RM 50 CREDITED TO {inviter}", icon="🎁")
                     
-            st.success(f"SUCCESS: System credited RM {test_dep_amount} to your storage core.")
+            st.success(f"SUCCESS: Account dynamically updated with RM {test_dep_amount}")
             time.sleep(1)
             st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Withdrawal Operations Request Gate (Threshold Guard Fix: RM 700)
+    # Withdrawal Logic Guard Engine (Hard-coded Threshold: RM 700)
     if show_withdraw:
         st.markdown("<div class='level-container'>", unsafe_allow_html=True)
-        w_amt = st.number_input("ENTER WITHDRAWAL AMOUNT (RM):", min_value=10, value=700)
-        if st.button("💸 DISPATCH WITHDRAWAL ORDER"):
+        w_amt = st.number_input("ENTER TARGET VOLUME LIQUIDATION AMOUNT (RM):", min_value=10, value=700)
+        if st.button("💸 CONFIRM IMMEDIATE PAYOUT REQUEST"):
             if w_amt < 700:
-                st.error("❌ ERROR: MINIMUM ALLOWED WITHDRAWAL LIMIT THRESHOLD IS STRICTLY RM 700")
+                st.error("❌ REGULATION ERROR: MINIMUM LIQUIDATION LIMIT IS FIXED AT RM 700")
             elif user_data["balance"] < w_amt:
-                st.error("❌ ERROR: INSUFFICIENT ACCOUNT BALANCE LIQUIDITY FOR DISPATCH")
+                st.error("❌ LEDGER ERROR: INSUBSTANTIAL CAPITAL BALANCES DETECTED")
             else:
                 st.session_state.users_db[current_user]["balance"] -= w_amt
-                st.success(f"🚀 SUCCESS: Withdrawal order of RM {w_amt} successfully dispatched!")
+                st.success(f"🚀 SUBMITTED: Order of RM {w_amt} transmitted to settlement matrix cluster.")
                 time.sleep(1)
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- SECTION 2: VIP SCHEME MATRIX PLANS NODES ---
-    st.markdown('<div class="section-label">💎 AVAILABLE INVESTMENT TIER MODULES</div>', unsafe_allow_html=True)
+    # --- INVESTMENT SCHEMES TIER NODES ---
+    st.markdown('<div class="section-label">💎 ACCOUNT ACTIVE VIP PLANS</div>', unsafe_allow_html=True)
     
     levels = [
-        {"name": "VIP LEVEL 1", "cost": 50, "daily": 15},
-        {"name": "VIP LEVEL 2", "cost": 200, "daily": 60},
-        {"name": "VIP LEVEL 3", "cost": 500, "daily": 180}
+        {"name": "VIP SCHEME NODE 1", "cost": 50, "daily": 15},
+        {"name": "VIP SCHEME NODE 2", "cost": 200, "daily": 60},
+        {"name": "VIP SCHEME NODE 3", "cost": 500, "daily": 180}
     ]
     
     for idx, lvl in enumerate(levels):
         st.markdown(f"""
         <div class="level-container">
-            <b style="color:#ffffff; font-size:16px;">{lvl['name']}</b><br>
-            <span style="color:#8b949e; font-size:13px; font-weight:bold;">DAILY PROFIT: RM {lvl['daily']:.2f} | ACTIVATION PRICE: RM {lvl['cost']}</span>
+            <div style="font-size:17px; color:#ffffff; margin-bottom:4px;">{lvl['name']}</div>
+            <div style="color:#94a3b8; font-size:13px;">DAILY REWARD RETRO: <span style="color:#10b981;">RM {lvl['daily']:.2f}</span></div>
+            <div style="color:#94a3b8; font-size:13px;">ACTIVATION CAPITAL QUANTITY: <span style="color:#f59e0b;">RM {lvl['cost']}</span></div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button(f"⚡ PURCHASE & UNLOCK {lvl['name']}", key=f"lvl_{idx}", use_container_width=True):
+        if st.button(f"⚡ UNLOCK {lvl['name']}", key=f"lvl_{idx}", use_container_width=True):
             if user_data["balance"] >= lvl['cost']:
                 st.session_state.users_db[current_user]["balance"] -= lvl['cost']
-                st.success(f"🎉 CELEBRATION: {lvl['name']} node successfully activated!")
+                st.success(f"🎉 VALIDATED: {lvl['name']} sequence successfully unlocked!")
                 time.sleep(1)
                 st.rerun()
             else:
-                st.error(f"❌ DENIED: Cost is RM {lvl['cost']}. Please recharge or request admin override.")
+                st.error(f"❌ REJECTED: Insufficient funds. Minimum recharge value needed: RM {lvl['cost']}")
 
-    # --- SECTION 3: ALWAYS DEPLOYED TOUCH 'N GO GATEWAY CODE BLOCK ---
-    st.markdown('<div class="section-label">📲 OFFICIAL TOUCH \'N GO DIGITAL PORTAL</div>', unsafe_allow_html=True)
-    st.markdown("<p style='font-size:13px; color:#8b949e; font-weight:bold;'>SCAN THE SYSTEM SCANNER BELOW DIRECTLY FOR MERCHANDISE PAYMENTS:</p>", unsafe_allow_html=True)
+    # --- TOUCH 'N GO GATEWAY FIXED RENDERING FRAME ---
+    st.markdown('<div class="section-label">📲 TOUCH \'N GO MERCHANT SYSTEM</div>', unsafe_allow_html=True)
+    st.markdown("<p style='font-size:12px; color:#94a3b8;'>SCAN THE SECURITY SECURE BOX TO DEPOSIT CAPITAL ASSETS:</p>", unsafe_allow_html=True)
     
+    # Secure iframe sandbox rendering to bypass standard browser asset processing filters
     st.markdown(
-        f'<div class="qr-holder">'
-        f'<img src="https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE" width="240" style="display:block; margin:0 auto; border-radius:10px;">'
-        f'<br><a href="https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE" target="_blank" style="color:#58a6ff; font-size:13px; font-weight:bold; text-decoration:none;">🔗 EXPAND TO FULL SCREEN QR</a>'
+        f'<div class="qr-holder-clean">'
+        f'<iframe src="https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE" width="100%" height="320" style="border:none; border-radius:10px; overflow:hidden;" scrolling="no"></iframe>'
+        f'<br><a href="https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE" target="_blank" style="color:#1d4ed8; font-size:13px; text-decoration:none;">🔗 IF NOT LOADING CLICK TO MANUAL REDIRECT</a>'
         f'</div>', 
         unsafe_allow_html=True
     )
 
-    # --- SECTION 4: NATIVE INTERACTIVE NAVIGATION TASK BAR ---
+    # --- NATIVE NAVIGATION BAR APP CORE FOOTER ---
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown('<div style="border-top: 2px solid #21262d; padding-top:10px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="border-top: 1px solid #1e293b; padding-top:12px;"></div>', unsafe_allow_html=True)
 
     col_b1, col_b2, col_b3 = st.columns(3)
     with col_b1:
-        if st.button("🏠 SYSTEM HOME", key="b_nav_h", use_container_width=True):
+        if st.button("🏠 REFRESH HOME", key="b_nav_h", use_container_width=True):
             st.rerun()
     with col_b2:
-        if st.button("📊 RUN TASK (+5)", key="b_nav_t", use_container_width=True):
+        if st.button("📊 CLAIM TASK (+5)", key="b_nav_t", use_container_width=True):
             st.session_state.users_db[current_user]["balance"] += 5.00
-            st.success("TASK VALUE EARNED: +RM 5.00 ADDED")
+            st.toast("REWARD CLAIMED: +RM 5.00 INSTANTLY APPLIED", icon="💰")
             time.sleep(0.5)
             st.rerun()
     with col_b3:
-        if st.button("🚪 LOGOUT APP", key="b_nav_l", use_container_width=True):
+        if st.button("🚪 LOGOUT SECURE", key="b_nav_l", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.current_user = ""
             st.rerun()
