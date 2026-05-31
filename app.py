@@ -34,12 +34,12 @@ st.markdown("""
         text-align: center;
         margin-top: 10px;
         margin-bottom: 5px;
-        font-size: 50px;
-        animation: pulseMoney 2s infinite alternate;
+        font-size: 55px;
+        animation: pulseMoney 1.5s infinite alternate;
     }
     @keyframes pulseMoney {
-        0% { transform: scale(0.92); filter: drop-shadow(0 0 5px #10b981); }
-        100% { transform: scale(1.05); filter: drop-shadow(0 0 25px #10b981); }
+        0% { transform: scale(0.95); filter: drop-shadow(0 0 8px #10b981); }
+        100% { transform: scale(1.08); filter: drop-shadow(0 0 28px #10b981); }
     }
     
     /* CRITICAL VISIBILITY FIX: Label Text Styles Override */
@@ -54,6 +54,16 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.9) !important;
     }
 
+    /* Warning and Deficient Alert boxes color fixing */
+    .stAlert p {
+        color: #ffffff !important;
+        font-weight: 900 !important;
+    }
+    div[data-testid="stNotification"] {
+        background-color: #7c2d12 !important;
+        border: 2px solid #ea580c !important;
+    }
+    
     /* Input Field Value Text Visibility Tuning */
     .stTextInput input, .stNumberInput input {
         color: #ffffff !important;
@@ -126,9 +136,11 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6) !important;
     }
     
-    /* Custom Styled Interactive Google Auth Button Container overrides */
-    div[data-testid="stForm"] .stButton>button {
-        border-radius: 12px !important;
+    /* Distinct Red/Orange design for Google Sign-In to stand out dynamically */
+    .google-btn-container .stButton>button {
+        background: linear-gradient(90deg, #ea4335 0%, #c5221f 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(234, 67, 53, 0.4) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -155,24 +167,25 @@ if 'is_admin' not in st.session_state: st.session_state.is_admin = False
 if 'selected_payment_level' not in st.session_state: st.session_state.selected_payment_level = None
 
 # Floating Money Icon Animation Stack
-st.markdown('<div class="money-animation-box">💰💵💰</div>', unsafe_allow_html=True)
+st.markdown('<div class="money-animation-box">💸💰🪙</div>', unsafe_allow_html=True)
 st.markdown('<div class="app-title-bar">GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
 
 # --- PORTAL REGISTRATION & GMAIL HUB SETUP ---
 if not st.session_state.logged_in:
     st.markdown("<h4 style='text-align:center; color:#ffffff; margin-bottom: 20px; letter-spacing:0.5px;'>SECURE PORTAL ACCOUNT HUB</h4>", unsafe_allow_html=True)
     
-    # INTERACTIVE GMAIL LOGIN ACTION CONTROLLER (FIXED CLICK ISSUE)
-    if st.button("🛑 CONTINUE WITH GOOGLE / GMAIL CLIENT", use_container_width=True):
-        # Auto logs in user securely using default demo Gmail configuration
+    # INTERACTIVE GMAIL LOGIN ACTION CONTROLLER (FIXED CLICK & STYLED RED)
+    st.markdown('<div class="google-btn-container">', unsafe_allow_html=True)
+    if st.button("🔴 SIGN IN WITH GOOGLE / GMAIL ACCOUNT", use_container_width=True):
         st.session_state.logged_in = True
         st.session_state.is_admin = False
         st.session_state.current_user = "salmanveerm@gmail.com"
         st.toast("✅ Google Account Authenticated Successfully!", icon="🚀")
         time.sleep(1)
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
         
-    st.markdown("<p style='text-align:center; color:#94a3b8; font-size:12px; margin-top:5px; margin-bottom:15px;'>- OR LOGIN USING PROTOCOL NETWORK CREDENTIALS -</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#94a3b8; font-size:12px; margin-top:5px; margin-bottom:15px;'>- OR LOGIN USING SYSTEM ID CREDENTIALS -</p>", unsafe_allow_html=True)
     
     with st.form("login_form"):
         username = st.text_input("📱 EMAIL REGISTERED ID / PHONE LINKAGE:", value="salmanveerm@gmail.com")
@@ -306,7 +319,6 @@ else:
         # QR Code Display
         st.image("https://kommodo.ai/i/pt49bwYh6iJZi2gWV2EE", caption="SECURE FINANCIAL GATEWAY PROTOCOLS ONLY", use_container_width=True)
         
-        # Text input fields with explicit forced white labels style
         holder_name = st.text_input("👤 SENDER ACCOUNT HOLDER NAME:", placeholder="Enter full sender legal account profile name")
         trx_id = st.text_input("🔢 TRANSACTION ID (TRX ID REFERENCE HASH):", placeholder="Enter unique banking slip 12-digit reference hex code")
         
@@ -363,7 +375,7 @@ else:
                 else:
                     st.session_state.selected_payment_level = l_name
                     st.warning(f"Allocation balance deficient! Complete secure inbound deposit form above.")
-                    st.scroll_to_top()
+                    time.sleep(1)
                     st.rerun()
 
     # --- CONTEXT-DRIVEN REFERRAL PROGRAM BOX SYSTEM ---
@@ -394,7 +406,7 @@ else:
         
         if st.button(f"📊 WATCH AD/TASK (+{int(task_payout)})", key="b_nav_t", use_container_width=True):
             with st.spinner("⏳ LOADING SPONSOR MEDIA HIGH-REVENUE STREAM ADVERT... PLEASE DO NOT CLOSE PORTAL"):
-                time.sleep(4.5)  # Forces full execution delay loop simulation block
+                time.sleep(4.5)
             st.session_state.users_db[current_user]["balance"] += task_payout
             st.toast(f"🔒 TRANSACTION ROUTE SECURED: +RM {task_payout:.2f} credited!", icon="💰")
             time.sleep(1)
