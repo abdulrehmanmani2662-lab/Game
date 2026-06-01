@@ -1,159 +1,180 @@
 import streamlit as st
-import time
+import sqlite3
+import pandas as pd
 import random
+import time
 
 # Page Layout Configuration
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="centered")
 
-# --- HIGH-CONTRAST ULTRA VISIBLE STYLESHEET (SECURITY LOCK EDITION) ---
+# --- DATABASE MANAGEMENT SUITE (SQLITE LAYER) ---
+def init_db():
+    conn = sqlite3.connect("matrix_vault.db", check_same_thread=False)
+    cursor = conn.cursor()
+    # Users Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            balance REAL,
+            active_level TEXT,
+            referred_by TEXT,
+            ref_code TEXT
+        )
+    """)
+    # Deposits Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS deposits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT,
+            level TEXT,
+            amount REAL,
+            method TEXT,
+            holder_name TEXT,
+            trx_id TEXT,
+            status TEXT
+        )
+    """)
+    # Insert default data if empty
+    cursor.execute("SELECT COUNT(*) FROM users")
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("INSERT INTO users VALUES ('salmanveerm@gmail.com', 5.00, 'None', '727', '2627')")
+        cursor.execute("INSERT INTO users VALUES ('ubaid_rajput', 50.00, 'None', '', '727')")
+    conn.commit()
+    conn.close()
+
+init_db()
+
+def query_db(query, args=(), one=False, commit=False):
+    conn = sqlite3.connect("matrix_vault.db", check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute(query, args)
+    if commit:
+        conn.commit()
+        conn.close()
+        return True
+    rv = cursor.fetchall()
+    conn.close()
+    return (rv[0] if rv else None) if one else rv
+
+# --- PREMIUM VISUAL STYLESHEET (REAL FINANCIAL SYSTEM LOOK) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
-    .stApp { background-color: #05070f !important; }
+    .stApp { background-color: #030712 !important; }
     
     .main .block-container { 
         padding-top: 5px !important; 
         padding-bottom: 110px !important; 
-        max-width: 420px !important;
+        max-width: 430px !important;
         margin: 0 auto;
     }
     
     h1, h2, h3, h4, h5, h6, p, span, div, label, button, input {
-        font-family: 'Montserrat', 'Poppins', sans-serif !important;
-        font-weight: 900 !important;
+        font-family: 'Poppins', sans-serif !important;
     }
     
-    /* Input Labels Visibility */
-    label, .stTextInput label, [data-testid="stWidgetLabel"] p, .stNumberInput label, .stSelectbox label {
-        color: #ffffff !important;
-        font-size: 13px !important;
-        font-weight: 900 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.8px !important;
-        margin-bottom: 8px !important;
-        display: block !important;
-        text-shadow: 2px 2px 4px #000000 !important;
+    /* Live Moving Live Ticker Style */
+    .ticker-wrap {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px; padding: 10px; text-align: center;
+        margin-bottom: 15px; font-size: 12px; color: #f87171;
+        font-weight: 600; letter-spacing: 0.5px;
     }
 
-    /* Fixed Dark/Invisible Input and Dropdown Boxes */
+    label, [data-testid="stWidgetLabel"] p {
+        color: #9ca3af !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 6px !important;
+    }
+
     .stTextInput input, .stNumberInput input, div[data-baseweb="select"] {
         color: #ffffff !important;
-        background-color: #0f172a !important;
-        border: 2px solid #ef4444 !important;
-        font-weight: 800 !important;
-        border-radius: 12px !important;
+        background-color: #0b0f19 !important;
+        border: 1px solid #374151 !important;
+        border-radius: 10px !important;
+        padding: 10px !important;
     }
     
     div[data-baseweb="select"] div {
         color: #ffffff !important;
-        background-color: #0f172a !important;
-    }
-    
-    .stTextInput input::placeholder {
-        color: #94a3b8 !important;
-        opacity: 1 !important;
-    }
-    
-    .money-animation-box {
-        text-align: center; margin-top: 10px; margin-bottom: 2px; font-size: 50px;
-        animation: pulseMoney 1.4s infinite alternate;
-    }
-    @keyframes pulseMoney {
-        0% { transform: scale(0.95); filter: drop-shadow(0 0 5px #ef4444); }
-        100% { transform: scale(1.05); filter: drop-shadow(0 0 20px #ef4444); }
+        background-color: #0b0f19 !important;
     }
     
     .app-title-bar {
-        text-align: center; font-size: 26px; color: #ffffff;
-        text-shadow: 0 0 12px #ef4444, 0 0 24px #b91c1c;
-        padding-bottom: 10px; margin-bottom: 20px; border-bottom: 3px solid #1e293b;
-        letter-spacing: 1px;
+        text-align: center; font-size: 22px; color: #ffffff;
+        font-family: 'Orbitron', sans-serif !important; font-weight: 800;
+        letter-spacing: 2px; margin-bottom: 15px;
+        background: linear-gradient(to right, #ef4444, #3b82f6);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     
     .balance-box {
-        background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 100%);
-        padding: 22px; border-radius: 22px; border: 2px solid #ef4444;
+        background: linear-gradient(135deg, #111827 0%, #030712 100%);
+        padding: 25px; border-radius: 20px; border: 1px solid #1f2937;
         margin-bottom: 20px; text-align: center;
-        box-shadow: 0 0 20px rgba(239, 68, 68, 0.25);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
     
     .section-label {
-        font-size: 16px; color: #ef4444; margin-top: 22px; margin-bottom: 12px; 
-        border-left: 5px solid #dc2626; padding-left: 10px; letter-spacing: 0.5px;
-        text-transform: uppercase;
+        font-size: 13px; color: #9ca3af; margin-top: 20px; margin-bottom: 10px; 
+        font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
     }
     
     .level-container {
-        background: linear-gradient(135deg, #0b0f19 0%, #111827 100%); 
-        border: 2px solid #1f2937; border-radius: 16px;
+        background: #111827; border: 1px solid #1f2937; border-radius: 14px;
         padding: 15px; margin-bottom: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
     .google-verification-card {
         background: #ffffff !important; color: #1f2937 !important;
-        border-radius: 20px; padding: 22px; text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.6); margin-bottom: 20px;
+        border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;
     }
     
     .invite-earn-box {
-        background: linear-gradient(135deg, #270505 0%, #0f0505 100%);
-        border: 2px dashed #ef4444; border-radius: 16px;
-        padding: 18px; margin-top: 15px; margin-bottom: 15px; text-align: center;
-        box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+        background: #0b0f19; border: 1px dashed #ef4444; border-radius: 14px;
+        padding: 15px; margin-top: 15px; text-align: center;
     }
     
     .payment-form-box {
-        background: linear-gradient(145deg, #090d16 0%, #1a0505 100%);
-        border: 3px solid #ef4444; border-radius: 20px;
-        padding: 20px; margin-top: 12px; margin-bottom: 22px;
-        box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+        background: #111827; border: 1px solid #ef4444; border-radius: 16px;
+        padding: 20px; margin-bottom: 20px;
     }
     
     .stButton>button {
-        font-family: 'Montserrat', sans-serif !important;
-        font-weight: 900 !important; font-size: 14px !important;
-        border-radius: 12px !important; padding: 12px 0 !important;
-        background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%) !important;
-        color: #ffffff !important; border: none !important;
-        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+        font-weight: 600 !important; font-size: 13px !important;
+        border-radius: 10px !important; padding: 10px 0 !important;
+        background: linear-gradient(90deg, #1f2937 0%, #111827 100%) !important;
+        color: #ffffff !important; border: 1px solid #374151 !important;
     }
     .stButton>button:hover {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
-        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.6) !important;
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.2) !important;
     }
     
-    .google-trigger-zone .stButton>button {
-        background: linear-gradient(90deg, #ea4335 0%, #c5221f 100%) !important;
-        color: #ffffff !important;
+    .action-btn-hub .stButton>button {
+        background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%) !important;
+        border: none !important;
     }
 
     .video-holder-box {
-        background: #000000; border: 2px solid #ef4444; 
-        border-radius: 16px; padding: 8px; margin-bottom: 15px;
+        background: #000000; border: 1px solid #1f2937; 
+        border-radius: 14px; padding: 6px; margin-bottom: 15px;
     }
     
     .bottom-nav-holder {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        background-color: #090b11;
-        border-top: 3px solid #1e293b;
-        padding: 12px 10px;
-        z-index: 999999;
-        max-width: 420px;
-        margin: 0 auto;
-        box-shadow: 0 -8px 24px rgba(0,0,0,0.9);
-    }
-    
-    .stAlert p {
-        color: #ffffff !important;
-        font-weight: bold !important;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background-color: #0b0f19; border-top: 1px solid #1f2937;
+        padding: 12px 10px; z-index: 999999; max-width: 430px; margin: 0 auto;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -164,13 +185,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# Strict Database & State Management Initialization
-if 'users_db' not in st.session_state:
-    st.session_state.users_db = {
-        "salmanveerm@gmail.com": {"balance": 5.00, "active_level": "None", "referred_by": "727", "ref_code": "2627"},
-        "ubaid_rajput": {"balance": 50.00, "active_level": "None", "referred_by": "", "ref_code": "727"},
-    }
-if 'deposit_requests' not in st.session_state: st.session_state.deposit_requests = []
+# Session State Synchronization
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -179,320 +194,273 @@ if 'google_screen_active' not in st.session_state: st.session_state.google_scree
 if 'admin_video_url' not in st.session_state: st.session_state.admin_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 if 'current_app_tab' not in st.session_state: st.session_state.current_app_tab = "home"
 
-# Fetch and store refer code inside session state immediately to prevent loss on refresh
 query_params = st.query_params
 if "ref" in query_params:
     st.session_state["saved_ref"] = query_params["ref"]
 elif "saved_ref" not in st.session_state:
     st.session_state["saved_ref"] = "727"
 
-st.markdown('<div class="money-animation-box">📈🚨💥</div>', unsafe_allow_html=True)
-st.markdown('<div class="app-title-bar">GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
+# Real-Time Moving Feed Simulator
+fake_users = ["ali_***", "mian_***", "tan_***", "lim_***", "raj_***", "zain_***"]
+fake_actions = [
+    f"just withdrew RM {random.randint(4,9)}00.00 successfully!",
+    f"activated VIP LEVEL {random.randint(1,3)} node pipeline.",
+    f"received RM 100.00 referral award incentive."
+]
+st.markdown(f'<div class="ticker-wrap">⚡ LIVE LOG: User {random.choice(fake_users)} {random.choice(fake_actions)}</div>', unsafe_allow_html=True)
 
-# --- STAGE 1: VERIFIED ACCOUNT GATEWAY TUNNEL ---
+st.markdown('<div class="app-title-bar">MATRIX PORTFOLIO</div>', unsafe_allow_html=True)
+
+# --- STAGE 1: SYSTEM SECURITY PORTAL ---
 if not st.session_state.logged_in:
-    
     if st.session_state.google_screen_active:
         st.markdown("""
         <div class="google-verification-card">
-            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" width="32px" style="margin-bottom:8px;"/>
-            <h3 style="color:#202124; margin:5px 0; font-size:17px;">Verify Identity Corridor</h3>
-            <p style="color:#5f6368; font-size:12px; font-weight:bold; margin-bottom:12px;">Confirm secure profile map sync with Google Security Layer</p>
-            <div style="background:#f1f3f4; border-radius:12px; padding:10px; display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:15px; border:1px solid #dadce0;">
-                <div style="background:#dc2626; width:28px; height:28px; border-radius:50%; color:white; font-weight:bold; font-size:13px; line-height:28px; text-align:center;">G</div>
-                <div style="text-align:left;">
-                    <div style="font-size:12px; font-weight:900; color:#3c4043;">Secure Client Gate Node</div>
-                    <div style="font-size:10px; color:#70757a; font-weight:bold;">Authentication via Google Cloud TLS</div>
-                </div>
-            </div>
+            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" width="28px"/>
+            <h3 style="color:#202124; margin:10px 0 5px 0; font-size:16px; font-weight:600;">Sign in with Google</h3>
+            <p style="color:#5f6368; font-size:12px; margin-bottom:15px;">to continue to Matrix secure cloud network mapping</p>
         </div>
         """, unsafe_allow_html=True)
         
-        if st.button("🔒 GRANT ENCRYPTED PROFILE ACCESS", use_container_width=True):
+        if st.button("🔒 AUTHORIZE VIA GOOGLE ACCOUNT", use_container_width=True):
+            user_exists = query_db("SELECT * FROM users WHERE username=?", ("salmanveerm@gmail.com",), one=True)
+            if not user_exists:
+                query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?)", ("salmanveerm@gmail.com", 5.00, "None", st.session_state["saved_ref"], "2627"), commit=True)
             st.session_state.logged_in = True
             st.session_state.google_screen_active = False
             st.session_state.current_user = "salmanveerm@gmail.com"
             st.session_state.current_app_tab = "home"
-            st.toast("Encrypted Google Profile Link Operational!", icon="⚡")
-            time.sleep(1)
             st.rerun()
             
-        if st.button("❌ CANCEL VERIFICATION", use_container_width=True):
+        if st.button("❌ CANCEL ACCESS", use_container_width=True):
             st.session_state.google_screen_active = False
             st.rerun()
-
     else:
-        st.markdown("<h4 style='text-align:center; color:#ffffff; margin-bottom: 15px;'>SECURE GATEWAY TUNNEL</h4>", unsafe_allow_html=True)
-        
-        st.markdown('<div class="google-trigger-zone">', unsafe_allow_html=True)
-        if st.button("🔴 SIGN IN WITH GOOGLE / GMAIL ACCOUNT", use_container_width=True):
-            st.session_state.google_screen_active = True
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.form("secure_login"):
+            st.markdown("<p style='text-align:center; font-size:12px; color:#9ca3af;'>SECURE IDENTITY GATEWAY</p>", unsafe_allow_html=True)
+            username = st.text_input("USER LOGIN ID (EMAIL OR ACCOUNT ID):", placeholder="name@example.com")
+            password = st.text_input("SECURE PASSPHRASE KEYCODE:", type="password", placeholder="••••••••")
             
-        st.markdown("<p style='text-align:center; color:#64748b; font-size:11px; margin-top:5px; margin-bottom:12px;'>- OR ACCESS USING PLATFORM ENCRYPTED KEY CODE -</p>", unsafe_allow_html=True)
-        
-        with st.form("login_form", clear_on_submit=False):
-            username = st.text_input("📱 EMAIL OR UNIQUE SYSTEM NUMBER ID:", value="", placeholder="Enter admin or client email")
-            password = st.text_input("🔒 ENTRY SECURE KEYCODE:", type="password", placeholder="••••••••")
-            submit_login = st.form_submit_button("🚀 INITIALIZE NODE DATABASE ENTRY", use_container_width=True)
-            
-            if submit_login:
-                # Basic input filter sanitization to prevent blank entry access
-                username_clean = username.strip()
-                password_clean = password.strip()
+            if st.form_submit_button("ENTER ACCOUNT MATRIX", use_container_width=True):
+                u_clean = username.strip()
+                p_clean = password.strip()
                 
-                if not username_clean or not password_clean:
-                    st.error("❌ VALIDATION ERROR: Entry logs require active string variables!")
-                elif username_clean == "admin" and password_clean == "admin123":
+                if not u_clean or not p_clean:
+                    st.error("Fields cannot remain empty space string layouts.")
+                elif u_clean == "admin" and p_clean == "admin123":
                     st.session_state.logged_in = True
                     st.session_state.is_admin = True
                     st.session_state.current_user = "ADMIN_PANEL"
-                    st.success("👑 Admin clearance token granted.")
-                    time.sleep(0.5)
-                    st.rerun()
-                elif username_clean in st.session_state.users_db:
-                    st.session_state.logged_in = True
-                    st.session_state.is_admin = False
-                    st.session_state.current_user = username_clean
-                    st.session_state.current_app_tab = "home"
-                    st.success("✔ Secure user node entry authorized.")
-                    time.sleep(0.5)
                     st.rerun()
                 else:
-                    # Register new entry safely if username does not exist
-                    new_code = str(random.randint(1000, 9999))
-                    st.session_state.users_db[username_clean] = {
-                        "balance": 0.00, 
-                        "active_level": "None", 
-                        "referred_by": st.session_state["saved_ref"], 
-                        "ref_code": new_code
-                    }
-                    st.session_state.logged_in = True
-                    st.session_state.is_admin = False
-                    st.session_state.current_user = username_clean
+                    user_row = query_db("SELECT * FROM users WHERE username=?", (u_clean,), one=True)
+                    if user_row:
+                        st.session_state.logged_in = True
+                        st.session_state.current_user = u_clean
+                    else:
+                        new_code = str(random.randint(1000, 9999))
+                        query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?)", (u_clean, 0.00, "None", st.session_state["saved_ref"], new_code), commit=True)
+                        st.session_state.logged_in = True
+                        st.session_state.current_user = u_clean
                     st.session_state.current_app_tab = "home"
-                    st.success("📥 New network node assigned to system matrix.")
-                    time.sleep(0.5)
                     st.rerun()
+                    
+        st.markdown("<p style='text-align:center; color:#4b5563; font-size:11px;'>- OR ALTERNATIVE ACCESS INTERFACE -</p>", unsafe_allow_html=True)
+        if st.button("🔴 OAUTH FAST SECURE SIGN IN", use_container_width=True):
+            st.session_state.google_screen_active = True
+            st.rerun()
 
-# --- STAGE 2: ADMIN PANEL VIEW (STRICT CONTAINER BOUNDS) ---
+# --- STAGE 2: ADMIN CENTRAL COMMAND PANEL ---
 elif st.session_state.logged_in and st.session_state.is_admin:
-    st.markdown("<h3 style='color:#ef4444; text-align:center;'>👑 CENTRAL ADMIN CONTROL ROOM</h3>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color:#ef4444;'>👑 ADMINISTRATIVE LEDGER ROOM</h4>", unsafe_allow_html=True)
     
-    st.markdown('<div class="section-label">📺 BROADCAST VIDEO MANAGEMENT ROUTER</div>', unsafe_allow_html=True)
-    new_url = st.text_input("SET STREAM / YOUTUBE URL TASK VIDEO FOR USERS:", value=st.session_state.admin_video_url)
-    if st.button("💾 UPDATE ACTIVE TASK STREAM LINK", use_container_width=True):
-        st.session_state.admin_video_url = new_url
-        st.success("Target media stream link successfully broadcasted to live network!")
+    st.session_state.admin_video_url = st.text_input("BROADCAST REWARD STREAM LINK:", value=st.session_state.admin_video_url)
     
-    st.markdown('<div class="section-label">📥 USER PENDING DEPOSIT VERIFICATIONS</div>', unsafe_allow_html=True)
-    if not st.session_state.deposit_requests:
-        st.info("No verification logs inside queue ledger.")
+    st.markdown('<div class="section-label">PENDING INBOUND ESCROW DEPOSITS</div>', unsafe_allow_html=True)
+    reqs = query_db("SELECT * FROM deposits WHERE status='PENDING'")
+    
+    if not reqs:
+        st.info("No logs present inside ledger memory stack.")
     else:
-        for idx, req in enumerate(st.session_state.deposit_requests):
-            with st.container():
-                st.markdown(f"""
-                <div class='level-container' style='border-color: #ef4444;'>
-                    <span style='color:#ef4444;'>USER CORE:</span> {req['user']}<br>
-                    <span style='color:#ef4444;'>TARGET CONTRACT:</span> {req['level']}<br>
-                    <span style='color:#ef4444;'>PROMISED SUM:</span> <b>RM {req['amount']}</b><br>
-                    <span style='color:#ef4444;'>METHOD CHOSEN:</span> {req['method']}<br>
-                    <span style='color:#ef4444;'>BANK RECEIPT TRACE TITLE:</span> {req['holder_name']}<br>
-                    <span style='color:#ef4444;'>HASH SERIAL TRX ID:</span> <code style='color:#ef4444;'>{req['trx_id']}</code>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                col_app, col_rej = st.columns(2)
-                with col_app:
-                    if st.button("✅ APPROVE DEPOSIT LAYER", key=f"app_{idx}", use_container_width=True):
-                        st.session_state.users_db[req['user']]["active_level"] = req['level']
-                        
-                        inviter_code = st.session_state.users_db[req['user']]["referred_by"]
-                        for u_name, u_info in st.session_state.users_db.items():
-                            if u_info.get("ref_code") == inviter_code:
-                                if req['amount'] == 200: st.session_state.users_db[u_name]["balance"] += 100.00
-                                elif req['amount'] == 50: st.session_state.users_db[u_name]["balance"] += 50.00
-                        
-                        st.session_state.deposit_requests.pop(idx)
-                        st.success("Target profile package unlocked successfully!")
-                        time.sleep(0.5)
-                        st.rerun()
-                with col_rej:
-                    if st.button("❌ REFUSE RECEIPT TRANSCRIPT", key=f"rej_{idx}", use_container_width=True):
-                        st.session_state.deposit_requests.pop(idx)
-                        st.warning("Receipt log trashed.")
-                        time.sleep(0.5)
-                        st.rerun()
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    if st.button("🚪 LOGOUT ADMIN ROOT TERMINAL", use_container_width=True):
+        for req in reqs:
+            st.markdown(f"""
+            <div class='level-container'>
+                USER: {req[1]} | CONTRACT: {req[2]}<br>
+                SUM: <b>RM {req[3]}</b> | METHOD: {req[4]}<br>
+                TITLE: {req[5]} | TRX HASH: <code>{req[6]}</code>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            c1, c2 = st.columns(2)
+            with c1:
+                if st.button("✅ APPROVE", key=f"y_{req[0]}", use_container_width=True):
+                    query_db("UPDATE users SET active_level=? WHERE username=?", (req[2], req[1]), commit=True)
+                    query_db("UPDATE deposits SET status='APPROVED' WHERE id=?", (req[0],), commit=True)
+                    
+                    # Process referral payouts
+                    u_info = query_db("SELECT referred_by FROM users WHERE username=?", (req[1],), one=True)
+                    if u_info and u_info[0]:
+                        inviter = query_db("SELECT username FROM users WHERE ref_code=?", (u_info[0],), one=True)
+                        if inviter:
+                            bonus = 100.00 if req[3] == 200 else (50.00 if req[3] == 50 else 0)
+                            query_db("UPDATE users SET balance = balance + ? WHERE username=?", (bonus, inviter[0]), commit=True)
+                    st.rerun()
+            with c2:
+                if st.button("❌ REJECT", key=f"n_{req[0]}", use_container_width=True):
+                    query_db("UPDATE deposits SET status='REJECTED' WHERE id=?", (req[0],), commit=True)
+                    st.rerun()
+                    
+    if st.button("🚪 LEAVE TERMINAL CONTROL", use_container_width=True):
         st.session_state.logged_in = False
         st.session_state.is_admin = False
-        st.session_state.current_user = ""
         st.rerun()
 
-# --- STAGE 3: APPLICATION MAIN DASHBOARD INTERFACE (SECURE BLOCK) ---
-elif st.session_state.logged_in and not st.session_state.is_admin:
-    current_user = st.session_state.current_user
-    user_data = st.session_state.users_db[current_user]
-    user_code = user_data.get("ref_code", "727")
+# --- STAGE 3: ACCOUNT REAL DASHBOARD INTERFACE ---
+else:
+    u_row = query_db("SELECT balance, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
+    curr_balance, curr_level, user_code = u_row[0], u_row[1], u_row[2]
     
-    # ------------------ TAB ROUTER: HOME ------------------
     if st.session_state.current_app_tab == "home":
         st.markdown(f"""
         <div class="balance-box">
-            <div style="color:#94a3b8; font-size:11px; letter-spacing:1px; margin-bottom:4px;">ACCOUNT SECURITY KEY: {user_code}</div>
-            <div style="color:#ffffff; font-size:13px; letter-spacing:0.5px;">ACTIVE VIP SUITE: <span style="color:#ef4444;">{user_data['active_level'].upper()}</span></div>
-            <div style="color:#ffffff; font-size:14px; letter-spacing:0.5px; margin-top:4px;">NET LIQUID VALUE WALLET</div>
-            <div style="font-size:36px; color:#ffffff; margin-top:3px; text-shadow: 0 0 10px rgba(239,68,68,0.4);">RM {user_data['balance']:.2f}</div>
+            <div style="color:#6b7280; font-size:11px; font-weight:500; letter-spacing:1px; margin-bottom:4px;">ACCOUNT SECURE ID: {user_code}</div>
+            <div style="color:#ef4444; font-size:12px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase;">{curr_level} SUBSCRIPTION TIED</div>
+            <div style="font-size:32px; font-family:'Orbitron', sans-serif !important; color:#ffffff; font-weight:800; margin-top:8px;">RM {curr_balance:.2f}</div>
+            <div style="color:#9ca3af; font-size:12px; margin-top:2px;">NET FINANCIAL ASSETS CAPITAL</div>
         </div>
         """, unsafe_allow_html=True)
+        
+        # --- PREMIUM METRIC LINE CHART GRAPH (REALISTIC FINANCIAL VIBE) ---
+        st.markdown('<div class="section-label">📉 CAPITAL REVENUE PERFORMANCE TIMELINE</div>', unsafe_allow_html=True)
+        chart_days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today"]
+        chart_data = [curr_balance * 0.4, curr_balance * 0.5, curr_balance * 0.7, curr_balance * 0.8, curr_balance * 0.9, curr_balance * 0.95, curr_balance]
+        df_metrics = pd.DataFrame({"Timeline Data": chart_data}, index=chart_days)
+        st.line_chart(df_metrics, y="Timeline Data", color="#ef4444")
 
-        col_dep, col_wdr = st.columns(2)
-        with col_dep:
-            if st.button("📥 INBOUND DEPOSIT", use_container_width=True):
-                st.info("Neeche scroll karke Exclusive Matrix Portfolios se apne VIP plan par click karein aur payment lock open karein.")
-        with col_wdr:
-            show_withdraw = st.button("📤 WITHDRAW SYSTEM", use_container_width=True)
-
-        if show_withdraw:
+        c_dep, c_wdr = st.columns(2)
+        with c_dep:
+            if st.button("📥 INBOUND FUNDING", use_container_width=True):
+                st.info("Neeche scroll karein aur jis VIP Matrix Asset ko buy karna hai us par click karke form activate karein.")
+        with c_wdr:
+            show_w = st.button("📤 EXTRACT LIQUIDITY", use_container_width=True)
+            
+        if show_w:
             st.markdown("<div class='level-container'>", unsafe_allow_html=True)
-            w_amt = st.number_input("ENTER WITHDRAW QUANTITY (RM):", min_value=10, value=700)
-            if st.button("💸 INITIALIZE SECURE WITHDRAW OUTFLOW", use_container_width=True):
+            w_amt = st.number_input("EXTRACTION TARGET AMOUNT (RM):", min_value=10, value=700)
+            if st.button("⚡ EXECUTE ESCROW WITHDRAW ROUTE", use_container_width=True):
                 if w_amt < 700:
-                    st.error("❌ PROTECTION REJECTED: GATEWAY MINIMUM SAFE WITHDRAW IS SET AT RM 700")
-                elif user_data["balance"] < w_amt:
-                    st.error("❌ TRANSACTION CRASH: BALANCE INSIDE INTERNAL LEDGER DEFICIT")
+                    st.error("❌ ROUTER REJECTION: MINIMUM SYSTEM WITHDRAW RESTRICTION SET AT RM 700")
+                elif curr_balance < w_amt:
+                    st.error("❌ FINANCIAL CRISIS: INSUFFICIENT BALANCE IN CURRENT VAULT TIMELINE")
                 else:
-                    st.session_state.users_db[current_user]["balance"] -= w_amt
-                    st.success(f"🚀 SUCCESS: Liquidity extraction payload routed to verification desk.")
+                    query_db("UPDATE users SET balance = balance - ? WHERE username=?", (w_amt, st.session_state.current_user), commit=True)
+                    st.success("Extraction signature recorded. Waiting admin network release block.")
                     time.sleep(1)
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- DYNAMIC MULTI-BANK & CRYPTO FORM GATEWAY ---
+        # --- FUNDING INTERFACE FLOW FORM PANEL ---
         if st.session_state.selected_payment_level:
             lvl_name = st.session_state.selected_payment_level
             lvl_cost = LEVELS_CONF[lvl_name]["cost"]
             
             st.markdown('<div class="payment-form-box">', unsafe_allow_html=True)
-            st.markdown(f"<h3 style='margin:0; color:#ffffff; text-align:center;'>📥 GATEWAY VERIFICATION HUB</h3>", unsafe_allow_html=True)
-            st.markdown(f"<p style='color:#e2e8f0; text-align:center; font-size:13px; margin-bottom:15px;'>REQUIRED DEPOSIT SUM: <b style='color:#ef4444; font-size:18px;'>RM {lvl_cost}</b></p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='margin:0; text-align:center; color:#ffffff; font-size:15px; font-weight:600;'>SECURE CONTRACT CHECKOUT VIA NODE</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:#9ca3af; text-align:center; font-size:12px; margin-bottom:15px;'>FUNDS NEEDED FOR ACTIVATION: <span style='color:#ef4444; font-weight:600;'>RM {lvl_cost}</span></p>", unsafe_allow_html=True)
             
-            pay_method = st.selectbox("SELECT YOUR DEPOSIT METHOD NETWORK:", ["Malaysia Local Bank", "Cryptocurrency (USDT TRC20)"])
+            p_method = st.selectbox("NETWORK PAYMENT SPECIFICATION CHANNELS:", ["Malaysia Local Bank", "Cryptocurrency (USDT TRC20)"])
             
-            if pay_method == "Malaysia Local Bank":
-                target_bank = st.selectbox("CHOOSE TARGET RECEIVING MALAYSIA BANK:", [
-                    "Maybank (Malayan Banking Berhad)",
-                    "CIMB Bank Berhad",
-                    "Public Bank Berhad",
-                    "RHB Bank Berhad",
-                    "Hong Leong Bank Berhad",
-                    "AmBank (M) Berhad",
-                    "Alliance Bank Malaysia Berhad",
-                    "Standard Chartered Bank Malaysia"
+            if p_method == "Malaysia Local Bank":
+                t_bank = st.selectbox("CHOOSE SYSTEM INTERMEDIARY BANK:", [
+                    "Maybank (Malayan Banking Berhad)", "CIMB Bank Berhad", "Public Bank Berhad", "RHB Bank Berhad", "Hong Leong Bank Berhad"
                 ])
-                
                 st.markdown(f"""
-                <div style="background:#000; border:2px solid #ef4444; padding:15px; border-radius:12px; margin-bottom:15px;">
-                    <p style="color:#ef4444; font-size:12px; margin:0; font-weight:900;">🏦 DEPOSIT ROUTING TARGET REGISTERED LOG:</p>
-                    <p style="color:#fff; font-size:14px; margin:4px 0 0 0;">BANK: <b>{target_bank}</b></p>
-                    <p style="color:#fff; font-size:14px; margin:2px 0 0 0;">HOLDER: <b>GLOBAL INVESTMENT HUB</b></p>
-                    <p style="color:#fff; font-size:14px; margin:2px 0 0 0;">ACC NO: <b>162485930214</b></p>
-                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Copy bank coordinates to execute secure local transfer manually.</p>
+                <div style="background:#0b0f19; border:1px solid #374151; padding:12px; border-radius:10px; margin-bottom:12px; font-size:12px; color:#ffffff;">
+                    🏦 BANK ROUTING WIRE MATRIX TARGET:<br>
+                    NAME: <b>GLOBAL ESCROW CAPITAL LIMITED</b><br>
+                    NUMBER: <code style='color:#ef4444;'>194058273645</code><br>
+                    BANK SELECTION ROUTE: <b>{t_bank}</b>
                 </div>
                 """, unsafe_allow_html=True)
-                
             else:
                 st.markdown("""
-                <div style="background:#000; border:2px solid #34d399; padding:15px; border-radius:12px; margin-bottom:15px;">
-                    <p style="color:#34d399; font-size:12px; margin:0; font-weight:900;">🌐 SECURE CRYPTO INFLOW PATHWAY (USDT TRC20):</p>
-                    <p style="color:#fff; font-size:13px; margin:5px 0; word-break:break-all;">NETWORK: <b>TRON (TRC20)</b></p>
-                    <p style="color:#fff; font-size:13px; margin:5px 0; word-break:break-all;">ADDRESS: <code style="color:#34d399;">TYr7272627MatrixSecureCryptoNodeVaultX92</code></p>
-                    <p style="color:#94a3b8; font-size:11px; margin-top:5px;">⚠️ Send identical currency evaluation rate block to this hash vector.</p>
+                <div style="background:#0b0f19; border:1px solid #374151; padding:12px; border-radius:10px; margin-bottom:12px; font-size:12px; color:#ffffff;">
+                    🌐 BLOCKCHAIN ADDRESS TARGET SEQUENCE (USDT TRC20):<br>
+                    NETWORK: <b>TRON (TRC20 LAYER LINK)</b><br>
+                    ADDRESS: <code style='color:#10b981; word-break:break-all;'>TMatrix727SecureVaultCryptoPayloadSystemNode99X</code>
                 </div>
                 """, unsafe_allow_html=True)
+                
+            h_name = st.text_input("ACCOUNT OWNER RECEIPT TEXT MATCH TITLE:", placeholder="John Doe")
+            t_id = st.text_input("SYSTEM SEQUENCE HASH REFERENCE (TRX ID):", placeholder="12-digit transaction index sequence")
             
-            holder_name = st.text_input("👤 SENDER NAME / ACCOUNT HOLDER TITLE:", placeholder="Enter your card name or account identity")
-            trx_id = st.text_input("🔢 RECEIPT TRANSACTION SERIAL TRX ID:", placeholder="Enter your 12-digit transaction index sequence")
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            col_sub_pay, col_can_pay = st.columns(2)
-            with col_sub_pay:
-                if st.button("🔥 DISPATCH SIGNED PROOF", use_container_width=True):
-                    if holder_name.strip() and trx_id.strip():
-                        st.session_state.deposit_requests.append({
-                            "user": current_user,
-                            "level": lvl_name,
-                            "amount": lvl_cost,
-                            "method": pay_method,
-                            "holder_name": holder_name.strip(),
-                            "trx_id": trx_id.strip()
-                        })
-                        st.success("✔ Verification fingerprint locked inside admin queue!")
+            cb1, cb2 = st.columns(2)
+            with cb1:
+                st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
+                submit_p = st.button("🔥 SEND SECURE PROOF", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                if submit_p:
+                    if h_name.strip() and t_id.strip():
+                        query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, 'PENDING')",
+                                 (st.session_state.current_user, lvl_name, lvl_cost, p_method, h_name.strip(), t_id.strip()), commit=True)
+                        st.success("Proof uploaded to persistence matrix database!")
                         st.session_state.selected_payment_level = None
-                        time.sleep(1)
+                        time.sleep(0.5)
                         st.rerun()
                     else:
-                        st.error("Input logs require validated structure elements!")
-            with col_can_pay:
-                if st.button("❌ ABORT ESCROW", use_container_width=True):
+                        st.error("Input rows require matching structure inputs.")
+            with cb2:
+                if st.button("❌ ABORT TRANSITION", use_container_width=True):
                     st.session_state.selected_payment_level = None
                     st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="section-label">💎 EXCLUSIVE MATRIX PORTFOLIOS</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-label">💎 EXCLUSIVE ASSET MATRIX PORTFOLIOS</div>', unsafe_allow_html=True)
         for l_name, l_details in LEVELS_CONF.items():
-            is_already_active = (user_data["active_level"] == l_name)
-            active_status_text = " [ACTIVE]" if is_already_active else ""
+            is_active = (curr_level == l_name)
             
             st.markdown(f"""
             <div class="level-container">
-                <div style="font-size:15px; color:#ffffff; margin-bottom:3px;">{l_name} <span style='color:#ef4444;'>{active_status_text}</span></div>
-                <div style="color:#cbd5e1; font-size:12px;">DAILY AD CONTRACT PAYOUT: <span style="color:#ef4444;">RM {l_details['daily_reward']:.2f}</span></div>
-                <div style="color:#cbd5e1; font-size:12px;">ACTIVATION MODULE COST: <span style="color:#ffffff;">RM {l_details['cost']}</span></div>
+                <div style="font-size:14px; font-weight:600; color:#ffffff;">{l_name} <span style='color:#ef4444;'>{"[ACTIVE SYSTEM CONTRACT]" if is_active else ""}</span></div>
+                <div style="color:#9ca3af; font-size:11px; margin-top:2px;">DAILY AD STREAM PAYOUT REWARD VALUE: <span style="color:#ef4444; font-weight:600;">RM {l_details['daily_reward']:.2f}</span></div>
+                <div style="color:#9ca3af; font-size:11px;">ACQUISITION THRESHOLD VALUE: <span style="color:#ffffff; font-weight:600;">RM {l_details['cost']}</span></div>
             </div>
             """, unsafe_allow_html=True)
             
-            if is_already_active:
-                st.button(f"✅ MODULE NODE {l_name} RUNNING", key=f"btn_act_{l_name}", disabled=True, use_container_width=True)
+            if is_active:
+                st.button(f"🚀 {l_name} CAPTURING LIVE TIERS", key=f"ac_{l_name}", disabled=True, use_container_width=True)
             else:
-                if st.button(f"⚡ ALLOCATE CAPITAL TO {l_name}", key=f"btn_unl_{l_name}", use_container_width=True):
-                    if user_data["balance"] >= l_details['cost']:
-                        st.session_state.users_db[current_user]["balance"] -= l_details['cost']
-                        st.session_state.users_db[current_user]["active_level"] = l_name
-                        st.success(f"🎉 Contract node {l_name} successfully initiated!")
-                        time.sleep(1)
+                if st.button(f"⚡ INITIALIZE ACQUISITION FOR {l_name}", key=f"un_{l_name}", use_container_width=True):
+                    if curr_balance >= l_details['cost']:
+                        query_db("UPDATE users SET balance = balance - ?, active_level=? WHERE username=?", (l_details['cost'], l_name, st.session_state.current_user), commit=True)
+                        st.success("Matrix cluster tier allocated successfully.")
+                        time.sleep(0.5)
                         st.rerun()
                     else:
                         st.session_state.selected_payment_level = l_name
-                        st.warning(f"Allocation balance deficient! Complete secure inbound deposit form generated below.")
-                        time.sleep(1)
+                        st.warning("Earning parameters deficient! Fund acquisition form launched inside dashboard viewport below.")
+                        time.sleep(0.5)
                         st.rerun()
 
-        # FIXED CLEAN REFERRAL LINK GENERATOR MAPPED SYSTEM
         st.markdown(f"""
         <div class="invite-earn-box">
-            <div style="font-size:17px; color:#ef4444; margin-bottom:4px; font-weight:900;">🤝 INVITE NETWORK FRIENDS & REAP RM 100</div>
-            <div style="font-size:12px; color:#cbd5e1; margin-bottom:10px; font-weight:700;">SHARE SYSTEM NETWORK LINK AND EARN COMMISSIONS LIQUIDITY INSTANTLY</div>
-            <div style="background-color:rgba(0,0,0,0.6); border:1px solid #ef4444; border-radius:10px; padding:10px; font-size:12px; color:#fca5a5; font-family:monospace !important; word-break: break-all;">
+            <div style="font-size:14px; color:#ef4444; font-weight:600; letter-spacing:0.5px;">🤝 DEPLOY INTERMEDIARY COMMISSIONS LINK</div>
+            <div style="font-size:11px; color:#9ca3af; margin-bottom:8px;">SHARE YOUR SEED TOKEN NODE AND REAP RM 100 BONUS STRUCTURE</div>
+            <div style="background:#030712; border:1px solid #1f2937; border-radius:8px; padding:8px; font-size:11px; color:#f87171; font-family:monospace !important; word-break: break-all;">
                 https://money.streamlit.app/?ref={user_code}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-    # ------------------ TAB ROUTER: TASK PANEL ------------------
+    # ------------------ TAB ROUTER: STREAM AD SYSTEM ------------------
     elif st.session_state.current_app_tab == "task":
-        st.markdown("<h3 style='color:#ef4444; text-align:center;'>📺 STREAM ADVERTISING REWARD TERMINAL</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#9ca3af; font-size:12px;'>DATA ADVERTISING CHANNEL STREAM</p>", unsafe_allow_html=True)
         
-        current_tier = user_data["active_level"]
-        task_payout = 5.00 if current_tier == "None" else float(LEVELS_CONF[current_tier]["daily_reward"])
+        task_payout = 5.00 if curr_level == "None" else float(LEVELS_CONF[curr_level]["daily_reward"])
         
         st.markdown(f"""
-        <div class='level-container' style='border-color: #ef4444; text-align:center;'>
-            <p style='margin:0; font-size:14px; color:#ffffff;'>CURRENT LEVEL TIED PAYOUT VALUE: <b style='color:#ef4444;'>RM {task_payout:.2f}</b></p>
-            <p style='margin:5px 0 0 0; font-size:11px; color:#94a3b8;'>Watch the entire sequence configured by network broadcast admin below to unlock allocation.</p>
+        <div class='level-container' style='text-align:center;'>
+            <p style='margin:0; font-size:12px; color:#9ca3af;'>TIER CONTRACT RETURN RATE: <b style='color:#ef4444; font-size:14px;'>RM {task_payout:.2f}</b></p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -500,31 +468,33 @@ elif st.session_state.logged_in and not st.session_state.is_admin:
         st.video(st.session_state.admin_video_url)
         st.markdown('</div>', unsafe_allow_html=True)
         
-        if st.button("💰 CLAIM LIQUID VIDEO ENGAGEMENT REWARD", use_container_width=True):
-            with st.spinner("⏳ SYNCING METRIC ENGAGEMENT NODES WITH CORE SERVER VAULT..."):
-                time.sleep(3.5)
-            st.session_state.users_db[current_user]["balance"] += task_payout
-            st.toast(f"Security Core Balance Update Verified: +RM {task_payout:.2f}", icon="💰")
+        st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
+        claim_btn = st.button("💰 CONSOLIDATE EARNED ASSET YIELD", use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        if claim_btn:
+            with st.spinner("⏳ SYNCING METRIC DATA INTEGRATION PACKETS WITH CLOUD ESCROW..."):
+                time.sleep(2)
+            query_db("UPDATE users SET balance = balance + ? WHERE username=?", (task_payout, st.session_state.current_user), commit=True)
+            st.toast(f"Ledger account state synchronized: +RM {task_payout:.2f}", icon="💰")
             time.sleep(0.5)
             st.session_state.current_app_tab = "home"
             st.rerun()
 
-    # --- THREE BUTTONS RED ROW NAVIGATION FOOTER ---
+    # --- FOOTER BUTTON NAVIGATION HUB ROW CONTAINER ---
     st.markdown("<br><br><br>", unsafe_allow_html=True)
-    
     st.markdown('<div class="bottom-nav-holder">', unsafe_allow_html=True)
     col_nav1, col_nav2, col_nav3 = st.columns(3)
     with col_nav1:
-        if st.button("🏠 HOME", key="nav_abs_home", use_container_width=True):
+        if st.button("🏠 PORTFOLIO", key="n_hm", use_container_width=True):
             st.session_state.current_app_tab = "home"
             st.session_state.selected_payment_level = None
             st.rerun()
     with col_nav2:
-        if st.button("📺 VIDEO TASK", key="nav_abs_task", use_container_width=True):
+        if st.button("📺 STREAM", key="n_tk", use_container_width=True):
             st.session_state.current_app_tab = "task"
             st.rerun()
     with col_nav3:
-        if st.button("🚪 LOGOUT", key="nav_abs_logout", use_container_width=True):
+        if st.button("🚪 HALT", key="n_lo", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.current_user = ""
             st.session_state.selected_payment_level = None
