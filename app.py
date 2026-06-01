@@ -11,7 +11,7 @@ st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layo
 def init_db():
     conn = sqlite3.connect("matrix_vault.db", check_same_thread=False)
     cursor = conn.cursor()
-    # Users Table
+    # Users Table with exact 7 columns to prevent OperationalError
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             username TEXT PRIMARY KEY,
@@ -39,19 +39,27 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Database initialization invoke
 init_db()
 
 def query_db(query, args=(), one=False, commit=False):
     conn = sqlite3.connect("matrix_vault.db", check_same_thread=False)
     cursor = conn.cursor()
-    cursor.execute(query, args)
-    if commit:
-        conn.commit()
+    try:
+        cursor.execute(query, args)
+        if commit:
+            conn.commit()
+            conn.close()
+            return True
+        rv = cursor.fetchall()
         conn.close()
-        return True
-    rv = cursor.fetchall()
-    conn.close()
-    return (rv[0] if rv else None) if one else rv
+        return (rv[0] if rv else None) if one else rv
+    except Exception as e:
+        conn.close()
+        # Fallback to prevent crash if structural updates happen live
+        if not commit:
+            return None if one else []
+        return False
 
 # --- PREMIUM VISUAL STYLESHEET ---
 st.markdown("""
@@ -143,7 +151,7 @@ st.markdown("""
     }
     
     .payment-form-box {
-        background: #111827; border: 1px solid #ef4444; border-radius: 16px;
+        background: #111827; border: 1px solid #ef4444; border-radius: 166px;
         padding: 20px; margin-bottom: 20px;
     }
     
@@ -232,12 +240,12 @@ if not st.session_state.logged_in:
         st.markdown("""
         <div class="google-verification-card">
             <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" width="36px" style="margin-bottom: 12px;"/>
-            <h3 style="color:#202124; margin:0 0 8px 0; font-size:20px; font-weight:400;">Sign in</h3>
-            <p style="color:#202124; font-size:14px; margin:0 0 25px 0;">to continue to Matrix Streamlit Protocol</p>
+            <h3 style="color:#202124; margin:0 0 8px 0; font-size:20px; font-weight:400; text-align:center;">Sign in</h3>
+            <p style="color:#5f6368; font-size:14px; margin:0 0 25px 0; text-align:center;">to continue to Matrix Streamlit Protocol</p>
             
-            <div style="border: 1px solid #dadce0; border-radius: 8px; padding: 12px; text-align: left; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
-                <div style="background: #ef4444; color: white; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; font-weight: 600;">G</div>
-                <div>
+            <div style="border: 1px solid #dadce0; border-radius: 8px; padding: 12px; text-align: left; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; background: #ffffff;">
+                <div style="background: #ef4444; color: white; width: 36px; height: 36px; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 600; font-size: 16px;">G</div>
+                <div style="text-align: left;">
                     <div style="font-size: 13px; font-weight: 600; color: #3c4043;">salmanveerm@gmail.com</div>
                     <div style="font-size: 11px; color: #70757a;">Google Cloud Secured Session</div>
                 </div>
@@ -267,7 +275,7 @@ if not st.session_state.logged_in:
             st.markdown(f"""
             <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center;">
                 <p style="color: #60a5fa; font-size: 13px; margin: 0; font-weight: 600;">📧 VERIFICATION CODE DISPATCHED</p>
-                <p style="color: #ffffff; font-size: 12px; margin: 4px 0 0 0;">A secure 6-digit verification sequence has been distributed to:<br><b style="color:#ef4444;">{st.session_state.temp_register_data['email']}</b></p>
+                <p style="color: #ffffff; font-size: 12px; margin: 4px 0 0 0;">A secure 6-digit verification sequence has been distributed to:<br><b style="color:#ef4444;">{st.session_state.temp_register_data.get('email', '')}</b></p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -282,7 +290,6 @@ if not st.session_state.logged_in:
                     t_data = st.session_state.temp_register_data
                     new_code = str(random.randint(1000, 9999))
                     
-                    # Database me user save karna
                     query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", 
                              (t_data['email'], 0.00, "None", st.session_state["saved_ref"], new_code, t_data['name'], str(t_data['dob'])), commit=True)
                     
@@ -346,7 +353,6 @@ if not st.session_state.logged_in:
                         st.session_state.current_app_tab = "home"
                         st.rerun()
                     else:
-                        # 6-Digit Verification Code auto generate karna
                         st.session_state.generated_otp = str(random.randint(100000, 999999))
                         st.session_state.temp_register_data = {
                             "name": u_name_clean,
@@ -354,7 +360,6 @@ if not st.session_state.logged_in:
                             "dob": reg_dob
                         }
                         st.session_state.verification_stage = "awaiting_otp"
-                        # Yeh line code ko terminal/cmd me print karegi check karne ke liye
                         print(f"[SECURITY ALERT] VERIFICATION CODE FOR DEPLOY: {st.session_state.generated_otp}")
                         st.rerun()
 
@@ -404,8 +409,13 @@ elif st.session_state.logged_in and st.session_state.is_admin:
 # --- STAGE 3: APPLICATION MAIN DASHBOARD INTERFACE ---
 else:
     u_row = query_db("SELECT balance, active_level, ref_code, full_name FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-    curr_balance, curr_level, user_code, full_name = u_row[0], u_row[1], u_row[2], u_row[3]
     
+    # Fallback checking to prevent unexpected unpack crashes
+    if u_row and len(u_row) >= 4:
+        curr_balance, curr_level, user_code, full_name = u_row[0], u_row[1], u_row[2], u_row[3]
+    else:
+        curr_balance, curr_level, user_code, full_name = 0.00, "None", "0000", "User"
+
     if st.session_state.current_app_tab == "home":
         st.markdown(f"""
         <div class="balance-box">
@@ -449,9 +459,12 @@ else:
             lvl_name = st.session_state.selected_payment_level
             lvl_cost = LEVELS_CONF[lvl_name]["cost"]
             
-            st.markdown('<div class="payment-form-box">', unsafe_allow_html=True)
-            st.markdown(f"<p style='margin:0; text-align:center; color:#ffffff; font-size:14px; font-weight:600;'>SECURE ESCROW DEPOSIT GATEWAY CHECKOUT</p>", unsafe_allow_html=True)
-            st.markdown(f"<p style='color:#9ca3af; text-align:center; font-size:12px; margin-bottom:15px;'>EVALUATION QUOTA COST TO SETTLE: <span style='color:#ef4444; font-weight:600;'>RM {lvl_cost}</span></p>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="background: #111827; border: 1px solid #ef4444; border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                <p style='margin:0; text-align:center; color:#ffffff; font-size:14px; font-weight:600;'>SECURE ESCROW DEPOSIT GATEWAY CHECKOUT</p>
+                <p style='color:#9ca3af; text-align:center; font-size:12px; margin-bottom:15px;'>EVALUATION QUOTA COST TO SETTLE: <span style='color:#ef4444; font-weight:600;'>RM {lvl_cost}</span></p>
+            </div>
+            """, unsafe_allow_html=True)
             
             p_method = st.selectbox("CHOOSE TRANSMISSION NETWORK INTERFACE ROUTE:", ["Malaysia Local Bank", "Cryptocurrency (USDT TRC20)"])
             
@@ -498,7 +511,6 @@ else:
                 if st.button("CANCEL TRANSACTION CHECKOUT", use_container_width=True):
                     st.session_state.selected_payment_level = None
                     st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="section-label">💎 AVAILABLE INVESTMENT EXCLUSIVE SUITES</div>', unsafe_allow_html=True)
         for l_name, l_details in LEVELS_CONF.items():
