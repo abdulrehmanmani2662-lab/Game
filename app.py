@@ -57,7 +57,7 @@ def query_db(query, args=(), one=False, commit=False):
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght=500;800&family=Poppins:wght=400;600;800&display=swap" rel="stylesheet">
     
     <style>
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
@@ -224,10 +224,10 @@ st.markdown(f'<div class="ticker-wrap">⚡ LIVE FEED: User {random.choice(fake_u
 
 st.markdown('<div class="app-title-bar">MATRIX PORTFOLIO</div>', unsafe_allow_html=True)
 
-# --- STAGE 1: IDENTITY ACCESS HUBS ---
+# --- STAGE 1: IDENTITY ACCESS HUBS (LOGIN / SIGNUP) ---
 if not st.session_state.logged_in:
     
-    # Track A: Google Official Identity Corridor
+    # Track A: Google Screen Box
     if st.session_state.google_screen_active:
         st.markdown("""
         <div class="google-verification-card">
@@ -261,7 +261,7 @@ if not st.session_state.logged_in:
             st.session_state.google_screen_active = False
             st.rerun()
             
-    # Track B: Interactive OTP Verification Stage Frame
+    # Track B: Email verification Code Screen (Next Page)
     elif st.session_state.verification_stage == "awaiting_otp":
         with st.form("otp_verification_form"):
             st.markdown(f"""
@@ -282,7 +282,7 @@ if not st.session_state.logged_in:
                     t_data = st.session_state.temp_register_data
                     new_code = str(random.randint(1000, 9999))
                     
-                    # Store safely in permanent SQLite ledger database
+                    # Database me user save karna
                     query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", 
                              (t_data['email'], 0.00, "None", st.session_state["saved_ref"], new_code, t_data['name'], str(t_data['dob'])), commit=True)
                     
@@ -294,19 +294,19 @@ if not st.session_state.logged_in:
                     time.sleep(0.5)
                     st.rerun()
                 else:
-                    st.error("Invalid passcode sequence! Please cross-check the distribution logs inside your email.")
+                    st.error("Invalid passcode sequence! Please check your email.")
                     
         if st.button("⬅ BACK TO MAIN REGISTRATION", use_container_width=True):
             st.session_state.verification_stage = "closed"
             st.rerun()
 
-    # Track C: Primary Gateway Selector UI Frame
+    # Track C: Main Login / Registration Form
     else:
         st.markdown("<div style='text-align:center; padding:10px 0 20px 0;'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size: 12px; color: #9ca3af; letter-spacing:1px; font-weight:600;'>SECURE NETWORK ACCESS</p>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
-        # Single Authorized OAuth Gateway
+        # Google Sign-In Button
         st.markdown('<div class="google-btn-hub">', unsafe_allow_html=True)
         if st.button("🎯 CONTINUE WITH GOOGLE ACCOUNT", use_container_width=True):
             st.session_state.google_screen_active = True
@@ -315,16 +315,16 @@ if not st.session_state.logged_in:
         
         st.markdown("<p style='text-align:center; color:#4b5563; font-size:11px; margin: 25px 0;'>- OR CREATE DECENTRALIZED PLATFORM IDENTITY -</p>", unsafe_allow_html=True)
         
-        # Manual Registration Track Form
+        # Account Banane Ka Option (Name, Email, DOB)
         with st.form("manual_signup_form"):
             st.markdown("<p style='font-size:12px; color:#ffffff; font-weight:600; margin-bottom:10px;'>CREATE NEW INVESTMENT NODE</p>", unsafe_allow_html=True)
             reg_name = st.text_input("FULL NAME IDENTITY:", placeholder="John Doe")
             reg_email = st.text_input("EMAIL ADDRESS LOG:", placeholder="name@example.com")
             reg_dob = st.date_input("DATE OF BIRTH:")
-            reg_admin_pass = st.text_input("ADMIN OVERRIDE KEY (OPTIONAL):", type="password", placeholder="Leave blank if registering as user")
+            reg_admin_pass = st.text_input("ADMIN OVERRIDE KEY (OPTIONAL):", type="password", placeholder="Leave blank for regular user")
             
             st.markdown('<div style="margin-top:15px;">', unsafe_allow_html=True)
-            request_registration = st.form_submit_button("REQUEST ACCOUNT ACCOUNT PRIVILEGES", use_container_width=True)
+            request_registration = st.form_submit_button("REQUEST ACCOUNT PRIVILEGES", use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
             
             if request_registration:
@@ -332,23 +332,21 @@ if not st.session_state.logged_in:
                 u_name_clean = reg_name.strip()
                 
                 if not u_email_clean or not u_name_clean:
-                    st.error("Validation failed: Name and Email coordinates must be specified.")
+                    st.error("Validation failed: Name and Email fields must be filled.")
                 elif u_email_clean == "admin" or reg_admin_pass.strip() == "admin123":
                     st.session_state.logged_in = True
                     st.session_state.is_admin = True
                     st.session_state.current_user = "ADMIN_PANEL"
                     st.rerun()
                 else:
-                    # Check if node profile already exists in ledger history database
                     record_exists = query_db("SELECT * FROM users WHERE username=?", (u_email_clean,), one=True)
                     if record_exists:
-                        # Existing user logs straight in to avoid duplicate bottlenecks
                         st.session_state.logged_in = True
                         st.session_state.current_user = u_email_clean
                         st.session_state.current_app_tab = "home"
                         st.rerun()
                     else:
-                        # Create simulated email verification token payload
+                        # 6-Digit Verification Code auto generate karna
                         st.session_state.generated_otp = str(random.randint(100000, 999999))
                         st.session_state.temp_register_data = {
                             "name": u_name_clean,
@@ -356,21 +354,20 @@ if not st.session_state.logged_in:
                             "dob": reg_dob
                         }
                         st.session_state.verification_stage = "awaiting_otp"
-                        # Print code directly to terminal logs window for debugging
-                        print(f"[SECURITY ALERT] VERIFICATION CODE FOR CODE DEPLOY: {st.session_state.generated_otp}")
+                        # Yeh line code ko terminal/cmd me print karegi check karne ke liye
+                        print(f"[SECURITY ALERT] VERIFICATION CODE FOR DEPLOY: {st.session_state.generated_otp}")
                         st.rerun()
 
 # --- STAGE 2: ADMINISTRATIVE CONTROLS DASHBOARD ---
 elif st.session_state.logged_in and st.session_state.is_admin:
     st.markdown("<h4 style='color:#ef4444;'>👑 MASTER CONTROLLER PLATFORM LEDGER</h4>", unsafe_allow_html=True)
-    
     st.session_state.admin_video_url = st.text_input("BROADCAST REWARD VIDEO TASK URL LINK:", value=st.session_state.admin_video_url)
     
     st.markdown('<div class="section-label">PENDING INBOUND ESCROW VERIFICATIONS</div>', unsafe_allow_html=True)
     reqs = query_db("SELECT * FROM deposits WHERE status='PENDING'")
     
     if not reqs:
-        st.info("No transaction requests locked in memory cache frames.")
+        st.info("No transaction requests in memory cache.")
     else:
         for req in reqs:
             st.markdown(f"""
@@ -420,7 +417,6 @@ else:
         </div>
         """, unsafe_allow_html=True)
         
-        # Line Metric Chart Vector Rendering
         st.markdown('<div class="section-label">📉 REVENUE INDEX GROWTH PERFORMANCE</div>', unsafe_allow_html=True)
         chart_days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today"]
         chart_data = [curr_balance * 0.4, curr_balance * 0.5, curr_balance * 0.7, curr_balance * 0.8, curr_balance * 0.9, curr_balance * 0.95, curr_balance]
@@ -441,15 +437,14 @@ else:
                 if w_amt < 700:
                     st.error("❌ PROTECTION BLOCK: SYSTEM SECURITY WITHDRAW LEVEL SET MINIMUM AT RM 700")
                 elif curr_balance < w_amt:
-                    st.error("❌ ESCROW FAILURE: COMPROMISED LEDGER BALANCE DUE TO FUND DEFICIT")
+                    st.error("❌ ESCROW FAILURE: FUND DEFICIT")
                 else:
                     query_db("UPDATE users SET balance = balance - ? WHERE username=?", (w_amt, st.session_state.current_user), commit=True)
-                    st.success("Withdraw authorization request transmitted to node verification matrix.")
+                    st.success("Withdraw authorization request transmitted successfully.")
                     time.sleep(1)
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # Checkout Allocation Form Window Block
         if st.session_state.selected_payment_level:
             lvl_name = st.session_state.selected_payment_level
             lvl_cost = LEVELS_CONF[lvl_name]["cost"]
@@ -493,7 +488,7 @@ else:
                     if h_name.strip() and t_id.strip():
                         query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, 'PENDING')",
                                  (st.session_state.current_user, lvl_name, lvl_cost, p_method, h_name.strip(), t_id.strip()), commit=True)
-                        st.success("Proof packet loaded successfully into transaction buffer queue!")
+                        st.success("Proof packet loaded successfully into queue!")
                         st.session_state.selected_payment_level = None
                         time.sleep(0.5)
                         st.rerun()
@@ -535,17 +530,15 @@ else:
         st.markdown(f"""
         <div class="invite-earn-box">
             <div style="font-size:13px; color:#ef4444; font-weight:600; letter-spacing:0.5px;">🤝 INVITE AFFILIATE PARALLEL ASSOCIATES</div>
-            <div style="font-size:11px; color:#9ca3af; margin-bottom:8px;">DISTRIBUTE UNIQUE CLUSTER SEED SEED NODE LINK AND REAP HIGHER BONUSES</div>
+            <div style="font-size:11px; color:#9ca3af; margin-bottom:8px;">DISTRIBUTE UNIQUE SEED NODE LINK AND REAP HIGHER BONUSES</div>
             <div style="background:#030712; border:1px solid #1f2937; border-radius:8px; padding:8px; font-size:11px; color:#f87171; font-family:monospace !important; word-break: break-all;">
                 https://money.streamlit.app/?ref={user_code}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-    # ------------------ TAB ROUTER: TASK PIPELINES ------------------
     elif st.session_state.current_app_tab == "task":
         st.markdown("<p style='text-align:center; color:#9ca3af; font-size:12px;'>MEDIA BROADCAST ADVERTISING REWARD PATH</p>", unsafe_allow_html=True)
-        
         task_payout = 5.00 if curr_level == "None" else float(LEVELS_CONF[curr_level]["daily_reward"])
         
         st.markdown(f"""
