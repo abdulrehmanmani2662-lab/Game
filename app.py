@@ -38,7 +38,7 @@ def send_real_verification_email(receiver_email, otp_code, user_name):
         print(f"[SMTP ERROR]: {e}")
         return False
 
-# --- DATABASE MANAGEMENT WITH REFERRALS ---
+# --- DATABASE UPGRADED ARCHITECTURE ---
 def init_db():
     conn = sqlite3.connect("matrix_vault.db", check_same_thread=False)
     cursor = conn.cursor()
@@ -55,7 +55,6 @@ def init_db():
         )
     """)
     
-    # Structural upgrades check
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
     if 'last_claim_timestamp' not in columns:
@@ -70,6 +69,16 @@ def init_db():
             method TEXT,
             holder_name TEXT,
             trx_id TEXT,
+            status TEXT
+        )
+    """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS withdrawals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT,
+            amount REAL,
+            wallet_details TEXT,
             status TEXT
         )
     """)
@@ -120,6 +129,10 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
     
+    /* Stats Row Layout */
+    .stats-grid { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
+    .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px; width: 50%; text-align: center; }
+    
     .section-label { font-size: 14px; color: #8b949e; margin-top: 25px; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .level-container { 
@@ -134,12 +147,8 @@ st.markdown("""
     }
     
     .invite-box {
-        background: rgba(88, 166, 255, 0.05);
-        border: 1px dashed #58a6ff;
-        border-radius: 12px;
-        padding: 15px;
-        text-align: center;
-        margin-bottom: 20px;
+        background: rgba(88, 166, 255, 0.05); border: 1px dashed #58a6ff;
+        border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px;
     }
     
     label, [data-testid="stWidgetLabel"] p { color: #8b949e !important; font-size: 12px !important; font-weight: 500 !important; margin-bottom: 6px !important; }
@@ -152,6 +161,11 @@ st.markdown("""
     .action-btn-hub .stButton>button:hover { background: #2ea043 !important; }
     
     .lock-btn-hub .stButton>button { background: #30363d !important; color: #8b949e !important; border: 1px solid #21262d !important; cursor: not-allowed !important; }
+    
+    .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+    .badge-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .badge-approved { background: rgba(35, 134, 54, 0.15); color: #2ea043; }
+    .badge-rejected { background: rgba(239, 68, 68, 0.15); color: #f87171; }
     
     .bottom-nav-holder { position: fixed; bottom: 0; left: 0; right: 0; background-color: #161b22; border-top: 1px solid #30363d; padding: 12px 10px; z-index: 999999; max-width: 420px; margin: 0 auto; }
     </style>
@@ -179,11 +193,7 @@ st.markdown('<div class="app-title-bar">Global Matrix Investment</div>', unsafe_
 if not st.session_state.logged_in:
     if st.session_state.verification_stage == "awaiting_otp":
         with st.form("otp_form"):
-            st.markdown(f"""
-            <div style="text-align: center; margin-bottom: 15px;">
-                <p style="color: #ffffff; font-size: 14px; margin: 0;">Enter verification code sent to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center; margin-bottom: 15px;'><p style='color: #ffffff; font-size: 14px; margin: 0;'>Enter verification code sent to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p></div>", unsafe_allow_html=True)
             user_otp_input = st.text_input("Verification Code:", max_chars=6)
             st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
             verify_submit = st.form_submit_button("Verify & Login", use_container_width=True)
@@ -193,15 +203,9 @@ if not st.session_state.logged_in:
                 if user_otp_input.strip() == st.session_state.generated_otp:
                     t_data = st.session_state.temp_register_data
                     my_ref_code = "MX" + str(random.randint(1000, 9999))
-                    
-                    # Insert new user data
-                    query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
-                             (t_data['email'], 0.00, "None", t_data['ref_by'], my_ref_code, t_data['name'], "2000-01-01", 0), commit=True)
-                    
-                    # Reward the inviter if code matches
+                    query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (t_data['email'], 0.00, "None", t_data['ref_by'], my_ref_code, t_data['name'], "2000-01-01", 0), commit=True)
                     if t_data['ref_by'] != "None":
                         query_db("UPDATE users SET balance = balance + 10.00 WHERE ref_code=?", (t_data['ref_by'],), commit=True)
-                        
                     st.session_state.logged_in = True
                     st.session_state.current_user = t_data['email']
                     st.session_state.verification_stage = "closed"
@@ -243,38 +247,27 @@ if not st.session_state.logged_in:
                             final_ref_by = "None"
                             if reg_invite_code.strip():
                                 check_code = query_db("SELECT username FROM users WHERE ref_code=?", (reg_invite_code.strip(),), one=True)
-                                if check_code:
-                                    final_ref_by = reg_invite_code.strip()
-                                else:
-                                    st.warning("Referral code not found. Continuing without referral.")
+                                if check_code: final_ref_by = reg_invite_code.strip()
+                                else: st.warning("Referral code not found. Continuing without referral.")
                                     
                             st.session_state.generated_otp = str(random.randint(100000, 999999))
-                            st.session_state.temp_register_data = {
-                                "name": reg_name.strip(), 
-                                "email": u_email_clean,
-                                "ref_by": final_ref_by
-                            }
+                            st.session_state.temp_register_data = {"name": reg_name.strip(), "email": u_email_clean, "ref_by": final_ref_by}
                             with st.spinner("Sending verification code..."):
                                 send_real_verification_email(u_email_clean, st.session_state.generated_otp, reg_name.strip())
                             st.session_state.verification_stage = "awaiting_otp"
                             st.rerun()
 
-# --- ADMIN PANEL ---
+# --- ADMIN CONTROL CENTER ---
 elif st.session_state.logged_in and st.session_state.is_admin:
     st.markdown("<h4 style='color:#ffffff; margin-bottom:20px;'>Admin Control Dashboard</h4>", unsafe_allow_html=True)
     st.session_state.admin_video_url = st.text_input("Update Task Video URL:", value=st.session_state.admin_video_url)
     
+    # Deposits Router
     st.markdown('<div class="section-label">Pending Deposit Approvals</div>', unsafe_allow_html=True)
     reqs = query_db("SELECT * FROM deposits WHERE status='PENDING'")
     if reqs:
         for req in reqs:
-            st.markdown(f"""
-            <div style="background:#161b22; border:1px solid #30363d; padding:12px; border-radius:8px; margin-bottom:10px;">
-                <b>User:</b> {req[1]}<br>
-                <b>Plan:</b> {req[2]} | <b>Amount:</b> RM {req[3]}<br>
-                <b>Trx ID:</b> <code>{req[6]}</code>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(f"<div style='background:#161b22; border:1px solid #30363d; padding:12px; border-radius:8px; margin-bottom:10px;'><b>User:</b> {req[1]}<br><b>Plan:</b> {req[2]} | <b>Amount:</b> RM {req[3]}<br><b>Trx ID:</b> {req[6]}</div>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 if st.button("Approve", key=f"a_{req[0]}", use_container_width=True):
@@ -285,72 +278,110 @@ elif st.session_state.logged_in and st.session_state.is_admin:
                 if st.button("Reject", key=f"r_{req[0]}", use_container_width=True):
                     query_db("UPDATE deposits SET status='REJECTED' WHERE id=?", (req[0],), commit=True)
                     st.rerun()
-    else:
-        st.info("No pending deposits.")
+    else: st.info("No pending deposits.")
+
+    # Withdrawals Router
+    st.markdown('<div class="section-label">Pending Withdrawal Cashouts</div>', unsafe_allow_html=True)
+    w_reqs = query_db("SELECT * FROM withdrawals WHERE status='PENDING'")
+    if w_reqs:
+        for w_req in w_reqs:
+            st.markdown(f"<div style='background:#161b22; border:1px solid #30363d; padding:12px; border-radius:8px; margin-bottom:10px;'><b>User:</b> {w_req[1]}<br><b>Cashout Amount:</b> RM {w_req[2]:.2f}<br><b>Account Route Details:</b> {w_req[3]}</div>", unsafe_allow_html=True)
+            wc1, wc2 = st.columns(2)
+            with wc1:
+                if st.button("Approve Payout", key=f"wa_{w_req[0]}", use_container_width=True):
+                    query_db("UPDATE withdrawals SET status='APPROVED' WHERE id=?", (w_req[0],), commit=True)
+                    st.rerun()
+            with wc2:
+                if st.button("Reject & Refund", key=f"wr_{w_req[0]}", use_container_width=True):
+                    query_db("UPDATE users SET balance = balance + ? WHERE username=?", (w_req[2], w_req[1]), commit=True)
+                    query_db("UPDATE withdrawals SET status='REJECTED' WHERE id=?", (w_req[0],), commit=True)
+                    st.rerun()
+    else: st.info("No pending cashout settlements.")
 
     if st.button("Logout From Admin", use_container_width=True):
-        st.session_state.logged_in = False
-        st.session_state.is_admin = False
-        st.rerun()
+        st.session_state.logged_in = False; st.session_state.is_admin = False; st.rerun()
 
-# --- USER DASHBOARD ---
+# --- LIVE USER APPLICATION FRAME ---
 else:
     u_row = query_db("SELECT balance, active_level, ref_code, full_name, last_claim_timestamp FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-    if u_row:
-        curr_balance, curr_level, user_code, full_name, last_claim = u_row[0], u_row[1], u_row[2], u_row[3], u_row[4]
-    else:
-        curr_balance, curr_level, user_code, full_name, last_claim = 0.00, "None", "MX0000", "User", 0
+    curr_balance, curr_level, user_code, full_name, last_claim = u_row[0], u_row[1], u_row[2], u_row[3], u_row[4] if u_row else (0.00, "None", "MX0000", "User", 0)
 
     if st.session_state.current_app_tab == "home":
+        # Global Trust Counter Metrics
+        total_users_count = len(query_db("SELECT username FROM users")) + 842
+        total_approved_w = query_db("SELECT SUM(amount) FROM withdrawals WHERE status='APPROVED'", one=True)
+        total_paid_out = float(total_approved_w[0]) + 14250.00 if total_approved_w and total_approved_w[0] else 14250.00
+        
         st.markdown(f"""
+        <div class="stats-grid">
+            <div class="stat-card"><div style="color:#8b949e; font-size:10px;">ACTIVE INVESTORS</div><div style="color:#ffffff; font-weight:700; font-size:14px;">{total_users_count}</div></div>
+            <div class="stat-card"><div style="color:#8b949e; font-size:10px;">TOTAL DISBURSED</div><div style="color:#2ea043; font-weight:700; font-size:14px;">RM {total_paid_out:.2f}</div></div>
+        </div>
         <div class="balance-box">
             <div style="color:#8b949e; font-size:12px;">Welcome Back</div>
             <div style="color:#ffffff; font-size:18px; font-weight:600; margin-bottom:8px;">{full_name}</div>
             <div style="color:#58a6ff; font-size:12px; font-weight:600; text-transform:uppercase;">Plan: {curr_level}</div>
             <div style="font-size:36px; color:#ffffff; font-weight:700; margin-top:10px;">RM {curr_balance:.2f}</div>
         </div>
-        """, unsafe_allow_html=True)
-        
-        # Invite Friend Module Visual Layout
-        st.markdown(f"""
         <div class="invite-box">
             <p style="color:#58a6ff; margin:0; font-size:13px; font-weight:600;">📢 INVITE FRIENDS & EARN MULTIPLIER</p>
-            <p style="color:#8b949e; margin:4px 0 10px 0; font-size:11px;">Share code with friends. Get RM 10.00 instant on registration!</p>
-            <div style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:8px; font-family:monospace; color:#ffffff; font-size:15px; font-weight:700; letter-spacing:1px;">
-                {user_code}
-            </div>
+            <p style="color:#8b949e; margin:4px 0 10px 0; font-size:11px;">Share code. Get RM 10.00 instant on registration!</p>
+            <div style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:8px; font-family:monospace; color:#ffffff; font-size:15px; font-weight:700;">{user_code}</div>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown('<div class="section-label">Available Investment Plans</div>', unsafe_allow_html=True)
-        for l_name, l_details in LEVELS_CONF.items():
-            st.markdown(f"""
-            <div class="level-container">
-                <div>
-                    <div style="font-size:15px; font-weight:600; color:#ffffff;">{l_name}</div>
-                    <div style="color:#8b949e; font-size:12px;">Daily Income: <span style="color:#2ea043; font-weight:600;">RM {l_details['daily_reward']:.2f}</span></div>
-                </div>
-                <div style="font-size:16px; font-weight:700; color:#58a6ff;">RM {l_details['cost']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-        st.markdown('<div class="section-label">Submit Deposit Proof</div>', unsafe_allow_html=True)
-        with st.form("deposit_form"):
-            h_name = st.text_input("Account Holder Name:")
-            t_id = st.text_input("Transaction ID (Trx ID):")
-            selected_plan = st.selectbox("Select Plan to Activate:", list(LEVELS_CONF.keys()))
-            st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
-            submit_proof = st.form_submit_button("Submit Proof", use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            if submit_proof:
-                if h_name and t_id:
-                    cost_amount = LEVELS_CONF[selected_plan]["cost"]
-                    query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                             (st.session_state.current_user, selected_plan, cost_amount, "Touch n Go", h_name, t_id, "PENDING"), commit=True)
-                    st.success("Deposit proof submitted successfully!")
-                else:
-                    st.error("Please fill all details.")
+        # Finance Portal Router (Tabs interface inside layout)
+        fin_tabs = st.radio("FINANCE HUB:", ["Buy Investment Nodes", "Deposit Verification", "Request Withdrawal"], horizontal=True)
+        
+        if fin_tabs == "Buy Investment Nodes":
+            st.markdown('<div class="section-label">Available Investment Plans</div>', unsafe_allow_html=True)
+            for l_name, l_details in LEVELS_CONF.items():
+                st.markdown(f"<div class='level-container'><div><div style='font-size:15px; font-weight:600; color:#ffffff;'>{l_name}</div><div style='color:#8b949e; font-size:12px;'>Daily Income: <span style='color:#2ea043; font-weight:600;'>RM {l_details['daily_reward']:.2f}</span></div></div><div style='font-size:16px; font-weight:700; color:#58a6ff;'>RM {l_details['cost']}</div></div>", unsafe_allow_html=True)
+                
+        elif fin_tabs == "Deposit Verification":
+            with st.form("deposit_form"):
+                h_name = st.text_input("Account Holder Name:")
+                t_id = st.text_input("Transaction ID (Trx ID):")
+                selected_plan = st.selectbox("Select Plan to Activate:", list(LEVELS_CONF.keys()))
+                st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
+                submit_proof = st.form_submit_button("Submit Proof Plan", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                if submit_proof and h_name and t_id:
+                    query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)", (st.session_state.current_user, selected_plan, LEVELS_CONF[selected_plan]["cost"], "Touch n Go", h_name, t_id, "PENDING"), commit=True)
+                    st.success("Proof submitted successfully!")
+                    st.rerun()
+
+        elif fin_tabs == "Request Withdrawal":
+            with st.form("withdraw_form"):
+                w_amount = st.number_input("Withdraw Amount (RM):", min_value=10.0, step=10.0)
+                w_details = st.text_input("Wallet Number / Bank Routing Node Details:", placeholder="e.g., Touch n Go 0123456789")
+                st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
+                submit_w = st.form_submit_button("Submit Cashout File", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                if submit_w:
+                    if w_amount <= curr_balance:
+                        if w_details.strip():
+                            query_db("UPDATE users SET balance = balance - ? WHERE username=?", (w_amount, st.session_state.current_user), commit=True)
+                            query_db("INSERT INTO withdrawals (user, amount, wallet_details, status) VALUES (?, ?, ?, ?)", (st.session_state.current_user, w_amount, w_details.strip(), "PENDING"), commit=True)
+                            st.success("Cashout pipeline initiated! Pending Admin verification.")
+                            st.rerun()
+                        else: st.error("Please fill terminal routing details.")
+                    else: st.error("Insufficient credit limits.")
+
+        # --- LOG TRANSACTION HISTORY FRAME ---
+        st.markdown('<div class="section-label">Your Transaction History</div>', unsafe_allow_html=True)
+        u_deposits = query_db("SELECT level, amount, status FROM deposits WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
+        u_withdrawals = query_db("SELECT amount, status FROM withdrawals WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
+        
+        if not u_deposits and not u_withdrawals:
+            st.markdown("<p style='font-size:12px; color:#8b949e;'>No transactions found on this account log node.</p>", unsafe_allow_html=True)
+        else:
+            for dep in u_deposits:
+                badge = f'<span class="status-badge badge-{"pending" if dep[2]=="PENDING" else "approved" if dep[2]=="APPROVED" else "rejected"}">{dep[2]}</span>'
+                st.markdown(f"<div style='display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px; border-bottom:1px solid #21262d; padding-bottom:4px;'><span style='color:#ffffff;'>Deposit Plan: {dep[0]}</span>{badge}</div>", unsafe_allow_html=True)
+            for wd in u_withdrawals:
+                badge = f'<span class="status-badge badge-{"pending" if wd[1]=="PENDING" else "approved" if wd[1]=="APPROVED" else "rejected"}">{wd[1]}</span>'
+                st.markdown(f"<div style='display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px; border-bottom:1px solid #21262d; padding-bottom:4px;'><span style='color:#f87171;'>Cashout: RM {wd[0]:.2f}</span>{badge}</div>", unsafe_allow_html=True)
 
     elif st.session_state.current_app_tab == "task":
         st.markdown('<div class="section-label">Daily Video Task</div>', unsafe_allow_html=True)
@@ -366,15 +397,7 @@ else:
             seconds_left = one_day_seconds - time_passed
             hours_left = seconds_left // 3600
             minutes_left = (seconds_left % 3600) // 60
-            
-            st.markdown(f"""
-            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 15px;">
-                <p style="color: #f87171; font-size: 13px; margin: 0; font-weight: 500;">
-                    🔒 Next claim available in <b>{hours_left}h {minutes_left}m</b>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
+            st.markdown(f'<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 15px;"><p style="color: #f87171; font-size: 13px; margin: 0; font-weight: 500;">🔒 Next claim available in <b>{hours_left}h {minutes_left}m</b></p></div>', unsafe_allow_html=True)
             st.markdown('<div class="lock-btn-hub">', unsafe_allow_html=True)
             st.button("Claim Daily Reward (Locked)", disabled=True, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
@@ -382,8 +405,7 @@ else:
             st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
             if st.button("Claim Daily Reward", use_container_width=True):
                 payout = 5.00 if curr_level == "None" else float(LEVELS_CONF[curr_level]["daily_reward"])
-                query_db("UPDATE users SET balance = balance + ?, last_claim_timestamp = ? WHERE username=?", 
-                         (payout, current_time, st.session_state.current_user), commit=True)
+                query_db("UPDATE users SET balance = balance + ?, last_claim_timestamp = ? WHERE username=?", (payout, current_time, st.session_state.current_user), commit=True)
                 st.success(f"RM {payout:.2f} added to your balance!")
                 st.session_state.current_app_tab = "home"
                 st.rerun()
