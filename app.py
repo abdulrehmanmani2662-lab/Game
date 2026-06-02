@@ -3,6 +3,7 @@ import sqlite3
 import pandas as pd
 import random
 import time
+import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -37,7 +38,7 @@ def send_real_verification_email(receiver_email, otp_code, user_name):
         print(f"[SMTP ERROR]: {e}")
         return False
 
-# --- DATABASE MANAGEMENT ---
+# --- DATABASE MANAGEMENT WITH REFERRALS ---
 def init_db():
     conn = sqlite3.connect("matrix_vault.db", check_same_thread=False)
     cursor = conn.cursor()
@@ -49,9 +50,17 @@ def init_db():
             referred_by TEXT,
             ref_code TEXT,
             full_name TEXT,
-            dob TEXT
+            dob TEXT,
+            last_claim_timestamp INTEGER DEFAULT 0
         )
     """)
+    
+    # Structural upgrades check
+    cursor.execute("PRAGMA table_info(users)")
+    columns = [col[1] for col in cursor.fetchall()]
+    if 'last_claim_timestamp' not in columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN last_claim_timestamp INTEGER DEFAULT 0")
+        
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS deposits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,7 +94,7 @@ def query_db(query, args=(), one=False, commit=False):
         conn.close()
         return None if one else []
 
-# --- BAMB PREMIUM VISUAL STYLESHEET (CLEAN & PROFESSIONAL) ---
+# --- PREMIUM VISUAL STYLESHEET ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,7 +110,6 @@ st.markdown("""
     
     .app-title-bar { text-align: center; font-size: 24px; color: #ffffff; font-weight: 700; letter-spacing: 1px; margin-bottom: 25px; }
     
-    /* Premium Balance Card */
     .balance-box { 
         background: linear-gradient(135deg, #1f2937 0%, #111827 100%); 
         padding: 22px; 
@@ -114,7 +122,6 @@ st.markdown("""
     
     .section-label { font-size: 14px; color: #8b949e; margin-top: 25px; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    /* Plan Cards */
     .level-container { 
         background: #161b22; 
         border: 1px solid #30363d; 
@@ -126,15 +133,25 @@ st.markdown("""
         align-items: center;
     }
     
+    .invite-box {
+        background: rgba(88, 166, 255, 0.05);
+        border: 1px dashed #58a6ff;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
     label, [data-testid="stWidgetLabel"] p { color: #8b949e !important; font-size: 12px !important; font-weight: 500 !important; margin-bottom: 6px !important; }
     .stTextInput input, .stNumberInput input, div[data-baseweb="select"] { color: #ffffff !important; background-color: #0d1117 !important; border: 1px solid #30363d !important; border-radius: 8px !important; padding: 10px !important; }
     
-    /* Buttons Customization */
     .stButton>button { font-weight: 600 !important; font-size: 14px !important; border-radius: 8px !important; padding: 12px 0 !important; background: #21262d !important; color: #c9d1d9 !important; border: 1px solid #30363d !important; }
     .stButton>button:hover { border-color: #58a6ff !important; color: #ffffff !important; }
     
     .action-btn-hub .stButton>button { background: #238636 !important; color: #ffffff !important; border: none !important; }
     .action-btn-hub .stButton>button:hover { background: #2ea043 !important; }
+    
+    .lock-btn-hub .stButton>button { background: #30363d !important; color: #8b949e !important; border: 1px solid #21262d !important; cursor: not-allowed !important; }
     
     .bottom-nav-holder { position: fixed; bottom: 0; left: 0; right: 0; background-color: #161b22; border-top: 1px solid #30363d; padding: 12px 10px; z-index: 999999; max-width: 420px; margin: 0 auto; }
     </style>
@@ -160,7 +177,6 @@ st.markdown('<div class="app-title-bar">Global Matrix Investment</div>', unsafe_
 
 # --- LOGIN / SIGNUP INTERFACE ---
 if not st.session_state.logged_in:
-    
     if st.session_state.verification_stage == "awaiting_otp":
         with st.form("otp_form"):
             st.markdown(f"""
@@ -168,9 +184,7 @@ if not st.session_state.logged_in:
                 <p style="color: #ffffff; font-size: 14px; margin: 0;">Enter verification code sent to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p>
             </div>
             """, unsafe_allow_html=True)
-            
             user_otp_input = st.text_input("Verification Code:", max_chars=6)
-            
             st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
             verify_submit = st.form_submit_button("Verify & Login", use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
@@ -178,7 +192,16 @@ if not st.session_state.logged_in:
             if verify_submit:
                 if user_otp_input.strip() == st.session_state.generated_otp:
                     t_data = st.session_state.temp_register_data
-                    query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", (t_data['email'], 0.00, "None", "727", str(random.randint(1000,9999)), t_data['name'], "2000-01-01"), commit=True)
+                    my_ref_code = "MX" + str(random.randint(1000, 9999))
+                    
+                    # Insert new user data
+                    query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
+                             (t_data['email'], 0.00, "None", t_data['ref_by'], my_ref_code, t_data['name'], "2000-01-01", 0), commit=True)
+                    
+                    # Reward the inviter if code matches
+                    if t_data['ref_by'] != "None":
+                        query_db("UPDATE users SET balance = balance + 10.00 WHERE ref_code=?", (t_data['ref_by'],), commit=True)
+                        
                     st.session_state.logged_in = True
                     st.session_state.current_user = t_data['email']
                     st.session_state.verification_stage = "closed"
@@ -193,6 +216,7 @@ if not st.session_state.logged_in:
             reg_name = st.text_input("Full Name (For New Users):")
             reg_email = st.text_input("Email Address:")
             reg_pass = st.text_input("Password:", type="password")
+            reg_invite_code = st.text_input("Referral Code (Optional):")
             
             st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
             submit_btn = st.form_submit_button("Login / Register", use_container_width=True)
@@ -216,12 +240,22 @@ if not st.session_state.logged_in:
                         if not reg_name.strip():
                             st.error("Please enter your Full Name to register.")
                         else:
+                            final_ref_by = "None"
+                            if reg_invite_code.strip():
+                                check_code = query_db("SELECT username FROM users WHERE ref_code=?", (reg_invite_code.strip(),), one=True)
+                                if check_code:
+                                    final_ref_by = reg_invite_code.strip()
+                                else:
+                                    st.warning("Referral code not found. Continuing without referral.")
+                                    
                             st.session_state.generated_otp = str(random.randint(100000, 999999))
-                            st.session_state.temp_register_data = {"name": reg_name.strip(), "email": u_email_clean}
-                            
+                            st.session_state.temp_register_data = {
+                                "name": reg_name.strip(), 
+                                "email": u_email_clean,
+                                "ref_by": final_ref_by
+                            }
                             with st.spinner("Sending verification code..."):
                                 send_real_verification_email(u_email_clean, st.session_state.generated_otp, reg_name.strip())
-                            
                             st.session_state.verification_stage = "awaiting_otp"
                             st.rerun()
 
@@ -259,10 +293,13 @@ elif st.session_state.logged_in and st.session_state.is_admin:
         st.session_state.is_admin = False
         st.rerun()
 
-# --- REAL WORKING USER INTERFACE ---
+# --- USER DASHBOARD ---
 else:
-    u_row = query_db("SELECT balance, active_level, ref_code, full_name FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-    curr_balance, curr_level, user_code, full_name = u_row[0], u_row[1], u_row[2], u_row[3] if u_row else (0.00, "None", "0000", "User")
+    u_row = query_db("SELECT balance, active_level, ref_code, full_name, last_claim_timestamp FROM users WHERE username=?", (st.session_state.current_user,), one=True)
+    if u_row:
+        curr_balance, curr_level, user_code, full_name, last_claim = u_row[0], u_row[1], u_row[2], u_row[3], u_row[4]
+    else:
+        curr_balance, curr_level, user_code, full_name, last_claim = 0.00, "None", "MX0000", "User", 0
 
     if st.session_state.current_app_tab == "home":
         st.markdown(f"""
@@ -271,6 +308,17 @@ else:
             <div style="color:#ffffff; font-size:18px; font-weight:600; margin-bottom:8px;">{full_name}</div>
             <div style="color:#58a6ff; font-size:12px; font-weight:600; text-transform:uppercase;">Plan: {curr_level}</div>
             <div style="font-size:36px; color:#ffffff; font-weight:700; margin-top:10px;">RM {curr_balance:.2f}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Invite Friend Module Visual Layout
+        st.markdown(f"""
+        <div class="invite-box">
+            <p style="color:#58a6ff; margin:0; font-size:13px; font-weight:600;">📢 INVITE FRIENDS & EARN MULTIPLIER</p>
+            <p style="color:#8b949e; margin:4px 0 10px 0; font-size:11px;">Share code with friends. Get RM 10.00 instant on registration!</p>
+            <div style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:8px; font-family:monospace; color:#ffffff; font-size:15px; font-weight:700; letter-spacing:1px;">
+                {user_code}
+            </div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -291,7 +339,6 @@ else:
             h_name = st.text_input("Account Holder Name:")
             t_id = st.text_input("Transaction ID (Trx ID):")
             selected_plan = st.selectbox("Select Plan to Activate:", list(LEVELS_CONF.keys()))
-            
             st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
             submit_proof = st.form_submit_button("Submit Proof", use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
@@ -311,14 +358,36 @@ else:
         st.video(st.session_state.admin_video_url)
         st.markdown('</div>', unsafe_allow_html=True)
         
-        st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
-        if st.button("Claim Daily Reward", use_container_width=True):
-            payout = 5.00 if curr_level == "None" else float(LEVELS_CONF[curr_level]["daily_reward"])
-            query_db("UPDATE users SET balance = balance + ? WHERE username=?", (payout, st.session_state.current_user), commit=True)
-            st.success(f"RM {payout:.2f} added to your balance!")
-            st.session_state.current_app_tab = "home"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        current_time = int(time.time())
+        time_passed = current_time - last_claim
+        one_day_seconds = 86400
+        
+        if time_passed < one_day_seconds:
+            seconds_left = one_day_seconds - time_passed
+            hours_left = seconds_left // 3600
+            minutes_left = (seconds_left % 3600) // 60
+            
+            st.markdown(f"""
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 15px;">
+                <p style="color: #f87171; font-size: 13px; margin: 0; font-weight: 500;">
+                    🔒 Next claim available in <b>{hours_left}h {minutes_left}m</b>
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown('<div class="lock-btn-hub">', unsafe_allow_html=True)
+            st.button("Claim Daily Reward (Locked)", disabled=True, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="action-btn-hub">', unsafe_allow_html=True)
+            if st.button("Claim Daily Reward", use_container_width=True):
+                payout = 5.00 if curr_level == "None" else float(LEVELS_CONF[curr_level]["daily_reward"])
+                query_db("UPDATE users SET balance = balance + ?, last_claim_timestamp = ? WHERE username=?", 
+                         (payout, current_time, st.session_state.current_user), commit=True)
+                st.success(f"RM {payout:.2f} added to your balance!")
+                st.session_state.current_app_tab = "home"
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
     # Sticky Footer Navigation
     st.markdown('<div class="bottom-nav-holder">', unsafe_allow_html=True)
