@@ -8,7 +8,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Force wide layout to let the laptop layout space out natively
+# Force wide layout to let the layout space out natively
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="wide")
 
 # --- DATABASE MANAGEMENT ---
@@ -104,9 +104,9 @@ if 'active_sidebar_tab' not in st.session_state: st.session_state.active_sidebar
 if 'verification_stage' not in st.session_state: st.session_state.verification_stage = "closed"
 if 'temp_register_data' not in st.session_state: st.session_state.temp_register_data = {}
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
-if 'auth_view' not in st.session_state: st.session_state.auth_view = "signup"  # Default view is signup now
+if 'auth_view' not in st.session_state: st.session_state.auth_view = "signup"
 
-# --- EXTREME STYLE INJECTION (CLEAN PROFESSIONAL REAL APP LOOK) ---
+# --- STYLE INJECTION ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -144,7 +144,6 @@ st.markdown("""
     }
     .brand-logo-text span { color: #f59e0b !important; }
     
-    /* Clean Professional Sidebar Buttons */
     .stButton>button {
         background: transparent !important;
         color: #475569 !important;
@@ -176,9 +175,7 @@ st.markdown("""
         letter-spacing: 0.5px !important;
         margin-bottom: 24px !important;
     }
-    .master-top-streamer span { color: #f59e0b !important; }
     
-    /* Clean Auth Form Styles */
     .clean-auth-card {
         background: #ffffff !important;
         border: 1px solid #e2e8f0 !important;
@@ -187,7 +184,6 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03) !important;
     }
     
-    /* Normalizing labels to look standard and premium, removing uppercase force */
     label, [data-testid="stWidgetLabel"] p { 
         color: #334155 !important; 
         font-size: 14px !important; 
@@ -204,7 +200,6 @@ st.markdown("""
         padding: 10px 14px !important;
     }
     
-    /* Real Corporate Submit Button Look */
     .form-execution-btn .stButton>button {
         background: #1e75e5 !important;
         color: #ffffff !important;
@@ -222,16 +217,6 @@ st.markdown("""
         color: #ffffff !important;
     }
 
-    /* Switch link text styling */
-    .toggle-link-text {
-        text-align: center !important;
-        font-size: 14px !important;
-        color: #64748b !important;
-        margin-top: 20px !important;
-        cursor: pointer;
-    }
-    
-    /* Post login wallet card items */
     .premium-navy-wallet-card {
         background: #0f172a !important;
         border-radius: 14px !important;
@@ -294,14 +279,14 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# --- CONTROL CONDITION: IF NOT LOGGED IN ---
+# --- UNIFIED ROUTING LOGIC ---
 if not st.session_state.logged_in:
     _, central_block, _ = st.columns([1.1, 1.8, 1.1])
     
     with central_block:
         st.markdown('<br><br><div class="brand-logo-card" style="margin-bottom:25px;"><div class="brand-logo-text">🔱 GLOBAL MATRIX <span>INVESTMENT</span></div></div>', unsafe_allow_html=True)
         
-        # --- OTP SCREEN ---
+        # 1. OTP SCREEN
         if st.session_state.verification_stage == "awaiting_otp":
             st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
             with st.form("secure_otp_form"):
@@ -327,7 +312,7 @@ if not st.session_state.logged_in:
                         st.error("Invalid verification code. Please check again.")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # --- SIGN UP VIEW (DEFAULT VIEW) ---
+        # 2. SIGN UP VIEW
         elif st.session_state.auth_view == "signup":
             st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
             with st.form("identity_register_gateway"):
@@ -366,14 +351,13 @@ if not st.session_state.logged_in:
                         st.error("Please provide a valid email address.")
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # Text Link layout option inside the signup panel to load login view
             c_left, c_mid, c_right = st.columns([1, 4, 1])
             with c_mid:
                 if st.button("Already have an account? Log In", key="switch_to_login"):
                     st.session_state.auth_view = "login"
                     st.rerun()
 
-        # --- SIGN IN VIEW (OLD ACCOUNT LOG IN) ---
+        # 3. SIGN IN VIEW
         elif st.session_state.auth_view == "login":
             st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
             with st.form("identity_login_gateway"):
@@ -407,14 +391,13 @@ if not st.session_state.logged_in:
                         st.error("Please type a valid structured email address.")
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # Text Link layout option inside the login panel to load signup view
             c_left, c_mid, c_right = st.columns([1, 4, 1])
             with c_mid:
                 if st.button("Don't have an account? Create one", key="switch_to_signup"):
                     st.session_state.auth_view = "signup"
                     st.rerun()
 
-# --- MASTER SIDEBAR & CONTENT VIEW (SHOWS ONLY POST LOGIN) ---
+# --- MAIN SYSTEM CONTENT PANEL ---
 else:
     side_pane, main_pane = st.columns([1, 4])
 
@@ -422,7 +405,6 @@ else:
         st.markdown('<div class="custom-sidebar-container">', unsafe_allow_html=True)
         st.markdown('<div class="brand-logo-card"><div class="brand-logo-text">🔱 GLOBAL MATRIX <span>INVESTMENT</span></div></div>', unsafe_allow_html=True)
         
-        # Navigation tabs without emojis or brackets
         if st.button("Dashboard", key="nav_dash"): st.session_state.active_sidebar_tab = "Dashboard"
         if st.button("Tasks", key="nav_tasks"): st.session_state.active_sidebar_tab = "Tasks"
         if st.button("Deposit", key="nav_dep"): st.session_state.active_sidebar_tab = "Deposit"
@@ -443,7 +425,6 @@ else:
         st.markdown('<div class="main-canvas-right">', unsafe_allow_html=True)
         st.markdown('<div class="master-top-streamer">GLOBAL MATRIX INVESTMENT PLATFORM</div>', unsafe_allow_html=True)
         
-        # --- ADMIN PANELS ---
         if st.session_state.is_admin:
             st.markdown("<h3>Admin Server Overrides</h3>", unsafe_allow_html=True)
             st.session_state.admin_video_url = st.text_input("Active Live Task Stream URL Link:", value=st.session_state.admin_video_url)
@@ -463,7 +444,6 @@ else:
                         query_db("UPDATE deposits SET status='REJECTED' WHERE id=?", (d[0],), commit=True)
                         st.rerun()
 
-        # --- ROUTED APP CONTENT ---
         else:
             u_data = query_db("SELECT balance, active_level, ref_code, full_name, last_claim_timestamp FROM users WHERE username=?", (st.session_state.current_user,), one=True)
             bal, lvl, code, title, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", "Matrix User", 0)
@@ -593,10 +573,9 @@ else:
                     for wl in all_withs:
                         c_badge = "c-approved" if wl[1]=="APPROVED" else "c-pending" if wl[1]=="PENDING" else "c-rejected"
                         st.markdown(f'<div class="history-row-item"><div><div class="hist-title-bold" style="color:#b91c1c;">Withdrawal Node Dispatched</div><div class="hist-subtitle-sub">Account Settlement Settlement Line</div></div><div style="text-align:right;"><div class="hist-value-bold" style="color:#b91c1c;">-RM {wl[0]:.2f}</div><span class="clean-badge-capsule {c_badge}">{wl[1]}</span></div></div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
 
             elif st.session_state.active_sidebar_tab == "Settings":
-                st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">Profile Preferences Security Node</div><p style="font-size:13px; color:#475569;">System encryption preferences parameters configuration are locked successfully.</p></div>', unsafe_allow_html=True)
+                st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">Profile Preferences Security Node</div><p style="font-size:13px; color:#475569;">System preferences parameters configuration are locked successfully.</p></div>', unsafe_allow_html=True)
                 
             elif st.session_state.active_sidebar_tab == "Help":
                 st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">Support Desk Assistance Portal Terminal</div><p style="font-size:13px; color:#475569;">Contact center team node at: <b>Salmanveerm@gmail.com</b></p></div>', unsafe_allow_html=True)
