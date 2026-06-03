@@ -8,7 +8,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Force layout to wide to match laptop sidebar structure perfectly
+# Force wide layout to let the laptop layout space out natively
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="wide")
 
 # --- DATABASE MANAGEMENT ---
@@ -74,7 +74,7 @@ def query_db(query, args=(), one=False, commit=False):
         conn.close()
         return None if one else []
 
-# --- REAL EMAIL PIPELINE ---
+# --- REAL EMAIL SYSTEM ---
 def send_real_verification_email(receiver_email, otp_code, user_name):
     try:
         msg = MIMEMultipart()
@@ -92,165 +92,162 @@ def send_real_verification_email(receiver_email, otp_code, user_name):
     except Exception as e:
         return False
 
-# --- EXACT LAPTOP SIDEBAR FRAMEWORK & LIGHT UI CSS ---
+# --- STAGE 3: EXTREME STYLE INJECTION (OVERWRITING STREAMLIT COMPLETELY) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-    /* Clean up default frames */
+    /* Remove streamlit blocks entirely */
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
     
-    .stApp { background-color: #f8fafc !important; }
+    /* Exact canvas background hue matching 1000047457.jpg */
+    .stApp { background-color: #f1f5f9 !important; }
     
-    /* Global Typography Reset */
+    /* Global Inter Font Mapping */
     h1, h2, h3, h4, h5, h6, p, span, div, label, button, input { font-family: 'Inter', sans-serif !important; }
     
-    /* Left Side Menu Sidebar Container Panel */
-    .laptop-left-sidebar {
-        background: #ffffff !important;
-        border-right: 1px solid #e2e8f0;
-        padding: 20px 15px;
-        height: 100vh;
+    /* Left Structural Sidebar Panel Design */
+    .custom-sidebar-container {
+        background-color: #ffffff !important;
+        border-right: 1px solid #e2e8f0 !important;
+        padding: 24px 16px !important;
+        height: 100vh !important;
+        display: flex;
+        flex-direction: column;
     }
     
-    /* Corporate Branding Card inside Sidebar top left */
-    .sidebar-brand-box {
-        background: #0f172a;
-        padding: 12px;
-        border-radius: 8px;
-        text-align: center;
-        margin-bottom: 30px;
+    /* Logo banner precisely matching top left laptop profile */
+    .brand-logo-card {
+        background: #0f172a !important;
+        padding: 14px !important;
+        border-radius: 8px !important;
+        text-align: center !important;
+        margin-bottom: 28px !important;
     }
-    .sidebar-brand-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #ffffff;
-        letter-spacing: 0.5px;
+    .brand-logo-text {
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        letter-spacing: 0.5px !important;
     }
-    .sidebar-brand-title span { color: #f59e0b; }
+    .brand-logo-text span { color: #f59e0b !important; }
     
-    /* Custom Navigation Buttons Framework */
+    /* LEFT 7 NAVIGATION MENUS STYLING */
     .stButton>button {
         background: transparent !important;
         color: #475569 !important;
         border: none !important;
-        padding: 10px 14px !important;
+        padding: 12px 16px !important;
         font-size: 14px !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         text-align: left !important;
         justify-content: flex-start !important;
         width: 100% !important;
         border-radius: 8px !important;
-        margin-bottom: 4px;
-        transition: all 0.2s ease;
+        margin-bottom: 6px !important;
+        transition: all 0.2s ease !important;
     }
     .stButton>button:hover {
         background: #f1f5f9 !important;
-        color: #0f172a !important;
+        color: #1e75e5 !important;
     }
     
-    /* Active highlighted item selection marker mimic */
-    div[data-testid="stHorizontalBlock"] .stButton>button:focus {
-        background: #e2e8f0 !important;
-        color: #0f172a !important;
-        font-weight: 600 !important;
+    /* Main Canvas Right Display Frame spacing */
+    .main-canvas-right {
+        padding: 20px 30px !important;
     }
     
-    /* Main Content Right Box Panel Configuration */
-    .laptop-right-panel {
-        padding: 15px 25px !important;
-    }
-    
-    /* Top Main Corporate Header Element */
-    .top-corporate-bar {
-        background: #0f172a;
-        padding: 14px 20px;
-        border-radius: 10px;
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 15px;
-        letter-spacing: 0.5px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .top-corporate-bar span { color: #f59e0b; }
-    
-    /* Exact Wallet Content Box Module Frame */
-    .wallet-mainframe-card {
+    /* Master Corporate Header Streamer */
+    .master-top-streamer {
         background: #0f172a !important;
-        border-radius: 12px;
-        padding: 22px;
+        padding: 16px 20px !important;
+        border-radius: 12px !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(15,23,42,0.08);
-        margin-bottom: 18px;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 24px !important;
     }
-    .wallet-caption-line { font-size: 11px; color: #94a3b8; font-weight: 500; text-transform: uppercase; }
-    .wallet-holder-identity { font-size: 22px; font-weight: 700; color: #ffffff; margin-top: 2px; margin-bottom: 15px; }
+    .master-top-streamer span { color: #f59e0b !important; }
     
-    /* Inner Row Layout Flex Blocks */
-    .wallet-splits-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid rgba(255,255,255,0.08);
-        padding-top: 14px;
+    /* EXACT EARNINGS CARD BOX (Navy Blue Block from screenshot 1000047457.jpg) */
+    .premium-navy-wallet-card {
+        background: #0f172a !important;
+        border-radius: 14px !important;
+        padding: 24px !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15) !important;
+        margin-bottom: 20px !important;
     }
-    .split-data-block { flex: 1; }
-    .split-data-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 600; }
-    .split-data-val { font-size: 19px; font-weight: 700; color: #ffffff; margin-top: 2px; }
+    .wallet-header-caption { font-size: 11px !important; color: #94a3b8 !important; font-weight: 500 !important; text-transform: uppercase; }
+    .wallet-user-title { font-size: 24px !important; font-weight: 700 !important; color: #ffffff !important; margin-top: 4px; margin-bottom: 18px; }
     
-    /* Quick Actions Static Display Links */
-    .pills-layout-row { display: flex; gap: 12px; margin-bottom: 18px; }
-    .pill-blue-item { background: #1e75e5; color: white; padding: 11px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; flex: 1; text-align: center; }
-    .pill-green-item { background: #22c55e; color: white; padding: 11px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; flex: 1; text-align: center; }
-    
-    /* Standard Light Panels */
-    .laptop-widget-box {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 16px;
+    /* Clean Internal Flex Split Row */
+    .wallet-data-split-flex {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding-top: 16px !important;
     }
-    .widget-box-title { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .wallet-data-chunk { flex: 1; }
+    .chunk-title-lbl { font-size: 11px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 600; }
+    .chunk-amount-val { font-size: 20px !important; font-weight: 700 !important; color: #ffffff !important; margin-top: 2px; }
     
-    /* Clean Logs Table Configuration */
-    .clean-table-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 12px;
+    /* QUICK ACTIONS BUTTONS (Exact color hex match from image) */
+    .action-pills-row { display: flex !important; gap: 14px !important; margin-bottom: 22px !important; }
+    .pill-blue-button { background: #1e75e5 !important; color: white !important; padding: 12px 20px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 700 !important; flex: 1 !important; text-align: center !important; box-shadow: 0 4px 12px rgba(30,117,229,0.15); }
+    .pill-green-button { background: #22c55e !important; color: white !important; padding: 12px 20px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 700 !important; flex: 1 !important; text-align: center !important; box-shadow: 0 4px 12px rgba(34,197,94,0.15); }
+    
+    /* Clean White Box Components */
+    .clean-white-card-widget {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.01) !important;
     }
-    .clean-table-row:last-child { border-bottom: none; }
-    .col-main-txt { font-weight: 600; color: #334155; }
-    .col-sub-txt { font-size: 10px; color: #64748b; margin-top: 1px; }
-    .col-val-bold { font-weight: 700; color: #0f172a; text-align: right; }
+    .card-widget-header { font-size: 14px !important; font-weight: 700 !important; color: #0f172a !important; margin-bottom: 14px !important; text-transform: uppercase; }
     
-    .badge-node-status { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-top: 3px; display: inline-block; }
-    .b-approved { background: #dcfce7; color: #15803d; }
-    .b-pending { background: #fef3c7; color: #b45309; }
-    .b-rejected { background: #fee2e2; color: #b91c1c; }
+    /* Modern Grid Execution for Sejarah Transactions rows */
+    .history-row-item {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 12px 0 !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        font-size: 13px !important;
+    }
+    .history-row-item:last-child { border-bottom: none !important; }
+    .hist-title-bold { font-weight: 600 !important; color: #334155 !important; }
+    .hist-subtitle-sub { font-size: 11px !important; color: #64748b !important; margin-top: 2px; }
+    .hist-value-bold { font-weight: 700 !important; color: #0f172a !important; text-align: right; }
     
-    /* Inputs Override styling */
-    label, [data-testid="stWidgetLabel"] p { color: #475569 !important; font-size: 11px !important; font-weight: 600 !important; }
-    .stTextInput input, .stNumberInput input, div[data-baseweb="select"] { background-color: #ffffff !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; }
+    /* Pill Status Badges */
+    .clean-badge-capsule { font-size: 10px !important; font-weight: 700 !important; padding: 3px 8px !important; border-radius: 4px !important; text-transform: uppercase; display: inline-block; margin-top: 4px; }
+    .c-approved { background: #dcfce7 !important; color: #15803d !important; }
+    .c-pending { background: #fef3c7 !important; color: #b45309 !important; }
+    .c-rejected { background: #fee2e2 !important; color: #b91c1c !important; }
     
-    .form-btn-submit .stButton>button {
+    /* Inputs Styling Customization Override */
+    label, [data-testid="stWidgetLabel"] p { color: #475569 !important; font-size: 11px !important; font-weight: 600 !important; text-transform: uppercase; }
+    .stTextInput input, .stNumberInput input, div[data-baseweb="select"] { background-color: #ffffff !important; border: 1px solid #cbd5e1 !important; border-radius: 8px !important; color: #0f172a !important; }
+    
+    /* Submission Button Frame alignment */
+    .form-execution-btn .stButton>button {
         background: #0f172a !important;
         color: #ffffff !important;
         text-align: center !important;
         justify-content: center !important;
-        font-weight: 600 !important;
-        font-size: 13px !important;
-        padding: 10px 0 !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        padding: 12px 0 !important;
+        border-radius: 8px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -261,7 +258,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# Session State Controls
+# Persistent State Management Routing
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -271,41 +268,41 @@ if 'verification_stage' not in st.session_state: st.session_state.verification_s
 if 'temp_register_data' not in st.session_state: st.session_state.temp_register_data = {}
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 
-# Master Frame Grid Layout Split (Left Sidebar 7 Options vs Right Main Panel View)
-side_pane, main_pane = st.columns([1, 3])
+# --- MASTER FRAME SIDEBAR DIVISION ---
+side_pane, main_pane = st.columns([1, 4])
 
 with side_pane:
-    st.markdown('<div class="laptop-left-sidebar">', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-brand-box"><div class="sidebar-brand-title">🔱 GLOBAL MATRIX <span>INVESTMENT</span></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="custom-sidebar-container">', unsafe_allow_html=True)
+    st.markdown('<div class="brand-logo-card"><div class="brand-logo-text">🔱 GLOBAL MATRIX <span>INVESTMENT</span></div></div>', unsafe_allow_html=True)
     
-    # Same 7 left side choices from your laptop dashboard layout blueprint
-    if st.button("📊 Dashboard", key="btn_side_dash"): st.session_state.active_sidebar_tab = "Dashboard"
-    if st.button("📺 Tasks", key="btn_side_tasks"): st.session_state.active_sidebar_tab = "Tasks"
-    if st.button("💰 Deposit", key="btn_side_dep"): st.session_state.active_sidebar_tab = "Deposit"
-    if st.button("💸 Withdrawal", key="btn_side_with"): st.session_state.active_sidebar_tab = "Withdrawal"
-    if st.button("⏳ History", key="btn_side_hist"): st.session_state.active_sidebar_tab = "History"
-    if st.button("⚙️ Settings", key="btn_side_sett"): st.session_state.active_sidebar_tab = "Settings"
-    if st.button("❓ Help", key="btn_side_help"): st.session_state.active_sidebar_tab = "Help"
+    # Left Side Options exactly matching layout requested
+    if st.button("📊 Dashboard", key="nav_dash"): st.session_state.active_sidebar_tab = "Dashboard"
+    if st.button("📺 Tasks", key="nav_tasks"): st.session_state.active_sidebar_tab = "Tasks"
+    if st.button("💰 Deposit", key="nav_dep"): st.session_state.active_sidebar_tab = "Deposit"
+    if st.button("💸 Withdrawal", key="nav_with"): st.session_state.active_sidebar_tab = "Withdrawal"
+    if st.button("⏳ History", key="nav_hist"): st.session_state.active_sidebar_tab = "History"
+    if st.button("⚙️ Settings", key="nav_sett"): st.session_state.active_sidebar_tab = "Settings"
+    if st.button("❓ Help", key="nav_help"): st.session_state.active_sidebar_tab = "Help"
     
     st.markdown('<br><hr style="border-color:#e2e8f0;"><br>', unsafe_allow_html=True)
     if st.session_state.logged_in:
-        if st.button("🚪 Disconnect Session", key="btn_side_logout"):
+        if st.button("🚪 Disconnect", key="nav_logout"):
             st.session_state.logged_in = False
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 with main_pane:
-    st.markdown('<div class="laptop-right-panel">', unsafe_allow_html=True)
-    st.markdown('<div class="top-corporate-bar">🔱 GLOBAL MATRIX <span>INVESTMENT</span> PANEL</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-canvas-right">', unsafe_allow_html=True)
+    st.markdown('<div class="master-top-streamer">🔱 GLOBAL MATRIX <span>INVESTMENT</span> SYSTEM</div>', unsafe_allow_html=True)
     
-    # --- AUTH GATES FOR SECURE ACCOUNTS ---
+    # --- AUTH SEGMENT PIPELINE ---
     if not st.session_state.logged_in:
         if st.session_state.verification_stage == "awaiting_otp":
-            with st.form("otp_gate_form"):
-                st.markdown(f"<p style='font-size:12px; color:#475569;'>Enter security code node dispatched to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p>", unsafe_allow_html=True)
-                u_otp = st.text_input("Enter 6-Digit Code Parameter:", max_chars=6)
-                st.markdown('<div class="form-btn-submit">', unsafe_allow_html=True)
-                btn_v = st.form_submit_button("Authenticate Verification Vector", use_container_width=True)
+            with st.form("secure_otp_form"):
+                st.markdown(f"<p style='font-size:12px; color:#475569;'>Enter security verification code dispatched to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p>", unsafe_allow_html=True)
+                u_otp = st.text_input("6-Digit OTP Token Input:", max_chars=6)
+                st.markdown('<div class="form-execution-btn">', unsafe_allow_html=True)
+                btn_v = st.form_submit_button("Verify Account Profile Token", use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
                 if btn_v:
                     if u_otp.strip() == st.session_state.generated_otp:
@@ -319,16 +316,16 @@ with main_pane:
                         st.session_state.verification_stage = "closed"
                         st.session_state.active_sidebar_tab = "Dashboard"
                         st.rerun()
-                    else: st.error("Mismatched security string execution parameters.")
+                    else: st.error("Mismatched dynamic routing security keys.")
         else:
-            with st.form("identity_gate_portal"):
-                st.markdown("<p style='font-size:12px; font-weight:700; color:#0f172a; margin-bottom:10px;'>ACCESS HUB CREDENTIAL GATEWAY</p>", unsafe_allow_html=True)
-                reg_name = st.text_input("Full Profile Label Name (New Users Only):")
-                reg_email = st.text_input("Account Identity Route Email Address:")
-                reg_pass = st.text_input("Security String Encryption Key Password:", type="password")
-                reg_invite_code = st.text_input("Referral Network Node Code (Optional):")
-                st.markdown('<div class="form-btn-submit">', unsafe_allow_html=True)
-                login_submit = st.form_submit_button("ACCESS ROUTE OR REGISTER INITIAL TOKEN", use_container_width=True)
+            with st.form("identity_access_gateway"):
+                st.markdown("<p style='font-size:13px; font-weight:700; color:#0f172a; margin-bottom:12px; text-align:center;'>ACCESS CREDENTIAL NODE DOORWAY</p>", unsafe_allow_html=True)
+                reg_name = st.text_input("User Core Full Display Name:")
+                reg_email = st.text_input("Secure Account Routing Email:")
+                reg_pass = st.text_input("Password Encryption Credential:", type="password")
+                reg_invite_code = st.text_input("Affiliate Invitation Network Node (Optional):")
+                st.markdown('<div class="form-execution-btn">', unsafe_allow_html=True)
+                login_submit = st.form_submit_button("OPEN PROFILE NODE OR SIGN-IN INSTANTLY", use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
                 
                 if login_submit:
@@ -346,7 +343,7 @@ with main_pane:
                             st.session_state.active_sidebar_tab = "Dashboard"
                             st.rerun()
                         else:
-                            if not reg_name.strip(): st.error("Declaration profile block name token entry missing.")
+                            if not reg_name.strip(): st.error("Please supply valid configuration owner names.")
                             else:
                                 f_ref = "None"
                                 if reg_invite_code.strip():
@@ -354,176 +351,176 @@ with main_pane:
                                     if match: f_ref = reg_invite_code.strip()
                                 st.session_state.generated_otp = str(random.randint(100000, 999999))
                                 st.session_state.temp_register_data = {"name": reg_name.strip(), "email": em_clean, "ref_by": f_ref}
-                                with st.spinner("Processing token transmission route..."):
+                                with st.spinner("Dispatching verification stream node..."):
                                     send_real_verification_email(em_clean, st.session_state.generated_otp, reg_name.strip())
                                 st.session_state.verification_stage = "awaiting_otp"
                                 st.rerun()
 
-    # --- ADMIN NODE PIPELINE MANAGER ---
+    # --- ADMIN ROOT CONSOLE ---
     elif st.session_state.logged_in and st.session_state.is_admin:
         st.markdown("<h3>Admin Server Overrides</h3>", unsafe_allow_html=True)
         st.session_state.admin_video_url = st.text_input("Active Live Task Stream URL Link:", value=st.session_state.admin_video_url)
         
-        st.markdown("**Pending Sync Node Requests Verification Logs**")
+        st.markdown("**Pending Synchronization Verification Logs Ledger**")
         deps = query_db("SELECT * FROM deposits WHERE status='PENDING'")
         for d in deps:
-            st.markdown(f"<div style='background:#ffffff; border:1px solid #e2e8f0; padding:10px; border-radius:6px; margin-bottom:5px; font-size:12px;'>Target User: {d[1]} | Volume size: <b>RM {d[3]}</b><br>Trx Identification Key: <code>{d[6]}</code></div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='background:#ffffff; border:1px solid #cbd5e1; padding:12px; border-radius:6px; margin-bottom:6px; font-size:12px;'>User Target: {d[1]} | Capacity: <b>RM {d[3]}</b><br>Hash Reference ID: <code>{d[6]}</code></div>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
-                if st.button("Confirm Sync Route", key=f"ad_{d[0]}"):
+                if st.button("Confirm Allocation", key=f"ad_{d[0]}"):
                     query_db("UPDATE users SET active_level=? WHERE username=?", (d[2], d[1]), commit=True)
                     query_db("UPDATE deposits SET status='APPROVED' WHERE id=?", (d[0],), commit=True)
                     st.rerun()
             with c2:
-                if st.button("Drop Allocation Request Token", key=f"rd_{d[0]}"):
+                if st.button("Drop Allocation Request", key=f"rd_{d[0]}"):
                     query_db("UPDATE deposits SET status='REJECTED' WHERE id=?", (d[0],), commit=True)
                     st.rerun()
 
-    # --- CORE USER INTERFACE DISPATCH NAVIGATION ROUTERS ---
+    # --- ROUTED DESKTOP VIEW APPLICATION CANVAS ---
     else:
         u_data = query_db("SELECT balance, active_level, ref_code, full_name, last_claim_timestamp FROM users WHERE username=?", (st.session_state.current_user,), one=True)
         bal, lvl, code, title, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", "Matrix User", 0)
         
-        # TAB 1: SIDEBAR OPTION 'DASHBOARD'
+        # 1. OPTION SIDEBAR NAVIGATION: DASHBOARD
         if st.session_state.active_sidebar_tab == "Dashboard":
-            # FIXED CLEAN WALLET: HTML Raw strings code completely replaced with native structural blocks
+            # FIXED PREMIUM WALLET CARD: Native secure parsing layout matching image 1000047457.jpg
             st.markdown(f"""
-            <div class="wallet-mainframe-card">
-                <div class="wallet-caption-line">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
-                <div class="wallet-holder-identity">👤 Account Holder: {title}</div>
+            <div class="premium-navy-wallet-card">
+                <div class="wallet-header-caption">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
+                <div class="wallet-user-title">👤 {title}</div>
                 
-                <div class="wallet-splits-row">
-                    <div class="split-data-block">
-                        <div class="split-data-label">Dompet Perolehan Saya (My Earnings Wallet)</div>
-                        <div class="split-data-val">RM {bal:.2f}</div>
+                <div class="wallet-data-split-flex">
+                    <div class="wallet-data-chunk">
+                        <div class="chunk-title-lbl">Dompet Perolehan Saya</div>
+                        <div class="chunk-amount-val">RM {bal:.2f}</div>
                     </div>
-                    <div class="split-data-block" style="text-align: right;">
-                        <div class="split-data-label">Ready For Extraction Withdrawal</div>
-                        <div class="split-data-val" style="color: #22c55e;">RM {bal:.2f}</div>
+                    <div class="wallet-data-chunk" style="text-align: right;">
+                        <div class="chunk-title-lbl">Ready For Withdrawal</div>
+                        <div class="chunk-amount-val" style="color: #22c55e;">RM {bal:.2f}</div>
                     </div>
                 </div>
             </div>
             
-            <div class="pills-layout-row">
-                <div class="pill-blue-item">🔹 Deposit Dana System Active</div>
-                <div class="pill-green-item">🔸 Tarik Perolehan Connected</div>
+            <div class="action-pills-row">
+                <div class="pill-blue-button">🔹 Deposit Dana Portal</div>
+                <div class="pill-green-button">🔸 Tarik Perolehan Hub</div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Referral Widget Section
+            # Referral Tracking Box Widget
             st.markdown(f"""
-            <div class="laptop-widget-box">
-                <div class="widget-box-title">👥 PARTNER INVITATION NETWORK LINK</div>
-                <div style="font-size:12px; color:#475569;">Distribute your assignment tag to secure instant RM 10.00 platform credits bonus:</div>
-                <div style="background:#f1f5f9; padding:10px; border-radius:6px; font-family:monospace; font-weight:700; font-size:15px; text-align:center; color:#1e75e5; margin-top:8px; border:1px dashed #cbd5e1;">{code}</div>
+            <div class="clean-white-card-widget">
+                <div class="card-widget-header">👥 SYSTEM REFERRAL INVITATION LINKS</div>
+                <div style="font-size:12px; color:#475569;">Share assignments node to snap an instant RM 10.00 cash voucher credit bonus:</div>
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; font-family:monospace; font-weight:700; font-size:15px; text-align:center; color:#1e75e5; margin-top:10px; border:1px dashed #cbd5e1;">{code}</div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Recent Transaction Table inside Dashboard view directly matching screenshot structure
-            st.markdown('<div class="laptop-widget-box"><div class="widget-box-title">Sejarah Transaksi Terkini</div>', unsafe_allow_html=True)
+            # Exact Realtime Ledger Box matching screenshot card exactly
+            st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">Sejarah Transaksi Terkini</div>', unsafe_allow_html=True)
             dep_logs = query_db("SELECT level, amount, status FROM deposits WHERE user=? ORDER BY id DESC LIMIT 2", (st.session_state.current_user,))
             w_logs = query_db("SELECT amount, status FROM withdrawals WHERE user=? ORDER BY id DESC LIMIT 2", (st.session_state.current_user,))
             
             if not dep_logs and not w_logs:
-                st.markdown("<p style='font-size:11px; color:#64748b; text-align:center; padding:10px;'>No database ledger operations recorded yet.</p>", unsafe_allow_html=True)
+                st.markdown("<p style='font-size:12px; color:#64748b; text-align:center; padding:12px;'>No structural ledger operations mapped to profile history.</p>", unsafe_allow_html=True)
             else:
                 for dl in dep_logs:
-                    b_cls = "b-approved" if dl[2]=="APPROVED" else "b-pending" if dl[2]=="PENDING" else "b-rejected"
-                    st.markdown(f'<div class="clean-table-row"><div><div class="col-main-txt">Deposit Dana Portal</div><div class="col-sub-txt">Allocation Node: {dl[0]}</div></div><div style="text-align:right;"><div class="col-val-bold">RM {dl[1]:.2f}</div><span class="badge-node-status {b_cls}">{dl[2]}</span></div></div>', unsafe_allow_html=True)
+                    c_badge = "c-approved" if dl[2]=="APPROVED" else "c-pending" if dl[2]=="PENDING" else "c-rejected"
+                    st.markdown(f'<div class="history-row-item"><div><div class="hist-title-bold">Deposit Dana Portal</div><div class="hist-subtitle-sub">Assigned Node Level: {dl[0]}</div></div><div style="text-align:right;"><div class="hist-value-bold">RM {dl[1]:.2f}</div><span class="clean-badge-capsule {c_badge}">{dl[2]}</span></div></div>', unsafe_allow_html=True)
                 for wl in w_logs:
-                    b_cls = "b-approved" if wl[1]=="APPROVED" else "b-pending" if wl[1]=="PENDING" else "b-rejected"
-                    st.markdown(f'<div class="clean-table-row"><div><div class="col-main-txt" style="color:#b91c1c;">Tarik Perolehan Dispatch</div><div class="col-sub-txt">System Extraction Wire</div></div><div style="text-align:right;"><div class="col-val-bold" style="color:#b91c1c;">-RM {wl[0]:.2f}</div><span class="badge-node-status {b_cls}">{wl[1]}</span></div></div>', unsafe_allow_html=True)
+                    c_badge = "c-approved" if wl[1]=="APPROVED" else "c-pending" if wl[1]=="PENDING" else "c-rejected"
+                    st.markdown(f'<div class="history-row-item"><div><div class="hist-title-bold" style="color:#b91c1c;">Tarik Perolehan Dispatch</div><div class="hist-subtitle-sub">Distribution Line Clearance</div></div><div style="text-align:right;"><div class="hist-value-bold" style="color:#b91c1c;">-RM {wl[0]:.2f}</div><span class="clean-badge-capsule {c_badge}">{wl[1]}</span></div></div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # TAB 2: SIDEBAR OPTION 'TASKS'
+        # 2. OPTION SIDEBAR NAVIGATION: TASKS
         elif st.session_state.active_sidebar_tab == "Tasks":
-            st.markdown('<div class="laptop-widget-box"><div class="widget-box-title">Tugasan Tontonan & Bonus Streams</div>', unsafe_allow_html=True)
+            st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">Tugasan Tontonan & Earn Streams Portal</div>', unsafe_allow_html=True)
             st.video(st.session_state.admin_video_url)
             
             c_time = int(time.time())
             diff = c_time - claim_stamp
             if diff < 86400:
                 rem = 86400 - diff
-                st.markdown(f"<div style='background:#fee2e2; border:1px solid #fca5a5; padding:10px; border-radius:6px; color:#b91c1c; font-size:12px; text-align:center; font-weight:500;'>🔒 Operational Cycle Locked. Next access window opens in: <b>{rem//3600}h {(rem%3600)//60}m</b></div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background:#fee2e2; border:1px solid #fca5a5; border-radius:6px; padding:12px; color:#b91c1c; font-size:12px; text-align:center; font-weight:600;'>🔒 Task reward processing pipeline cold lock. Re-opens in: {rem//3600}h {(rem%3600)//60}m</div>", unsafe_allow_html=True)
             else:
-                st.markdown('<div class="form-btn-submit" style="margin-top:12px;">', unsafe_allow_html=True)
-                if st.button("Tonton & Peroleh Instant Yield Reward", key="btn_execute_task_yield"):
+                st.markdown('<div class="form-execution-btn" style="margin-top:14px;">', unsafe_allow_html=True)
+                if st.button("Confirm Media stream Watch Completion Reward"):
                     bonus = 5.00 if lvl == "None" else float(LEVELS_CONF[lvl]["daily_reward"])
                     query_db("UPDATE users SET balance = balance + ?, last_claim_timestamp = ? WHERE username=?", (bonus, c_time, st.session_state.current_user), commit=True)
-                    st.success(f"System yield update verification confirmed: +RM {bonus:.2f}")
+                    st.success(f"System distribution logs verified: Added +RM {bonus:.2f}")
                     st.session_state.active_sidebar_tab = "Dashboard"
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # TAB 3: SIDEBAR OPTION 'DEPOSIT'
+        # 3. OPTION SIDEBAR NAVIGATION: DEPOSIT
         elif st.session_state.active_sidebar_tab == "Deposit":
-            st.markdown('<div class="widget-box-title">Available Activation Tiers Matrix</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-widget-header">Available Subscription Vault Deployment Matrix</div>', unsafe_allow_html=True)
             for ln, ld in LEVELS_CONF.items():
                 st.markdown(f"""
-                <div style='background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;'>
+                <div style='background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;'>
                     <div>
                         <div style='font-size:13px; font-weight:700; color:#0f172a;'>{ln}</div>
-                        <div style='font-size:11px; color:#64748b;'>Daily Task Revenue Margin: <span style='color:#22c55e; font-weight:600;'>RM {ld['daily_reward']}</span></div>
+                        <div style='font-size:11px; color:#64748b;'>Daily Task Allocation Yield: <span style='color:#22c55e; font-weight:600;'>RM {ld['daily_reward']}</span></div>
                     </div>
                     <div style='font-size:14px; font-weight:700; color:#1e75e5;'>RM {ld['cost']}</div>
                 </div>
                 """, unsafe_allow_html=True)
                 
-            with st.form("deposit_submission_form"):
-                st.markdown('<p style="font-size:12px; font-weight:600; color:#0f172a;">HANTAR BUKTI SLIP DEPOSIT PORTAL</p>', unsafe_allow_html=True)
-                holder = st.text_input("Account Holder Verification Submitter Name:")
-                tx_str = st.text_input("Unique System Reference Transaction ID (Trx ID):")
-                p_select = st.selectbox("Choose Target Allocation Tier Plan Node:", list(LEVELS_CONF.keys()))
-                st.markdown('<div class="form-btn-submit">', unsafe_allow_html=True)
-                btn_d = st.form_submit_button("Hantar Slip Deposit Now Verification", use_container_width=True)
+            with st.form("deposit_confirmation_hub"):
+                st.markdown('<p style="font-size:12px; font-weight:700; color:#0f172a;">HANTAR BUKTI SLIP DEPOSIT PORTAL</p>', unsafe_allow_html=True)
+                holder = st.text_input("Depositor Submitter Profile Name Verification:")
+                tx_str = st.text_input("Network Unique Transaction Reference Hash Code (Trx ID):")
+                p_select = st.selectbox("Select Target Investment Allocation Tier Plan:", list(LEVELS_CONF.keys()))
+                st.markdown('<div class="form-execution-btn">', unsafe_allow_html=True)
+                btn_d = st.form_submit_button("Hantar Slip Deposit Node Now", use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
                 if btn_d and holder and tx_str:
-                    query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)", (st.session_state.current_user, p_select, LEVELS_CONF[p_select]["cost"], "TNG/Bank Gateway", holder, tx_str, "PENDING"), commit=True)
-                    st.success("Verification parameters successfully mapped to secure ledger logs. Awaiting confirmation.")
+                    query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)", (st.session_state.current_user, p_select, LEVELS_CONF[p_select]["cost"], "TNG/Online Bank Trans", holder, tx_str, "PENDING"), commit=True)
+                    st.success("Ledger entry requested successfully. Admin approval synchronization underway.")
                     st.rerun()
 
-        # TAB 4: SIDEBAR OPTION 'WITHDRAWAL'
+        # 4. OPTION SIDEBAR NAVIGATION: WITHDRAWAL
         elif st.session_state.active_sidebar_tab == "Withdrawal":
-            with st.form("withdrawal_execution_form"):
-                st.markdown('<p style="font-size:12px; font-weight:600; color:#0f172a;">TARIK PEROLEHAN HUB CASH OUT OUTFLOW</p>', unsafe_allow_html=True)
-                w_val = st.number_input("Desired Cash Out Volume (RM):", min_value=10.0, step=5.0)
-                w_net = st.text_input("Routing Destination Channel Addresses Details:")
-                st.markdown('<div class="form-btn-submit">', unsafe_allow_html=True)
-                btn_w = st.form_submit_button("Deploy Cashout Settlement Wire", use_container_width=True)
+            with st.form("withdrawal_request_terminal"):
+                st.markdown('<p style="font-size:12px; font-weight:700; color:#0f172a;">TARIK PEROLEHAN VALUATION FUNDS DISPATCH</p>', unsafe_allow_html=True)
+                w_val = st.number_input("Desired Balance Cashout Outflow (RM):", min_value=10.0, step=5.0)
+                w_net = st.text_input("Target Account Settlement Routing Coordinates Bank Details:")
+                st.markdown('<div class="form-execution-btn">', unsafe_allow_html=True)
+                btn_w = st.form_submit_button("Deploy Settlement Distribution Line Wire", use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
                 if btn_w:
                     if w_val <= bal:
                         if w_net.strip():
                             query_db("UPDATE users SET balance = balance - ? WHERE username=?", (w_val, st.session_state.current_user), commit=True)
                             query_db("INSERT INTO withdrawals (user, amount, wallet_details, status) VALUES (?, ?, ?, ?)", (st.session_state.current_user, w_val, w_net.strip(), "PENDING"), commit=True)
-                            st.success("Extraction parameters locked down. System routing active.")
+                            st.success("Settlement liquidation pipelines activated successfully.")
                             st.rerun()
-                        else: st.error("Target routing coordinates string can't be empty.")
-                    else: st.error("Account balance threshold limits error.")
+                        else: st.error("Target deployment bank parameter cannot be blank.")
+                    else: st.error("Available credit thresholds balance limits violated.")
 
-        # TAB 5: SIDEBAR OPTION 'HISTORY'
+        # 5. OPTION SIDEBAR NAVIGATION: HISTORY
         elif st.session_state.active_sidebar_tab == "History":
-            st.markdown('<div class="laptop-widget-box"><div class="widget-box-title">Complete System Ledger Operation History Logs</div>', unsafe_allow_html=True)
+            st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">Complete Unified Account Balance History Logs</div>', unsafe_allow_html=True)
             all_deps = query_db("SELECT level, amount, status FROM deposits WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
             all_withs = query_db("SELECT amount, status FROM withdrawals WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
             
             if not all_deps and not all_withs:
-                st.markdown("<p style='font-size:12px; color:#64748b; text-align:center;'>No historical timeline entry records mapped.</p>", unsafe_allow_html=True)
+                st.markdown("<p style='font-size:12px; color:#64748b; text-align:center;'>No historical server data captured under token signature.</p>", unsafe_allow_html=True)
             else:
                 for dl in all_deps:
-                    b_cls = "b-approved" if dl[2]=="APPROVED" else "b-pending" if dl[2]=="PENDING" else "b-rejected"
-                    st.markdown(f'<div class="clean-table-row"><div><div class="col-main-txt">Deposit Node Allocation</div><div class="col-sub-txt">Tier Rank: {dl[0]}</div></div><div style="text-align:right;"><div class="col-val-bold">RM {dl[1]:.2f}</div><span class="badge-node-status {b_cls}">{dl[2]}</span></div></div>', unsafe_allow_html=True)
+                    c_badge = "c-approved" if dl[2]=="APPROVED" else "c-pending" if dl[2]=="PENDING" else "c-rejected"
+                    st.markdown(f'<div class="history-row-item"><div><div class="hist-title-bold">Deposit Node Registry</div><div class="hist-subtitle-sub">Tier Category Blueprint: {dl[0]}</div></div><div style="text-align:right;"><div class="hist-value-bold">RM {dl[1]:.2f}</div><span class="clean-badge-capsule {c_badge}">{dl[2]}</span></div></div>', unsafe_allow_html=True)
                 for wl in all_withs:
-                    b_cls = "b-approved" if wl[1]=="APPROVED" else "b-pending" if wl[1]=="PENDING" else "b-rejected"
-                    st.markdown(f'<div class="clean-table-row"><div><div class="col-main-txt" style="color:#b91c1c;">Tarik Perolehan Cashout</div><div class="col-sub-txt">Network Node Wire</div></div><div style="text-align:right;"><div class="col-val-bold" style="color:#b91c1c;">-RM {wl[0]:.2f}</div><span class="badge-node-status {b_cls}">{wl[1]}</span></div></div>', unsafe_allow_html=True)
+                    c_badge = "c-approved" if wl[1]=="APPROVED" else "c-pending" if wl[1]=="PENDING" else "c-rejected"
+                    st.markdown(f'<div class="history-row-item"><div><div class="hist-title-bold" style="color:#b91c1c;">Tarik Perolehan Distribution</div><div class="hist-subtitle-sub">Account Token Settlement Wire</div></div><div style="text-align:right;"><div class="hist-value-bold" style="color:#b91c1c;">-RM {wl[0]:.2f}</div><span class="clean-badge-capsule {c_badge}">{wl[1]}</span></div></div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # TAB 6 & 7: SETTINGS & HELP SKELETONS
+        # 6 & 7. OPTION SIDEBAR NAVIGATION: SETTINGS & HELP PANELS
         elif st.session_state.active_sidebar_tab == "Settings":
-            st.markdown('<div class="laptop-widget-box"><div class="widget-box-title">⚙️ User Node Preference Profile Settings</div><p style="font-size:12px; color:#475569;">Security configurations and profile encryption matrices are operational and locked securely.</p></div>', unsafe_allow_html=True)
+            st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">⚙️ Secure Profile Configuration Preferences</div><p style="font-size:12px; color:#475569;">System encryption vectors and security node parameters are operational, up to date, and locked securely.</p></div>', unsafe_allow_html=True)
             
         elif st.session_state.active_sidebar_tab == "Help":
-            st.markdown('<div class="laptop-widget-box"><div class="widget-box-title">❓ Help Desk Support Portal</div><p style="font-size:12px; color:#475569;">If you experience transaction processing lags or network parameter drops, coordinate with support team instantly at: <b>Salmanveerm@gmail.com</b></p></div>', unsafe_allow_html=True)
+            st.markdown('<div class="clean-white-card-widget"><div class="card-widget-header">❓ Help Desk Support Portal Terminal</div><p style="font-size:12px; color:#475569;">If you experience authorization lag matrix or deposit transaction clearance processing drops, coordinate with our support dispatch node instantly at: <b>Salmanveerm@gmail.com</b></p></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
