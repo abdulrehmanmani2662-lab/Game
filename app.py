@@ -127,7 +127,7 @@ if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 # --- GLOBAL STYLING ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=700;800;900&display=swap" rel="stylesheet">
     
     <style>
     [data-testid="stSidebar"], footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
@@ -158,7 +158,7 @@ st.markdown("""
     .clean-auth-card {
         background: #ffffff !important;
         border: 2px solid #cbd5e1 !important;
-        border-radius: 166px !important;
+        border-radius: 16px !important;
         padding: 24px !important;
         max-width: 450px;
         margin: 15px auto !important;
@@ -233,7 +233,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# --- AUTH PANELS PIPELINE ---
+# --- AUTH PANELS PIPELINE (ONLY VISIBLE WHEN OUTSIDE APPLICATION) ---
 if not st.session_state.logged_in:
     st.markdown('<div class="app-brand-header">🔱 GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
     
@@ -330,13 +330,14 @@ if not st.session_state.logged_in:
                     else: st.error("Credentials security pairing failed database matching.")
         st.markdown('</div>', unsafe_allow_html=True)
         
+        # CREATE ACCOUNT BUTTONS ONLY FOR LOGIN PAGE SCREEN AREA
         c1, c2 = st.columns(2)
         with c1:
             if st.button("Create Profile Account"): st.session_state.auth_view = "signup"; st.rerun()
         with c2:
             if st.button("🔑 Forgot Passwords?"): st.session_state.auth_view = "forgot_password_request"; st.rerun()
 
-# --- MAIN WORKSPACE INTERFACE ---
+# --- MAIN LOGGED-IN PORTAL INTERFACE WORKSPACE ---
 else:
     if st.session_state.is_admin:
         st.markdown('<div class="app-brand-header">🚨 MASTER CONTROL PANEL (ADMIN)</div>', unsafe_allow_html=True)
@@ -414,8 +415,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- 100% SECURE NATIVE HTML INTERFACE NAVIGATION HUB ---
-        # Direct execution injection pipeline via embedded frames to completely bypass Streamlit Attribute drops.
+        # --- 100% SECURE NATIVE HTML INTERFACE NAVIGATION HUB (ONLY LOADS INSIDE DASHBOARD) ---
         html_nav_component = """
         <style>
             .custom-btn-container {
