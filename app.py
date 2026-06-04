@@ -7,6 +7,7 @@ import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import streamlit.components.v1 as components
 
 # Global app setting
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="wide")
@@ -123,7 +124,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- IMMUNE DYNAMIC MIXED KEY-BASED CSS ENGINE ---
+# --- GLOBAL STYLING ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -157,7 +158,7 @@ st.markdown("""
     .clean-auth-card {
         background: #ffffff !important;
         border: 2px solid #cbd5e1 !important;
-        border-radius: 16px !important;
+        border-radius: 166px !important;
         padding: 24px !important;
         max-width: 450px;
         margin: 15px auto !important;
@@ -186,47 +187,16 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
     .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* NATIVE BUTTON BASE RULES */
-    div.stButton { margin-bottom: 12px !important; width: 100% !important; }
-    
+    /* AUTH AND NATIVE SUBMIT BUTTONS STYLE */
     div.stButton > button {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
         width: 100% !important;
-        min-height: 54px !important;
+        min-height: 50px !important;
         border-radius: 12px !important;
+        background-color: #0f172a !important;
+        color: white !important;
         border: none !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.06) !important;
-        padding: 12px 20px !important;
     }
-    
-    /* Strong Global White Text Override For All Custom States */
-    div.stButton > button p, 
-    div.stButton > button span, 
-    div.stButton > button div,
-    div.stButton > button data {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        font-size: 15px !important;
-        text-align: left !important;
-    }
-
-    /* FOOLPROOF KEY-BASED DIRECT BACKGROUND COLOR INJECTION */
-    div.stButton:has(button[key="nav_dash"]) > button { background-color: #ec4899 !important; } /* Pink */
-    div.stButton:has(button[key="nav_tasks"]) > button { background-color: #ef4444 !important; } /* Red */
-    div.stButton:has(button[key="nav_dep"]) > button { background-color: #22c55e !important; } /* Green */
-    div.stButton:has(button[key="nav_with"]) > button { background-color: #f97316 !important; } /* Orange */
-    div.stButton:has(button[key="nav_hist"]) > button { background-color: #06b6d4 !important; } /* Cyan */
-    div.stButton:has(button[key="nav_logout"]) > button { background-color: #64748b !important; } /* Slate Gray */
-
-    /* Clean Hover Interactions Mapping */
-    div.stButton:has(button[key="nav_dash"]) > button:hover { background-color: #db2777 !important; }
-    div.stButton:has(button[key="nav_tasks"]) > button:hover { background-color: #dc2626 !important; }
-    div.stButton:has(button[key="nav_dep"]) > button:hover { background-color: #16a34a !important; }
-    div.stButton:has(button[key="nav_with"]) > button:hover { background-color: #ea580c !important; }
-    div.stButton:has(button[key="nav_hist"]) > button:hover { background-color: #0891b2 !important; }
-    div.stButton:has(button[key="nav_logout"]) > button:hover { background-color: #475569 !important; }
+    div.stButton > button p { color: white !important; }
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -371,7 +341,7 @@ else:
     if st.session_state.is_admin:
         st.markdown('<div class="app-brand-header">🚨 MASTER CONTROL PANEL (ADMIN)</div>', unsafe_allow_html=True)
         
-        if st.button("Logout Admin Console", key="nav_logout_admin"):
+        if st.button("Logout Admin Console"):
             st.session_state.logged_in = False
             st.session_state.is_admin = False
             st.rerun()
@@ -444,31 +414,61 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- IMMUNE DYNAMIC ACTION NAVIGATION TRIGGERS ---
-        if st.button("Fund Deposit / Dashboard Overview", key="nav_dash"):
-            st.session_state.active_sidebar_tab = "Dashboard"
-            st.rerun()
-            
-        if st.button("Claim Revenue / Stream Video Tasks", key="nav_tasks"):
-            st.session_state.active_sidebar_tab = "Tasks"
-            st.rerun()
-            
-        if st.button("Add Wallet Funds Balance Node", key="nav_dep"):
-            st.session_state.active_sidebar_tab = "Deposit"
-            st.rerun()
-            
-        if st.button("Bank Cashout Liquidation Settlement", key="nav_with"):
-            st.session_state.active_sidebar_tab = "Withdrawal"
-            st.rerun()
-            
-        if st.button("Ledger Statements Account Logs", key="nav_hist"):
-            st.session_state.active_sidebar_tab = "History"
-            st.rerun()
-            
-        if st.button("Disconnect Secure Portal Access", key="nav_logout"):
-            st.session_state.logged_in = False
-            st.session_state.auth_view = "login"
-            st.rerun()
+        # --- 100% SECURE NATIVE HTML INTERFACE NAVIGATION HUB ---
+        # Direct execution injection pipeline via embedded frames to completely bypass Streamlit Attribute drops.
+        html_nav_component = """
+        <style>
+            .custom-btn-container {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                width: 100%;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+            }
+            .nav-btn {
+                width: 100%;
+                min-height: 54px;
+                border-radius: 12px;
+                border: none;
+                color: #ffffff !important;
+                font-weight: 800;
+                font-size: 15px;
+                text-align: left;
+                padding: 12px 20px;
+                cursor: pointer;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+                transition: opacity 0.2s;
+            }
+            .nav-btn:hover { opacity: 0.9; }
+            .btn-dash { background-color: #ec4899 !important; }
+            .btn-tasks { background-color: #ef4444 !important; }
+            .btn-dep { background-color: #22c55e !important; }
+            .btn-with { background-color: #f97316 !important; }
+            .btn-hist { background-color: #06b6d4 !important; }
+            .btn-logout { background-color: #64748b !important; }
+        </style>
+        
+        <div class="custom-btn-container">
+            <button class="nav-btn btn-dash" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'Dashboard'}, '*')">Fund Deposit / Dashboard Overview</button>
+            <button class="nav-btn btn-tasks" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'Tasks'}, '*')">Claim Revenue / Stream Video Tasks</button>
+            <button class="nav-btn btn-dep" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'Deposit'}, '*')">Add Wallet Funds Balance Node</button>
+            <button class="nav-btn btn-with" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'Withdrawal'}, '*')">Bank Cashout Liquidation Settlement</button>
+            <button class="nav-btn btn-hist" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'History'}, '*')">Ledger Statements Account Logs</button>
+            <button class="nav-btn btn-logout" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'Logout'}, '*')">Disconnect Secure Portal Access</button>
+        </div>
+        """
+        
+        # Capture routing triggers perfectly inside the frame matrix
+        nav_trigger = components.html(html_nav_component, height=410, scrolling=False)
+        
+        if nav_trigger:
+            if nav_trigger == "Logout":
+                st.session_state.logged_in = False
+                st.session_state.auth_view = "login"
+                st.rerun()
+            else:
+                st.session_state.active_sidebar_tab = nav_trigger
+                st.rerun()
 
         # --- DYNAMIC ACTION VIEWS HOOK PANEL MODULES ---
         if st.session_state.active_sidebar_tab == "Dashboard":
