@@ -28,7 +28,6 @@ def init_db():
             last_claim_timestamp INTEGER DEFAULT 0
         )
     """)
-    # Database migration check for columns
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
     if 'password' not in columns:
@@ -129,9 +128,9 @@ st.markdown("""
         border-radius: 12px !important;
         color: #ffffff !important;
         font-weight: 800 !important;
-        font-size: 16px !important;
+        font-size: 15px !important;
         letter-spacing: 0.8px !important;
-        margin-bottom: 20px !important;
+        margin-bottom: 15px !important;
         text-align: center !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     }
@@ -145,17 +144,26 @@ st.markdown("""
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04) !important;
     }
     
+    /* Custom Navigation Pills Layout */
+    .nav-container-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+        margin-bottom: 15px !important;
+    }
+
     /* Native Buttons UI Makeover */
     .stButton>button {
         background: #ffffff !important;
         color: #1f2937 !important;
         border: 1px solid #e5e7eb !important;
         border-radius: 10px !important;
-        padding: 12px 16px !important;
-        font-size: 14px !important;
+        padding: 10px 5px !important;
+        font-size: 12px !important;
         font-weight: 600 !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+        width: 100% !important;
     }
     .stButton>button:hover {
         background: #2563eb !important;
@@ -163,7 +171,7 @@ st.markdown("""
         border-color: #2563eb !important;
     }
 
-    /* EXACT 1000047472.JPG DUAL WALLET CARD DESIGN */
+    /* PREMIUM DUAL WALLET CARD DESIGN */
     .earnwise-main-card {
         background: #0f172a !important;
         border-radius: 16px !important;
@@ -173,36 +181,37 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15) !important;
     }
     .card-top-title { font-size: 13px !important; color: #94a3b8 !important; font-weight: 600; }
-    .card-sub-banner { font-size: 11px !important; color: #fbbf24 !important; font-weight: 700; margin-top: 2px; margin-bottom: 16px; }
+    .card-sub-banner { font-size: 11px !important; color: #fbbf24 !important; font-weight: 700; margin-top: 4px; margin-bottom: 16px; }
     
     .wallet-row-container {
         display: flex !important;
         justify-content: space-between !important;
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 12px !important;
         padding: 14px !important;
+        margin-top: 6px;
         margin-bottom: 14px !important;
     }
     .wallet-box { width: 48%; }
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; }
-    .wallet-val { font-size: 18px !important; font-weight: 800 !important; color: #ffffff !important; margin-top: 2px; }
+    .wallet-val { font-size: 16px !important; font-weight: 800 !important; color: #ffffff !important; margin-top: 2px; }
 
-    /* Action Buttons Row */
+    /* Action Buttons Row Inside Card */
     .action-btn-row {
         display: flex !important;
         justify-content: space-between !important;
         gap: 10px !important;
+        margin-top: 10px;
     }
     .action-btn-half {
         flex: 1 !important;
         text-align: center !important;
-        padding: 12px !important;
-        border-radius: 10px !important;
-        font-size: 13px !important;
+        padding: 10px !important;
+        border-radius: 8px !important;
+        font-size: 12px !important;
         font-weight: 700 !important;
         color: #ffffff !important;
-        text-decoration: none !important;
     }
     .bg-blue { background: #1e75e5 !important; }
     .bg-green { background: #10b981 !important; }
@@ -335,7 +344,7 @@ if not st.session_state.logged_in:
 else:
     st.markdown('<div class="app-brand-header">GLOBAL MATRIX INVESTMENT PLATFORM</div>', unsafe_allow_html=True)
     
-    # Grid Navigation System Bar (Matches Screen 2 Style Options Flow)
+    # Grid Navigation System - Row 1
     nav_c1, nav_c2, nav_c3 = st.columns(3)
     with nav_c1:
         if st.button("🏠 Dashboard", use_container_width=True): st.session_state.active_sidebar_tab = "Dashboard"
@@ -344,6 +353,7 @@ else:
     with nav_c3:
         if st.button("📜 Log History", use_container_width=True): st.session_state.active_sidebar_tab = "History"
 
+    # Grid Navigation System - Row 2
     nav_c4, nav_c5, nav_c6 = st.columns(3)
     with nav_c4:
         if st.button("➕ Deposit", use_container_width=True): st.session_state.active_sidebar_tab = "Deposit"
@@ -355,7 +365,7 @@ else:
             st.session_state.is_admin = False
             st.rerun()
 
-    st.markdown('<div style="margin-bottom: 20px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-bottom: 10px;"></div>', unsafe_allow_html=True)
 
     # --- ROUTING LOGIC SCREENS ---
     if st.session_state.is_admin:
@@ -373,24 +383,23 @@ else:
         u_data = query_db("SELECT balance, active_level, ref_code, full_name, last_claim_timestamp FROM users WHERE username=?", (st.session_state.current_user,), one=True)
         bal, lvl, code, title, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", "Matrix User", 0)
         
-        # Calculate Mock Pending/Withdrawal splits just like the mockup layout view
         ready_withdrawal = bal * 0.70 
         
         if st.session_state.active_sidebar_tab == "Dashboard":
-            # EXACT DUAL WALLET CARD LOOK FROM SCREENSHOT 2 (1000047472.jpg)
+            # FIXED: Added unsafe_allow_html=True down here so it renders beautiful cards instead of raw text code!
             st.markdown(f"""
             <div class="earnwise-main-card">
                 <div class="card-top-title">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
                 <div class="card-sub-banner">**Pelan VIP/SVIP & Tugasan Media Sosial Diperkenalkan!**</div>
                 
-                <div style="font-size: 12px; margin-bottom: 6px; color:#cbd5e1;">💼 Dompet Perolehan Saya (My Earnings Wallet)</div>
+                <div style="font-size: 11px; color:#cbd5e1; margin-bottom: 2px;">💼 Dompet Perolehan Saya (My Earnings Wallet)</div>
                 <div class="wallet-row-container">
                     <div class="wallet-box">
                         <div class="wallet-lbl">Current Balance</div>
                         <div class="wallet-val">RM {bal:,.2f}</div>
                     </div>
-                    <div class="wallet-box" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
-                        <div class="wallet-lbl">Ready For Withdrawal</div>
+                    <div class="wallet-box" style="border-left: 1px solid rgba(255,255,255,0.15); padding-left: 12px;">
+                        <div class="wallet-lbl">Ready For Cashout</div>
                         <div class="wallet-val" style="color: #10b981;">RM {ready_withdrawal:,.2f}</div>
                     </div>
                 </div>
@@ -402,7 +411,6 @@ else:
             </div>
             """, unsafe_allow_html=True)
             
-            # Additional widgets for layout uniformity 
             st.markdown(f"""
             <div class="premium-widget-box">
                 <div class="widget-title-head">Pusat Tugasan YouTube & Media (Active Tier)</div>
