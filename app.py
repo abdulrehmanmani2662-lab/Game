@@ -8,7 +8,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Forced app structure setup
+# Forced app structure setup globally
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="wide")
 
 # --- DATABASE ENGINE ---
@@ -95,7 +95,7 @@ def send_real_verification_email(receiver_email, otp_code, user_name, subject_ti
     except:
         return False
 
-# Core state controls
+# Session management router states
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -106,10 +106,21 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- BRANDING & STYLING OVERHAUL (100% MATCHING SCREENSHOT 3) ---
+# --- URL PARAMETERS DETECTOR FOR CUSTOM DABBEY CLICKS ---
+st_params = st.query_params
+if "nav" in st_params:
+    nav_val = st_params["nav"]
+    if nav_val in ["Dashboard", "Tasks", "Deposit", "Withdrawal", "History", "Logout"]:
+        if nav_val == "Logout":
+            st.session_state.logged_in = False
+            st.session_state.auth_view = "login"
+        else:
+            st.session_state.active_sidebar_tab = nav_val
+
+# --- ADVANCED PREMIUM INJECTION CSS ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2 family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
     [data-testid="stSidebar"], footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
@@ -119,7 +130,6 @@ st.markdown("""
     .stApp { background-color: #f8fafc !important; }
     * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
     
-    /* Top Bar Title Card */
     .app-brand-header {
         background: #0f172a !important;
         padding: 14px !important;
@@ -140,18 +150,17 @@ st.markdown("""
         margin: 35px auto !important;
     }
 
-    /* PREMIUM DASHBOARD CARD (SCREENSHOT 3 BLUE THEME MATCH) */
+    /* PREMIUM BALANCE BANNER (SCREENSHOT MATCH) */
     .earnwise-main-card {
         background: #0d1e3d !important;
         border-radius: 14px !important;
         padding: 18px !important;
         color: #ffffff !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 16px !important;
     }
     .card-top-title { font-size: 14px !important; color: #94a3b8 !important; font-weight: 600; }
     .card-sub-banner { font-size: 11px !important; color: #fbbf24 !important; font-weight: 700; margin-top: 2px; margin-bottom: 12px; }
     
-    /* Strict Mobile Flex Row Layout - No breaking into multiple lines */
     .wallet-grid {
         display: flex !important;
         flex-direction: row !important;
@@ -165,28 +174,36 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 700; line-height: 1.2; }
     .wallet-val { font-size: 18px !important; font-weight: 800 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* ACTION BUTTON DASHBOARD GRID (SCREENSHOT 3 BOX DESIGN REPLICATED) */
-    .button-flex-container {
+    /* LEFT-ALIGNED VERTICAL DASHBOARD NAVIGATION DABBA ENGINE */
+    .v-dabba-container {
         display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        margin-bottom: 10px !important;
+        flex-direction: column !important;
         gap: 10px !important;
+        margin-bottom: 20px !important;
+        width: 100% !important;
     }
-    .custom-dash-btn {
-        flex: 1 !important;
+    .custom-dabba-link {
+        display: block !important;
+        width: 100% !important;
+        padding: 14px 16px !important;
         border-radius: 10px !important;
-        padding: 12px 8px !important;
-        text-align: center !important;
-        text-decoration: none !important;
-        color: white !important;
+        color: #ffffff !important;
         font-weight: 700 !important;
         font-size: 13px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        text-align: left !important;  /* Strict Left Alignment Line */
+        text-decoration: none !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.04) !important;
+        transition: transform 0.2s, opacity 0.2s !important;
     }
-    .bg-blue-btn { background: #1e62d0 !important; }
-    .bg-green-btn { background: #10b981 !important; }
-    .bg-slate-btn { background: #475569 !important; }
+    .custom-dabba-link:active { transform: scale(0.98); opacity: 0.9; }
+    
+    /* Dynamic Color Mappings based on Screenshot 1000048025.jpg spec */
+    .db-blue-color { background: #1e62d0 !important; }
+    .db-green-color { background: #10b981 !important; }
+    .db-orange-color { background: #f97316 !important; }
+    .db-purple-color { background: #8b5cf6 !important; }
+    .db-slate-color { background: #475569 !important; }
+    .db-red-color { background: #ef4444 !important; }
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -220,7 +237,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# --- PORTAL GATEWAYS SYSTEM (LOGIN / SIGNUP) ---
+# --- AUTH PANELS PIPELINE ---
 if not st.session_state.logged_in:
     st.markdown('<div class="app-brand-header">🔱 GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
     
@@ -245,9 +262,9 @@ if not st.session_state.logged_in:
     elif st.session_state.auth_view == "forgot_password_request":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("forgot_form"):
-            st.markdown("<h3>Reset Account Password</h3>", unsafe_allow_html=True)
-            r_email = st.text_input("Email Address")
-            if st.form_submit_button("Send Recovery Token", use_container_width=True):
+            st.markdown("<h3>Reset Password Configuration</h3>", unsafe_allow_html=True)
+            r_email = st.text_input("Enter Registered Email Account")
+            if st.form_submit_button("Send Password Recovery OTP Token", use_container_width=True):
                 user_match = query_db("SELECT full_name FROM users WHERE username=?", (r_email.strip(),), one=True)
                 if user_match:
                     st.session_state.generated_otp = str(random.randint(100000, 999999))
@@ -255,36 +272,36 @@ if not st.session_state.logged_in:
                     send_real_verification_email(r_email.strip(), st.session_state.generated_otp, user_match[0], "Password Recovery Code")
                     st.session_state.auth_view = "forgot_password_verification"
                     st.rerun()
-                else: st.error("Email layout node not found.")
+                else: st.error("Target email node sequence not registered.")
         st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("Back to Sign In"):
+        if st.button("Abort and Return to Sign In"):
             st.session_state.auth_view = "login"
             st.rerun()
 
     elif st.session_state.auth_view == "forgot_password_verification":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("reset_finalize_form"):
-            st.markdown("<h3>Enter Verification Code</h3>", unsafe_allow_html=True)
-            input_token = st.text_input("6-Digit Token", max_chars=6)
-            new_pass = st.text_input("New Secure Password", type="password")
-            if st.form_submit_button("Overwrite Password Profile", use_container_width=True):
+            st.markdown("<h3>Input Recovery Verification Code</h3>", unsafe_allow_html=True)
+            input_token = st.text_input("6-Digit Token Code Received", max_chars=6)
+            new_pass = st.text_input("Configure Secure Password", type="password")
+            if st.form_submit_button("Rewrite Security Profile", use_container_width=True):
                 if input_token.strip() == st.session_state.generated_otp:
                     query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.temp_register_data['email']), commit=True)
-                    st.success("Password overwritten! Logging in.")
+                    st.success("Credentials updated successfully.")
                     st.session_state.auth_view = "login"
                     st.rerun()
-                else: st.error("Token invalid alignment.")
+                else: st.error("Token verification hash mismatched.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.auth_view == "signup":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("reg_form"):
-            st.markdown("<h3>Create Account Node</h3>", unsafe_allow_html=True)
+            st.markdown("<h3>Create Platform Profile</h3>", unsafe_allow_html=True)
             reg_name = st.text_input("Name")
             reg_email = st.text_input("Email")
             reg_pass = st.text_input("Password", type="password")
-            reg_inv = st.text_input("Invite Code Token (Optional)")
-            if st.form_submit_button("Register Account", use_container_width=True):
+            reg_inv = st.text_input("Invite Token (Optional)")
+            if st.form_submit_button("Register Account Node", use_container_width=True):
                 if "@" in reg_email:
                     st.session_state.generated_otp = str(random.randint(100000, 999999))
                     st.session_state.temp_register_data = {"name": reg_name.strip(), "email": reg_email.strip(), "password": reg_pass.strip(), "ref_by": reg_inv.strip() or "None"}
@@ -292,17 +309,17 @@ if not st.session_state.logged_in:
                     st.session_state.verification_stage = "awaiting_otp"
                     st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("Have an account? Log In"):
+        if st.button("Existing Profile? Log In"):
             st.session_state.auth_view = "login"
             st.rerun()
 
     elif st.session_state.auth_view == "login":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("login_form"):
-            st.markdown("<h3>Account Login Entry</h3>", unsafe_allow_html=True)
-            login_email = st.text_input("Email Address")
-            login_pass = st.text_input("System Password", type="password")
-            if st.form_submit_button("Secure Portal Access", use_container_width=True):
+            st.markdown("<h3>Secure Portal Gateway</h3>", unsafe_allow_html=True)
+            login_email = st.text_input("Registered Email Address")
+            login_pass = st.text_input("Account Secret Password", type="password")
+            if st.form_submit_button("Authorize Workspace Connection", use_container_width=True):
                 if login_email.strip() == "admin" and login_pass.strip() == "admin123":
                     st.session_state.logged_in = True
                     st.session_state.is_admin = True
@@ -314,16 +331,16 @@ if not st.session_state.logged_in:
                         st.session_state.current_user = login_email.strip()
                         st.session_state.active_sidebar_tab = "Dashboard"
                         st.rerun()
-                    else: st.error("Credentials match error database tracking.")
+                    else: st.error("Credentials database identification fault.")
         st.markdown('</div>', unsafe_allow_html=True)
         
         c1, c2 = st.columns(2)
         with c1:
-            if st.button("Create Profile Node"): st.session_state.auth_view = "signup"; st.rerun()
+            if st.button("Enroll Profile"): st.session_state.auth_view = "signup"; st.rerun()
         with c2:
             if st.button("🔑 Forgot Passwords?"): st.session_state.auth_view = "forgot_password_request"; st.rerun()
 
-# --- MAIN WORKSPACE SYSTEM ---
+# --- MAIN DASHBOARD INTERFACE TERMINAL ---
 else:
     st.markdown('<div class="app-brand-header">👑 GLOBAL MATRIX PREMIUM SYSTEM</div>', unsafe_allow_html=True)
     
@@ -348,7 +365,7 @@ else:
         bal, lvl, code, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", 0)
         ready_withdrawal = bal * 0.70
 
-        # --- 1. CRITICAL FIXED ROW: PREMIUM WALLET BANNER (SCREENSHOT MATCH) ---
+        # --- PREMIUM WALLET HEAD CARD ---
         st.markdown(f"""
         <div class="earnwise-main-card">
             <div class="card-top-title">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
@@ -366,52 +383,22 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- 2. CRITICAL FIXED GRID ROW: PREMIUM NAVIGATION BOXES (SCREENSHOT MATCH) ---
-        # Row 1 Buttons: Dashboard & Tasks (Always horizontally aligned on mobile phones)
+        # --- ⚡ 100% LEFT SIDEBAR LINE DASHBOARD DABBA MENU ⚡ ---
+        # Saare buttons ab left align aur screenshot ke premium dabba format me vertical line me hain
         st.markdown("""
-        <div class="button-flex-container">
-            <a href="?nav=dashboard" class="custom-dash-btn bg-blue-btn" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'Dashboard'}, '*')">🔷 Deposit Dana / Dashboard</a>
-            <a href="?nav=tasks" class="custom-dash-btn bg-green-btn">🟢 Tarik Perolehan / Tasks</a>
+        <div class="v-dabba-container">
+            <a href="?nav=Dashboard" target="_self" class="custom-dabba-link db-blue-color">🔹 Deposit Dana / Dashboard Hub</a>
+            <a href="?nav=Tasks" target="_self" class="custom-dabba-link db-green-color">🟢 Tarik Perolehan / Play Video Tasks</a>
+            <a href="?nav=Deposit" target="_self" class="custom-dabba-link db-orange-color">➕ Fund Wallets Add Balance</a>
+            <a href="?nav=Withdrawal" target="_self" class="custom-dabba-link db-purple-color">📤 Cashout System Settlement Node</a>
+            <a href="?nav=History" target="_self" class="custom-dabba-link db-slate-color">📜 Ledger History Account Statement</a>
+            <a href="?nav=Logout" target="_self" class="custom-dabba-link db-red-color">🚪 Disconnect Secure Portal Connection</a>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Streamlit bridge handlers to read click states without line drops
-        btn_col_1, btn_col_2, btn_col_3 = st.columns(3)
-        with btn_col_1:
-            if st.button("🏠 Home Overview", use_container_width=True):
-                st.session_state.active_sidebar_tab = "Dashboard"
-                st.rerun()
-        with btn_col_2:
-            if st.button("📺 Play Video Tasks", use_container_width=True):
-                st.session_state.active_sidebar_tab = "Tasks"
-                st.rerun()
-        with btn_col_3:
-            if st.button("➕ Fund Wallets", use_container_width=True):
-                st.session_state.active_sidebar_tab = "Deposit"
-                st.rerun()
-                
-        # Row 2 Action controllers links block
-        btn_col_4, btn_col_5 = st.columns(2)
-        with btn_col_4:
-            if st.button("📤 Cashout System", use_container_width=True):
-                st.session_state.active_sidebar_tab = "Withdrawal"
-                st.rerun()
-        with btn_col_5:
-            if st.button("📜 Ledger History", use_container_width=True):
-                st.session_state.active_sidebar_tab = "History"
-                st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Logout layout footer
-        if st.button("🚪 Disconnect Secure Portal Connection", use_container_width=True):
-            st.session_state.logged_in = False
-            st.session_state.auth_view = "login"
-            st.rerun()
-
-        st.markdown("---")
-
-        # --- DYNAMIC ACTION VIEWS HOOKS ---
+        # --- DYNAMIC ACTIVE SUB-PANELS CONTENT VIEWPORT ---
         if st.session_state.active_sidebar_tab == "Dashboard":
             st.markdown("### Profile Meta Allocation Nodes Overview")
             col_l, col_r = st.columns(2)
