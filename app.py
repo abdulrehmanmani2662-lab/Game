@@ -28,6 +28,7 @@ def init_db():
             last_claim_timestamp INTEGER DEFAULT 0
         )
     """)
+    # Structural safety fallback column sync
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
     if 'password' not in columns:
@@ -77,14 +78,14 @@ def query_db(query, args=(), one=False, commit=False):
         conn.close()
         return None if one else []
 
-# --- REAL EMAIL SYSTEM ---
-def send_real_verification_email(receiver_email, otp_code, user_name):
+# --- SECURE REAL EMAIL GATEWAY ---
+def send_real_verification_email(receiver_email, otp_code, user_name, subject_title="Verification Code"):
     try:
         msg = MIMEMultipart()
         msg['From'] = f"Global Matrix Support <Salmanveerm@gmail.com>"
         msg['To'] = receiver_email
-        msg['Subject'] = f"Verification Code: {otp_code}"
-        body = f"Hello {user_name},\n\nYour verification code is: {otp_code}\n\nRegards,\nGlobal Matrix Investment Team"
+        msg['Subject'] = f"{subject_title}: {otp_code}"
+        body = f"Hello {user_name},\n\nYour security execution verification code token is: {otp_code}\n\nRegards,\nGlobal Matrix Investment Team"
         msg.attach(MIMEText(body, 'plain'))
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
@@ -95,7 +96,7 @@ def send_real_verification_email(receiver_email, otp_code, user_name):
     except Exception as e:
         return False
 
-# Session State Routing
+# Persistent Application Core State Variables Router
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -104,16 +105,15 @@ if 'active_sidebar_tab' not in st.session_state: st.session_state.active_sidebar
 if 'verification_stage' not in st.session_state: st.session_state.verification_stage = "closed"
 if 'temp_register_data' not in st.session_state: st.session_state.temp_register_data = {}
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
-if 'auth_view' not in st.session_state: st.session_state.auth_view = "signup"
+if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- PREMIUM UI/UX DIRECT STYLING OVERHAUL ---
+# --- CSS OVERRIDES UI ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-    /* Hide Default Streamlit Junk */
     header, footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
@@ -121,7 +121,6 @@ st.markdown("""
     .stApp { background-color: #f4f6f9 !important; }
     * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
     
-    /* Top Header Branding */
     .app-brand-header {
         background: linear-gradient(135deg, #111827, #1f2937) !important;
         padding: 18px !important;
@@ -135,24 +134,15 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     }
     
-    /* Auth Cards */
     .clean-auth-card {
         background: #ffffff !important;
         border: 1px solid #e5e7eb !important;
         border-radius: 20px !important;
         padding: 26px !important;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04) !important;
+        margin-bottom: 15px;
     }
     
-    /* Custom Navigation Pills Layout */
-    .nav-container-grid {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 8px !important;
-        margin-bottom: 15px !important;
-    }
-
-    /* Native Buttons UI Makeover */
     .stButton>button {
         background: #ffffff !important;
         color: #1f2937 !important;
@@ -171,7 +161,7 @@ st.markdown("""
         border-color: #2563eb !important;
     }
 
-    /* PREMIUM DUAL WALLET CARD DESIGN */
+    /* PREMIUM MOBILE WALLET OVERRIDES MATCHING SCREENSHOT 2 EXACTLY */
     .earnwise-main-card {
         background: #0f172a !important;
         border-radius: 16px !important;
@@ -197,7 +187,6 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; }
     .wallet-val { font-size: 16px !important; font-weight: 800 !important; color: #ffffff !important; margin-top: 2px; }
 
-    /* Action Buttons Row Inside Card */
     .action-btn-row {
         display: flex !important;
         justify-content: space-between !important;
@@ -216,7 +205,6 @@ st.markdown("""
     .bg-blue { background: #1e75e5 !important; }
     .bg-green { background: #10b981 !important; }
 
-    /* White Widget Panels */
     .premium-widget-box {
         background: #ffffff !important;
         border: 1px solid #e5e7eb !important;
@@ -234,7 +222,6 @@ st.markdown("""
         padding-left: 8px;
     }
     
-    /* History Rows */
     .history-item-flex {
         display: flex !important;
         justify-content: space-between !important;
@@ -255,16 +242,17 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# --- UNIFIED AUTHENTICATION VIEWS ---
+# --- UNIFIED IDENTITY GATEWAYS (AUTH) ---
 if not st.session_state.logged_in:
     st.markdown('<div class="app-brand-header" style="margin-top:20px;">🔱 GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
     
+    # A. SIGN UP VERIFICATION STAGE (OTP)
     if st.session_state.verification_stage == "awaiting_otp":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("secure_otp_form"):
-            st.markdown(f"<h4 style='text-align:center;'>Verify Your Email</h4><p style='font-size:12px; color:#6b7280; text-align:center;'>Code sent to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p>", unsafe_allow_html=True)
-            u_otp = st.text_input("Enter 6-Digit Code", max_chars=6)
-            if st.form_submit_button("Verify Code", use_container_width=True):
+            st.markdown(f"<h4 style='text-align:center;'>Verify Account Registration</h4><p style='font-size:12px; color:#6b7280; text-align:center;'>Security code dispatched to:<br><b>{st.session_state.temp_register_data.get('email', '')}</b></p>", unsafe_allow_html=True)
+            u_otp = st.text_input("Enter 6-Digit Code Verification Token", max_chars=6)
+            if st.form_submit_button("Verify Code Token", use_container_width=True):
                 if u_otp.strip() == st.session_state.generated_otp:
                     t_data = st.session_state.temp_register_data
                     m_code = "GM" + str(random.randint(1000, 9999))
@@ -277,10 +265,50 @@ if not st.session_state.logged_in:
                     st.session_state.verification_stage = "closed"
                     st.session_state.active_sidebar_tab = "Dashboard"
                     st.rerun()
-                else:
-                    st.error("Invalid code.")
+                else: st.error("Verification string token mismatch.")
         st.markdown('</div>', unsafe_allow_html=True)
 
+    # B. FORGOT PASSWORD REQUEST GATEWAY
+    elif st.session_state.auth_view == "forgot_password_request":
+        st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
+        with st.form("forgot_password_email_pipeline"):
+            st.markdown("<h4 style='text-align:center; font-weight:700;'>Recover Passwords Account</h4>", unsafe_allow_html=True)
+            reset_email = st.text_input("Your Registered Email Address Account:")
+            if st.form_submit_button("Generate Reset Token Code Link", use_container_width=True):
+                clean_email = reset_email.strip()
+                match_user = query_db("SELECT full_name FROM users WHERE username=?", (clean_email,), one=True)
+                if match_user:
+                    st.session_state.generated_otp = str(random.randint(100000, 999999))
+                    st.session_state.temp_register_data = {"email": clean_email, "name": match_user[0]}
+                    send_real_verification_email(clean_email, st.session_state.generated_otp, match_user[0], "Password Recovery Reset Token Code")
+                    st.session_state.auth_view = "forgot_password_verification"
+                    st.success("Recovery verification token code generated successfully to target channel.")
+                    st.rerun()
+                else: st.error("No verified user entries registered with this tracking node email.")
+        st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("Abort and Back to Login"):
+            st.session_state.auth_view = "login"
+            st.rerun()
+
+    # C. FORGOT PASSWORD VERIFICATION EXECUTION STAGE
+    elif st.session_state.auth_view == "forgot_password_verification":
+        st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
+        with st.form("password_reset_override_terminal"):
+            st.markdown(f"<h4 style='text-align:center;'>Reset Credential Configuration</h4><p style='font-size:12px; text-align:center; color:#6b7280;'>Targeting: <b>{st.session_state.temp_register_data.get('email')}</b></p>", unsafe_allow_html=True)
+            input_token = st.text_input("6-Digit Recovery Token Code String:", max_chars=6)
+            new_secure_password = st.text_input("Configure New Account Passwords Input String:", type="password")
+            if st.form_submit_button("Overwrite Cryptographic Key Node Passwords", use_container_width=True):
+                if input_token.strip() == st.session_state.generated_otp:
+                    if len(new_secure_password.strip()) >= 4:
+                        query_db("UPDATE users SET password=? WHERE username=?", (new_secure_password.strip(), st.session_state.temp_register_data.get('email')), commit=True)
+                        st.success("Security keys modified successfully! Re-routing back to basic execution login panels.")
+                        st.session_state.auth_view = "login"
+                        st.rerun()
+                    else: st.error("Password string density parameters error.")
+                else: st.error("Invalid dynamic token recovery mismatch logs.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # D. APPLICATION BASE SIGNUP HUB
     elif st.session_state.auth_view == "signup":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("identity_register_gateway"):
@@ -312,13 +340,14 @@ if not st.session_state.logged_in:
             st.session_state.auth_view = "login"
             st.rerun()
 
+    # E. APPLICATION BASE SIGNIN HUB (WITH FORGOT PASSWORD TRIGGER LINK)
     elif st.session_state.auth_view == "login":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("identity_login_gateway"):
-            st.markdown("<h4 style='text-align:center; font-weight:700;'>Welcome Back</h4>", unsafe_allow_html=True)
+            st.markdown("<h4 style='text-align:center; font-weight:700;'>Welcome Back Log In</h4>", unsafe_allow_html=True)
             login_email = st.text_input("Email Address")
             login_pass = st.text_input("Password", type="password")
-            if st.form_submit_button("Sign In", use_container_width=True):
+            if st.form_submit_button("Sign In Secure Authenticator", use_container_width=True):
                 em_clean = login_email.strip()
                 pass_clean = login_pass.strip()
                 if em_clean == "admin" and pass_clean == "admin123":
@@ -333,18 +362,26 @@ if not st.session_state.logged_in:
                         st.session_state.current_user = em_clean
                         st.session_state.active_sidebar_tab = "Dashboard"
                         st.rerun()
-                    else: st.error("Incorrect credentials.")
-                else: st.error("Invalid email pattern.")
+                    else: st.error("Incorrect credentials configuration log matrix matching error.")
+                else: st.error("Invalid tracking route email patterns format.")
         st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("New here? Create an Account", use_container_width=True):
-            st.session_state.auth_view = "signup"
-            st.rerun()
+        
+        # Dual Navigation Help Grid Structure below login box
+        help_c1, help_c2 = st.columns(2)
+        with help_c1:
+            if st.button("New Account Registry"):
+                st.session_state.auth_view = "signup"
+                st.rerun()
+        with help_c2:
+            if st.button("🔑 Forgot Passwords?"):
+                st.session_state.auth_view = "forgot_password_request"
+                st.rerun()
 
-# --- MAIN RESPONSIVE APPLICATION CONTROLLER ---
+# --- MAIN APPLICATION WORKSPACE CONTROLLER ---
 else:
     st.markdown('<div class="app-brand-header">GLOBAL MATRIX INVESTMENT PLATFORM</div>', unsafe_allow_html=True)
     
-    # Grid Navigation System - Row 1
+    # Responsive Grid Navigation Core System Top Bar Row 1
     nav_c1, nav_c2, nav_c3 = st.columns(3)
     with nav_c1:
         if st.button("🏠 Dashboard", use_container_width=True): st.session_state.active_sidebar_tab = "Dashboard"
@@ -353,7 +390,7 @@ else:
     with nav_c3:
         if st.button("📜 Log History", use_container_width=True): st.session_state.active_sidebar_tab = "History"
 
-    # Grid Navigation System - Row 2
+    # Responsive Grid Navigation Core System Top Bar Row 2
     nav_c4, nav_c5, nav_c6 = st.columns(3)
     with nav_c4:
         if st.button("➕ Deposit", use_container_width=True): st.session_state.active_sidebar_tab = "Deposit"
@@ -363,11 +400,12 @@ else:
         if st.button("🚪 Leave App", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.is_admin = False
+            st.session_state.auth_view = "login"
             st.rerun()
 
     st.markdown('<div style="margin-bottom: 10px;"></div>', unsafe_allow_html=True)
 
-    # --- ROUTING LOGIC SCREENS ---
+    # --- ROUTING SYSTEM LOGIC VIEWS ---
     if st.session_state.is_admin:
         st.markdown("### Admin Configuration Pipeline Logs")
         st.session_state.admin_video_url = st.text_input("Active Live Stream URL:", value=st.session_state.admin_video_url)
@@ -385,12 +423,13 @@ else:
         
         ready_withdrawal = bal * 0.70 
         
+        # ACTIVE ROUTER VIEW: DASHBOARD
         if st.session_state.active_sidebar_tab == "Dashboard":
-            # FIXED: Added unsafe_allow_html=True down here so it renders beautiful cards instead of raw text code!
+            # PERFECT COMPILATION RENDERING WITHOUT STR CORRUPTIONS (unsafe_allow_html=True explicitly tracked)
             st.markdown(f"""
             <div class="earnwise-main-card">
                 <div class="card-top-title">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
-                <div class="card-sub-banner">**Pelan VIP/SVIP & Tugasan Media Sosial Diperkenalkan!**</div>
+                <div class="card-sub-banner">Pelan VIP/SVIP &amp; Tugasan Media Sosial Diperkenalkan!</div>
                 
                 <div style="font-size: 11px; color:#cbd5e1; margin-bottom: 2px;">💼 Dompet Perolehan Saya (My Earnings Wallet)</div>
                 <div class="wallet-row-container">
@@ -413,14 +452,15 @@ else:
             
             st.markdown(f"""
             <div class="premium-widget-box">
-                <div class="widget-title-head">Pusat Tugasan YouTube & Media (Active Tier)</div>
+                <div class="widget-title-head">Pusat Tugasan YouTube &amp; Media (Active Tier)</div>
                 <p style="font-size:13px; color:#4b5563; margin:0;">Your tier node status code is: <b style="color:#2563eb;">{lvl}</b></p>
                 <p style="font-size:12px; color:#6b7280; margin-top:4px;">Invitation link activation tracking ID token: <b>{code}</b></p>
             </div>
             """, unsafe_allow_html=True)
 
+        # ACTIVE ROUTER VIEW: TASKS
         elif st.session_state.active_sidebar_tab == "Tasks":
-            st.markdown('<div class="premium-widget-box"><div class="widget-title-head">Tonton Video & Menang</div>', unsafe_allow_html=True)
+            st.markdown('<div class="premium-widget-box"><div class="widget-title-head">Tonton Video &amp; Menang</div>', unsafe_allow_html=True)
             st.video(st.session_state.admin_video_url)
             
             c_time = int(time.time())
@@ -428,13 +468,14 @@ else:
                 rem = 86400 - (c_time - claim_stamp)
                 st.markdown(f"<div style='background:#fee2e2; padding:12px; border-radius:8px; color:#991b1b; font-size:13px; text-align:center; font-weight:600;'>🔒 Tasks locked. Cool down active. Next claim in: {rem//3600}h {(rem%3600)//60}m</div>", unsafe_allow_html=True)
             else:
-                if st.button("Tonton & Peroleh Reward Now", use_container_width=True):
+                if st.button("Tonton &amp; Peroleh Reward Now", use_container_width=True):
                     bonus = 5.00 if lvl == "None" else float(LEVELS_CONF[lvl]["daily_reward"])
                     query_db("UPDATE users SET balance = balance + ?, last_claim_timestamp = ? WHERE username=?", (bonus, c_time, st.session_state.current_user), commit=True)
                     st.success(f"Success! Credited +RM {bonus:.2f} to your secure stream vault.")
                     st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ACTIVE ROUTER VIEW: DEPOSIT
         elif st.session_state.active_sidebar_tab == "Deposit":
             st.markdown('<div class="premium-widget-box"><div class="widget-title-head">Submit Secure Payment Slip Gateway</div>', unsafe_allow_html=True)
             with st.form("deposit_confirmation_hub"):
@@ -448,6 +489,7 @@ else:
                         st.success("Verification receipt logged into tracking databases pipeline node.")
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ACTIVE ROUTER VIEW: WITHDRAWAL
         elif st.session_state.active_sidebar_tab == "Withdrawal":
             st.markdown('<div class="premium-widget-box"><div class="widget-title-head">Tarik Perolehan Outflow Terminal</div>', unsafe_allow_html=True)
             with st.form("withdrawal_request_terminal"):
@@ -464,6 +506,7 @@ else:
                     else: st.error("Out of bound index allocation error. Account balance status shortfall.")
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ACTIVE ROUTER VIEW: HISTORY
         elif st.session_state.active_sidebar_tab == "History":
             st.markdown('<div class="premium-widget-box"><div class="widget-title-head">Sejarah Transaksi Terkini</div>', unsafe_allow_html=True)
             all_deps = query_db("SELECT level, amount, status FROM deposits WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
