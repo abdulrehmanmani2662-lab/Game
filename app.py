@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- CUSTOM ENGINE FOR PREMIUM STYLED DABBE (TABS) ---
+# --- CUSTOM ENGINE FOR COLORFUL CORNER DABBE (TABS) ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
@@ -150,42 +150,57 @@ st.markdown("""
         border: 1px solid #1e293b;
     }
     
-    /* --- CUSTOM DABBE (RADIO TO BUTTONS) CSS HACK --- */
+    /* --- EXACT MATCH FOR DOOSRI SCREENSHOT TABS HACK --- */
     div[data-testid="stRadio"] > div {
-        display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
-        gap: 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
     }
     div[data-testid="stRadio"] label {
-        background: #ffffff !important;
-        border: 2px solid #e2e8f0 !important;
-        padding: 12px 10px !important;
-        border-radius: 10px !important;
+        padding: 16px 20px !important;
+        border-radius: 12px !important;
         cursor: pointer !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        transition: all 0.25s ease !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-    }
-    div[data-testid="stRadio"] label:hover {
-        border-color: #3b82f6 !important;
-        background: #f0f6ff !important;
-    }
-    div[data-testid="stRadio"] label[data-checked="true"] {
-        background: #3b82f6 !important;
-        border-color: #2563eb !important;
+        display: block !important;
+        width: 100% !important;
         color: white !important;
         font-weight: bold !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        font-size: 16px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        border: none !important;
+        transition: transform 0.2s ease, opacity 0.2s ease !important;
     }
-    /* Hide native small round circles */
-    div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] {
-        color: inherit !important;
+    div[data-testid="stRadio"] label:hover {
+        transform: scale(1.01);
+        opacity: 0.95;
     }
-    div[data-testid="stRadio"] input[type="radio"] {
-        display: none !important;
+    
+    /* 1. Fund Deposit / Dashboard Overview -> Pink */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:nth-child(1) {
+        background: #ec4899 !important;
     }
+    /* 2. Claim Revenue / Stream Video Tasks -> Red/Coral */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:nth-child(2) {
+        background: #ef4444 !important;
+    }
+    /* 3. Add Wallet Funds Balance Node -> Green */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:nth-child(3) {
+        background: #22c55e !important;
+    }
+    /* 4. Bank Cashout Liquidation Settlement -> Orange */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:nth-child(4) {
+        background: #f97316 !important;
+    }
+    /* 5. Ledger Statements Account Logs -> Cyan */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:nth-child(5) {
+        background: #06b6d4 !important;
+    }
+    /* 6. Disconnect Secure Portal Access -> Slate Grey */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:nth-child(6) {
+        background: #64748b !important;
+    }
+
+    /* Hide standard radio circular elements completely */
+    div[data-testid="stRadio"] input[type="radio"], 
     div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
         display: none !important;
     }
@@ -374,13 +389,30 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- MODERN CLICKABLE DABBE PANELS (RADIO TRANSFORMATION) ---
-        st.markdown("### 📱 Navigation Panel")
+        # --- NAVIGATION TILES MATCHING IMAGE 1000049608.jpg ---
+        labels_list = [
+            "Fund Deposit / Dashboard Overview", 
+            "Claim Revenue / Stream Video Tasks", 
+            "Add Wallet Funds Balance Node", 
+            "Bank Cashout Liquidation Settlement", 
+            "Ledger Statements Account Logs",
+            "Disconnect Secure Portal Access"
+        ]
         
-        # Creating mapping for standard tabs labels to cleaner styled titles
-        labels_list = ["📊 Dashboard Hub", "🎥 Play Video Tasks", "💳 Add Balance Funds", "💰 Settlement Outflow", "📑 Ledger Statements"]
-        current_idx = ["Dashboard Overview", "Stream Video Tasks", "Add Wallet Funds", "Bank Cashout Liquidation", "Ledger Logs Statements"].index(st.session_state.active_sidebar_tab)
+        # Safe sync for mapping active view states
+        tabs_map = {
+            "Fund Deposit / Dashboard Overview": "Dashboard Overview",
+            "Claim Revenue / Stream Video Tasks": "Stream Video Tasks",
+            "Add Wallet Funds Balance Node": "Add Wallet Funds",
+            "Bank Cashout Liquidation Settlement": "Bank Cashout Liquidation",
+            "Ledger Statements Account Logs": "Ledger Logs Statements"
+        }
         
+        try:
+            current_idx = list(tabs_map.values()).index(st.session_state.active_sidebar_tab)
+        except ValueError:
+            current_idx = 0
+            
         app_tab = st.radio(
             "Select View Workspace Tab:",
             labels_list,
@@ -388,14 +420,14 @@ else:
             label_visibility="collapsed"
         )
         
-        tabs_map = {
-            "📊 Dashboard Hub": "Dashboard Overview",
-            "🎥 Play Video Tasks": "Stream Video Tasks",
-            "💳 Add Balance Funds": "Add Wallet Funds",
-            "💰 Settlement Outflow": "Bank Cashout Liquidation",
-            "📑 Ledger Statements": "Ledger Logs Statements"
-        }
-        st.session_state.active_sidebar_tab = tabs_map[app_tab]
+        # Handle Action routing dynamically
+        if app_tab == "Disconnect Secure Portal Access":
+            st.session_state.logged_in = False
+            st.session_state.auth_view = "login"
+            st.rerun()
+        else:
+            st.session_state.active_sidebar_tab = tabs_map[app_tab]
+            
         st.markdown("---")
 
         # --- DYNAMIC ACTION VIEWS ---
@@ -468,10 +500,3 @@ else:
                 for dl in all_deps:
                     st.markdown(f"**Node Model:** {dl[0]} | **Amount:** RM {dl[1]:,.2f} | **Status:** {dl[2]} ({dl[3]})")
                     st.markdown("---")
-
-        # --- DISCONNECT SECURE PORTAL ---
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚪 Disconnect Secure Portal Connection", use_container_width=True, type="secondary"):
-            st.session_state.logged_in = False
-            st.session_state.auth_view = "login"
-            st.rerun()
