@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- FIXED & IMMUNE COLOR INJECTION CSS ENGINE ---
+# --- IMMUNE DYNAMIC MIXED KEY-BASED CSS ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -186,7 +186,7 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
     .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* CORE NATIVE BUTTON GLOBAL STYLING */
+    /* NATIVE BUTTON BASE RULES */
     div.stButton { margin-bottom: 12px !important; width: 100% !important; }
     
     div.stButton > button {
@@ -201,7 +201,7 @@ st.markdown("""
         padding: 12px 20px !important;
     }
     
-    /* Strict Force White Text Color inside Elements */
+    /* Strong Global White Text Override For All Custom States */
     div.stButton > button p, 
     div.stButton > button span, 
     div.stButton > button div,
@@ -212,21 +212,21 @@ st.markdown("""
         text-align: left !important;
     }
 
-    /* Target Elements By Sequential Structural Indexes to Bypass Attribute Drops */
-    div.stButton:nth-of-type(1) > button { background-color: #ec4899 !important; } /* Pink */
-    div.stButton:nth-of-type(2) > button { background-color: #ef4444 !important; } /* Red */
-    div.stButton:nth-of-type(3) > button { background-color: #22c55e !important; } /* Green */
-    div.stButton:nth-of-type(4) > button { background-color: #f97316 !important; } /* Orange */
-    div.stButton:nth-of-type(5) > button { background-color: #06b6d4 !important; } /* Cyan */
-    div.stButton:nth-of-type(6) > button { background-color: #64748b !important; } /* Slate Gray */
+    /* FOOLPROOF KEY-BASED DIRECT BACKGROUND COLOR INJECTION */
+    div.stButton:has(button[key="nav_dash"]) > button { background-color: #ec4899 !important; } /* Pink */
+    div.stButton:has(button[key="nav_tasks"]) > button { background-color: #ef4444 !important; } /* Red */
+    div.stButton:has(button[key="nav_dep"]) > button { background-color: #22c55e !important; } /* Green */
+    div.stButton:has(button[key="nav_with"]) > button { background-color: #f97316 !important; } /* Orange */
+    div.stButton:has(button[key="nav_hist"]) > button { background-color: #06b6d4 !important; } /* Cyan */
+    div.stButton:has(button[key="nav_logout"]) > button { background-color: #64748b !important; } /* Slate Gray */
 
-    /* Ensure hover matches dynamic coloring cleanly without white flashing */
-    div.stButton:nth-of-type(1) > button:hover { background-color: #db2777 !important; }
-    div.stButton:nth-of-type(2) > button:hover { background-color: #dc2626 !important; }
-    div.stButton:nth-of-type(3) > button:hover { background-color: #16a34a !important; }
-    div.stButton:nth-of-type(4) > button:hover { background-color: #ea580c !important; }
-    div.stButton:nth-of-type(5) > button:hover { background-color: #0891b2 !important; }
-    div.stButton:nth-of-type(6) > button:hover { background-color: #475569 !important; }
+    /* Clean Hover Interactions Mapping */
+    div.stButton:has(button[key="nav_dash"]) > button:hover { background-color: #db2777 !important; }
+    div.stButton:has(button[key="nav_tasks"]) > button:hover { background-color: #dc2626 !important; }
+    div.stButton:has(button[key="nav_dep"]) > button:hover { background-color: #16a34a !important; }
+    div.stButton:has(button[key="nav_with"]) > button:hover { background-color: #ea580c !important; }
+    div.stButton:has(button[key="nav_hist"]) > button:hover { background-color: #0891b2 !important; }
+    div.stButton:has(button[key="nav_logout"]) > button:hover { background-color: #475569 !important; }
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -444,7 +444,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- MIXED VIBRANT COLORS STRIP ---
+        # --- IMMUNE DYNAMIC ACTION NAVIGATION TRIGGERS ---
         if st.button("Fund Deposit / Dashboard Overview", key="nav_dash"):
             st.session_state.active_sidebar_tab = "Dashboard"
             st.rerun()
