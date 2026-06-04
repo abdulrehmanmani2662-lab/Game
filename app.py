@@ -8,8 +8,25 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Forced app structure setup globally
+# Global app setting
 st.set_page_config(page_title="Global Matrix Investment", page_icon="📈", layout="wide")
+
+# --- MALAYSIAN BANKS LIST CONFIGURATION ---
+MALAYSIAN_BANKS = [
+    "Maybank (Malayan Banking Berhad)",
+    "CIMB Bank Berhad",
+    "Public Bank Berhad",
+    "RHB Bank Berhad",
+    "Hong Leong Bank Berhad",
+    "AmBank (M) Berhad",
+    "UOB (United Overseas Bank Malaysia)",
+    "Bank Islam Malaysia Berhad",
+    "Affin Bank Berhad",
+    "Alliance Bank Malaysia Berhad",
+    "Standard Chartered Bank Malaysia",
+    "HSBC Bank Malaysia Berhad",
+    "Bank Muamalat Malaysia Berhad"
+]
 
 # --- DATABASE ENGINE ---
 def init_db():
@@ -95,7 +112,7 @@ def send_real_verification_email(receiver_email, otp_code, user_name, subject_ti
     except:
         return False
 
-# Session management router states
+# Session routers state engine
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -106,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- URL PARAMETERS DETECTOR FOR CUSTOM DABBEY CLICKS ---
+# --- URL QUERY PARAMETERS DETECTOR FOR MENU CLICKS ---
 st_params = st.query_params
 if "nav" in st_params:
     nav_val = st_params["nav"]
@@ -117,10 +134,10 @@ if "nav" in st_params:
         else:
             st.session_state.active_sidebar_tab = nav_val
 
-# --- ADVANCED PREMIUM INJECTION CSS ENGINE ---
+# --- ADVANCED PREMIUM INJECTION CSS ENGINE (ENGLISH LABELS) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2 family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
     [data-testid="stSidebar"], footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
@@ -150,7 +167,7 @@ st.markdown("""
         margin: 35px auto !important;
     }
 
-    /* PREMIUM BALANCE BANNER (SCREENSHOT MATCH) */
+    /* PREMIUM BALANCE BANNER COMPONENT */
     .earnwise-main-card {
         background: #0d1e3d !important;
         border-radius: 14px !important;
@@ -190,14 +207,13 @@ st.markdown("""
         color: #ffffff !important;
         font-weight: 700 !important;
         font-size: 13px !important;
-        text-align: left !important;  /* Strict Left Alignment Line */
+        text-align: left !important;
         text-decoration: none !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.04) !important;
         transition: transform 0.2s, opacity 0.2s !important;
     }
     .custom-dabba-link:active { transform: scale(0.98); opacity: 0.9; }
     
-    /* Dynamic Color Mappings based on Screenshot 1000048025.jpg spec */
     .db-blue-color { background: #1e62d0 !important; }
     .db-green-color { background: #10b981 !important; }
     .db-orange-color { background: #f97316 !important; }
@@ -237,7 +253,7 @@ LEVELS_CONF = {
     "VIP LEVEL 3": {"cost": 500, "daily_reward": 180}
 }
 
-# --- AUTH PANELS PIPELINE ---
+# --- AUTH PANELS PIPELINE (ENGLISH CONVERSION) ---
 if not st.session_state.logged_in:
     st.markdown('<div class="app-brand-header">🔱 GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
     
@@ -245,7 +261,7 @@ if not st.session_state.logged_in:
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("otp_verify_form"):
             st.markdown("<h3>Verify Account</h3>", unsafe_allow_html=True)
-            u_otp = st.text_input("6-Digit Token")
+            u_otp = st.text_input("Enter 6-Digit Token")
             if st.form_submit_button("Submit Token", use_container_width=True):
                 if u_otp.strip() == st.session_state.generated_otp:
                     t_data = st.session_state.temp_register_data
@@ -256,15 +272,15 @@ if not st.session_state.logged_in:
                     st.session_state.current_user = t_data['email']
                     st.session_state.verification_stage = "closed"
                     st.rerun()
-                else: st.error("Token invalid.")
+                else: st.error("Token verification invalid.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.auth_view == "forgot_password_request":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("forgot_form"):
-            st.markdown("<h3>Reset Password Configuration</h3>", unsafe_allow_html=True)
-            r_email = st.text_input("Enter Registered Email Account")
-            if st.form_submit_button("Send Password Recovery OTP Token", use_container_width=True):
+            st.markdown("<h3>Reset Password Account</h3>", unsafe_allow_html=True)
+            r_email = st.text_input("Enter Registered Email Address")
+            if st.form_submit_button("Send Recovery Token Code", use_container_width=True):
                 user_match = query_db("SELECT full_name FROM users WHERE username=?", (r_email.strip(),), one=True)
                 if user_match:
                     st.session_state.generated_otp = str(random.randint(100000, 999999))
@@ -272,36 +288,36 @@ if not st.session_state.logged_in:
                     send_real_verification_email(r_email.strip(), st.session_state.generated_otp, user_match[0], "Password Recovery Code")
                     st.session_state.auth_view = "forgot_password_verification"
                     st.rerun()
-                else: st.error("Target email node sequence not registered.")
+                else: st.error("Target email layout node not found in system storage.")
         st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("Abort and Return to Sign In"):
+        if st.button("Back to Sign In Login Portal"):
             st.session_state.auth_view = "login"
             st.rerun()
 
     elif st.session_state.auth_view == "forgot_password_verification":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("reset_finalize_form"):
-            st.markdown("<h3>Input Recovery Verification Code</h3>", unsafe_allow_html=True)
-            input_token = st.text_input("6-Digit Token Code Received", max_chars=6)
-            new_pass = st.text_input("Configure Secure Password", type="password")
-            if st.form_submit_button("Rewrite Security Profile", use_container_width=True):
+            st.markdown("<h3>Enter Recovery Security Token</h3>", unsafe_allow_html=True)
+            input_token = st.text_input("6-Digit Token Code", max_chars=6)
+            new_pass = st.text_input("New Secure Access Password", type="password")
+            if st.form_submit_button("Overwrite Security Credentials", use_container_width=True):
                 if input_token.strip() == st.session_state.generated_otp:
                     query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.temp_register_data['email']), commit=True)
-                    st.success("Credentials updated successfully.")
+                    st.success("Password overwritten! Proceed to sign-in setup.")
                     st.session_state.auth_view = "login"
                     st.rerun()
-                else: st.error("Token verification hash mismatched.")
+                else: st.error("Token validation index misaligned.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.auth_view == "signup":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("reg_form"):
-            st.markdown("<h3>Create Platform Profile</h3>", unsafe_allow_html=True)
-            reg_name = st.text_input("Name")
-            reg_email = st.text_input("Email")
-            reg_pass = st.text_input("Password", type="password")
-            reg_inv = st.text_input("Invite Token (Optional)")
-            if st.form_submit_button("Register Account Node", use_container_width=True):
+            st.markdown("<h3>Create Platform Node Profile</h3>", unsafe_allow_html=True)
+            reg_name = st.text_input("Full Profile Name")
+            reg_email = st.text_input("Valid Email Address")
+            reg_pass = st.text_input("Secure Account Password", type="password")
+            reg_inv = st.text_input("Invitation Hash Tracking Code (Optional)")
+            if st.form_submit_button("Register Account Credentials", use_container_width=True):
                 if "@" in reg_email:
                     st.session_state.generated_otp = str(random.randint(100000, 999999))
                     st.session_state.temp_register_data = {"name": reg_name.strip(), "email": reg_email.strip(), "password": reg_pass.strip(), "ref_by": reg_inv.strip() or "None"}
@@ -309,17 +325,17 @@ if not st.session_state.logged_in:
                     st.session_state.verification_stage = "awaiting_otp"
                     st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("Existing Profile? Log In"):
+        if st.button("Already have an account? Access Portal"):
             st.session_state.auth_view = "login"
             st.rerun()
 
     elif st.session_state.auth_view == "login":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("login_form"):
-            st.markdown("<h3>Secure Portal Gateway</h3>", unsafe_allow_html=True)
-            login_email = st.text_input("Registered Email Address")
-            login_pass = st.text_input("Account Secret Password", type="password")
-            if st.form_submit_button("Authorize Workspace Connection", use_container_width=True):
+            st.markdown("<h3>Account Login Entry Hub</h3>", unsafe_allow_html=True)
+            login_email = st.text_input("Registered Account Email")
+            login_pass = st.text_input("System Security Password", type="password")
+            if st.form_submit_button("Authorize Secure Access", use_container_width=True):
                 if login_email.strip() == "admin" and login_pass.strip() == "admin123":
                     st.session_state.logged_in = True
                     st.session_state.is_admin = True
@@ -331,31 +347,31 @@ if not st.session_state.logged_in:
                         st.session_state.current_user = login_email.strip()
                         st.session_state.active_sidebar_tab = "Dashboard"
                         st.rerun()
-                    else: st.error("Credentials database identification fault.")
+                    else: st.error("Credentials security pairing failed database matching.")
         st.markdown('</div>', unsafe_allow_html=True)
         
         c1, c2 = st.columns(2)
         with c1:
-            if st.button("Enroll Profile"): st.session_state.auth_view = "signup"; st.rerun()
+            if st.button("Create Profile Account"): st.session_state.auth_view = "signup"; st.rerun()
         with c2:
             if st.button("🔑 Forgot Passwords?"): st.session_state.auth_view = "forgot_password_request"; st.rerun()
 
-# --- MAIN DASHBOARD INTERFACE TERMINAL ---
+# --- MAIN WORKSPACE INTERFACE ---
 else:
     st.markdown('<div class="app-brand-header">👑 GLOBAL MATRIX PREMIUM SYSTEM</div>', unsafe_allow_html=True)
     
     if st.session_state.is_admin:
         st.markdown("## Admin Matrix Controller Terminal")
-        st.session_state.admin_video_url = st.text_input("Video URL Target Link:", value=st.session_state.admin_video_url)
-        if st.button("Logout Admin Interface Context", use_container_width=True):
+        st.session_state.admin_video_url = st.text_input("Video URL Target Link Configuration:", value=st.session_state.admin_video_url)
+        if st.button("Logout Admin Workspace Instance", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.is_admin = False
             st.rerun()
             
         deps = query_db("SELECT * FROM deposits WHERE status='PENDING'")
         for d in deps:
-            st.markdown(f"User: {d[1]} | Plan Tier: {d[2]} | Code Hash: {d[6]}")
-            if st.button(f"Approve Sequence ID {d[0]}", use_container_width=True):
+            st.markdown(f"User: {d[1]} | Plan Tier Target: {d[2]} | Verification Trx ID: {d[6]}")
+            if st.button(f"Approve Sequence Processing Allocation ID {d[0]}", use_container_width=True):
                 query_db("UPDATE users SET active_level=? WHERE username=?", (d[2], d[1]), commit=True)
                 query_db("UPDATE deposits SET status='APPROVED' WHERE id=?", (d[0],), commit=True)
                 st.rerun()
@@ -365,111 +381,118 @@ else:
         bal, lvl, code, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", 0)
         ready_withdrawal = bal * 0.70
 
-        # --- PREMIUM WALLET HEAD CARD ---
+        # --- PREMIUM WALLET CARD BANNER (ENGLISH TRANSLATED) ---
         st.markdown(f"""
         <div class="earnwise-main-card">
-            <div class="card-top-title">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
-            <div class="card-sub-banner">Pelan VIP/SVIP &amp; Tugasan Media Sosial Diperkenalkan!</div>
+            <div class="card-top-title">EarnWise: Your Earnings Overview Hub Dashboard (MY)</div>
+            <div class="card-sub-banner">VIP/SVIP Tiers &amp; Social Video Streams Active Tasks Systems Live!</div>
             <div class="wallet-grid">
                 <div class="wallet-box">
-                    <div class="wallet-lbl">💼 DOMPET PEROLEHAN SAYA (CURRENT BALANCE)</div>
+                    <div class="wallet-lbl">💼 MY EARNINGS WALLET NODE (CURRENT BALANCE)</div>
                     <div class="wallet-val">RM {bal:,.2f}</div>
                 </div>
                 <div class="wallet-box" style="border-left: 1px solid rgba(255,255,255,0.15); padding-left:15px;">
-                    <div class="wallet-lbl">📤 READY FOR CASHOUT OUTFLOW</div>
+                    <div class="wallet-lbl">📤 READY FOR CASHOUT LIQUIDATION OUTFLOW</div>
                     <div class="wallet-val" style="color: #10b981;">RM {ready_withdrawal:,.2f}</div>
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # --- ⚡ 100% LEFT SIDEBAR LINE DASHBOARD DABBA MENU ⚡ ---
-        # Saare buttons ab left align aur screenshot ke premium dabba format me vertical line me hain
+        # --- ⚡ LEFT-ALIGNED VERTICAL ENGLISH DABBA NAVIGATION MENU ⚡ ---
         st.markdown("""
         <div class="v-dabba-container">
-            <a href="?nav=Dashboard" target="_self" class="custom-dabba-link db-blue-color">🔹 Deposit Dana / Dashboard Hub</a>
-            <a href="?nav=Tasks" target="_self" class="custom-dabba-link db-green-color">🟢 Tarik Perolehan / Play Video Tasks</a>
-            <a href="?nav=Deposit" target="_self" class="custom-dabba-link db-orange-color">➕ Fund Wallets Add Balance</a>
-            <a href="?nav=Withdrawal" target="_self" class="custom-dabba-link db-purple-color">📤 Cashout System Settlement Node</a>
-            <a href="?nav=History" target="_self" class="custom-dabba-link db-slate-color">📜 Ledger History Account Statement</a>
-            <a href="?nav=Logout" target="_self" class="custom-dabba-link db-red-color">🚪 Disconnect Secure Portal Connection</a>
+            <a href="?nav=Dashboard" target="_self" class="custom-dabba-link db-blue-color">🔹 Fund Deposit / Dashboard Overview</a>
+            <a href="?nav=Tasks" target="_self" class="custom-dabba-link db-green-color">🟢 Claim Revenue / Stream Video Tasks</a>
+            <a href="?nav=Deposit" target="_self" class="custom-dabba-link db-orange-color">➕ Add Wallet Funds Balance Node</a>
+            <a href="?nav=Withdrawal" target="_self" class="custom-dabba-link db-purple-color">📤 Bank Cashout Liquidation Settlement</a>
+            <a href="?nav=History" target="_self" class="custom-dabba-link db-slate-color">📜 Ledger Statements Account Logs</a>
+            <a href="?nav=Logout" target="_self" class="custom-dabba-link db-red-color">🚪 Disconnect Secure Portal Access</a>
         </div>
         """, unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # --- DYNAMIC ACTIVE SUB-PANELS CONTENT VIEWPORT ---
+        # --- DYNAMIC ACTION VIEWS HOOK PANEL MODULES ---
         if st.session_state.active_sidebar_tab == "Dashboard":
             st.markdown("### Profile Meta Allocation Nodes Overview")
             col_l, col_r = st.columns(2)
             with col_l:
                 st.markdown("""
                 <div class="premium-widget-box" style="height:120px;">
-                    <div class="widget-title-head">Tugasan Tontonan &amp; Bonus Module</div>
-                    <p style="font-size:13px; color:#4b5563; margin:0;">Watch streamed sequence loops inside the task panels to instantly unlock matrix allocation balances daily into secure nodes.</p>
+                    <div class="widget-title-head">Video Stream Engine &amp; Daily Rewards Module</div>
+                    <p style="font-size:13px; color:#4b5563; margin:0;">Watch allocated video stream loop playback logs within the interface tasks workspace to unlock cloud matrix balances instantly into tracking pipelines.</p>
                 </div>
                 """, unsafe_allow_html=True)
             with col_r:
                 st.markdown(f"""
                 <div class="premium-widget-box" style="height:120px;">
-                    <div class="widget-title-head">Pusat Tugasan YouTube &amp; Media (Active Tier)</div>
-                    <p style="font-size:13px; color:#4b5563; margin:0;">Active Operational Node Tier Status: <b style="color:#2563eb;">{lvl}</b></p>
-                    <p style="font-size:12px; color:#64748b; margin-top:5px;">Unique Invitation Hash Tracking ID Code Token: <b>{code}</b></p>
+                    <div class="widget-title-head">YouTube Streams Tasks Core Center (Active Tier)</div>
+                    <p style="font-size:13px; color:#4b5563; margin:0;">Active Functional Node Profile Level Status: <b style="color:#2563eb;">{lvl}</b></p>
+                    <p style="font-size:12px; color:#64748b; margin-top:5px;">Unique Invitation Hash Tracking Identification Token ID: <b>{code}</b></p>
                 </div>
                 """, unsafe_allow_html=True)
 
         elif st.session_state.active_sidebar_tab == "Tasks":
-            st.markdown("<div class='form-wrapper-box'><h4>Tonton Video &amp; Menang Rewards Workspace</h4>", unsafe_allow_html=True)
+            st.markdown("<div class='form-wrapper-box'><h4>Stream Video Playback &amp; Earn Matrix Settlement Tokens</h4>", unsafe_allow_html=True)
             st.video(st.session_state.admin_video_url)
             
             c_time = int(time.time())
             if (c_time - claim_stamp) < 86400:
                 rem = 86400 - (c_time - claim_stamp)
-                st.error(f"Cooldown active sequence constraint lock block. Time remaining: {rem//3600}h {(rem%3600)//60}m")
+                st.error(f"Daily system stream task cooldown lock active. Time remaining execution segment: {rem//3600}h {(rem%3600)//60}m")
             else:
-                if st.button("Claim Daily Stream Settlement Token Now", use_container_width=True):
+                if st.button("Claim Daily Video Processing Reward Yield Allocation Now", use_container_width=True):
                     bonus = 5.00 if lvl == "None" else float(LEVELS_CONF[lvl]["daily_reward"])
                     query_db("UPDATE users SET balance = balance + ?, last_claim_timestamp = ? WHERE username=?", (bonus, c_time, st.session_state.current_user), commit=True)
-                    st.success(f"Execution tracking settlement bonus logged successfully: +RM {bonus:.2f}")
+                    st.success(f"Execution tracking settlement stream balance assigned logged: +RM {bonus:.2f}")
                     st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
 
         elif st.session_state.active_sidebar_tab == "Deposit":
-            st.markdown("<div class='form-wrapper-box'><h4>Submit Deposit Verification Payment Slip</h4>", unsafe_allow_html=True)
+            st.markdown("<div class='form-wrapper-box'><h4>Submit Local Malaysian Bank Transfer Deposit Proof Slip</h4>", unsafe_allow_html=True)
             with st.form("dep_form_hub"):
-                holder = st.text_input("Sender Account Holder Full Title Reference:")
-                tx_str = st.text_input("Bank System Verification Transaction Code Token (Trx ID):")
-                p_select = st.selectbox("Select Target Deployment Nodes Plan Tier Configuration:", list(LEVELS_CONF.keys()))
-                if st.form_submit_button("Hantar Slip Proof Verification Sequence", use_container_width=True):
+                # Integrated Dropdown Selection Box for all Top Malaysian Banks
+                deposit_bank = st.selectbox("Select Your Malaysian Bank Node Used for Deposit Transfer:", MALAYSIAN_BANKS)
+                holder = st.text_input("Sender Account Holder Name/Title:")
+                tx_str = st.text_input("Bank System Payment Verification Transaction Reference Number (Trx ID):")
+                p_select = st.selectbox("Select Target Active Investment Nodes Deployment Level Configuration:", list(LEVELS_CONF.keys()))
+                if st.form_submit_button("Submit Deposit Proof Payment Slip Metadata", use_container_width=True):
                     if holder and tx_str:
+                        # Append the selected bank details to logging notes
+                        method_string = f"Bank Transfer ({deposit_bank})"
                         query_db("INSERT INTO deposits (user, level, amount, method, holder_name, trx_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-                                 (st.session_state.current_user, p_select, LEVELS_CONF[p_select]["cost"], "Bank Transfer", holder, tx_str, "PENDING"), commit=True)
-                        st.success("Log submission cached into tracking pipelines.")
+                                 (st.session_state.current_user, p_select, LEVELS_CONF[p_select]["cost"], method_string, holder, tx_str, "PENDING"), commit=True)
+                        st.success("Log submission payment confirmation pending admin verification check.")
             st.markdown('</div>', unsafe_allow_html=True)
 
         elif st.session_state.active_sidebar_tab == "Withdrawal":
-            st.markdown("<div class='form-wrapper-box'><h4>Launch Liquidation Outflow Settlement Connection Terminal</h4>", unsafe_allow_html=True)
+            st.markdown("<div class='form-wrapper-box'><h4>Configure Bank Liquidation Cashout Outflow Node Connection</h4>", unsafe_allow_html=True)
             with st.form("with_form_hub"):
-                w_val = st.number_input("Value Sum Liquidation Size (RM Units):", min_value=10.0, step=5.0)
-                w_net = st.text_input("Destination Routing Accounts / Wallet Matrix Information Data String:")
-                if st.form_submit_button("Execute Outflow Cashout Command Link", use_container_width=True):
+                # Integrated Dropdown Selection Box for receiving funds in Malaysian local bank account
+                withdrawal_bank = st.selectbox("Select Target Malaysian Bank Destination Node Account Receive:", MALAYSIAN_BANKS)
+                w_acc_num = st.text_input("Receiver Bank Account Number:")
+                w_acc_title = st.text_input("Receiver Bank Account Title/Full Name:")
+                w_val = st.number_input("Value Sum Cashout Size (RM Units):", min_value=10.0, step=5.0)
+                if st.form_submit_button("Execute Outflow Cashout Command Authorization Pipeline", use_container_width=True):
                     if w_val <= bal:
+                        routing_string = f"Bank: {withdrawal_bank} | Acc Num: {w_acc_num} | Title: {w_acc_title}"
                         query_db("UPDATE users SET balance = balance - ? WHERE username=?", (w_val, st.session_state.current_user), commit=True)
-                        query_db("INSERT INTO withdrawals (user, amount, wallet_details, status) VALUES (?, ?, ?, ?)", (st.session_state.current_user, w_val, w_net.strip(), "PENDING"), commit=True)
-                        st.success("Outflow pipelines execution complete.")
+                        query_db("INSERT INTO withdrawals (user, amount, wallet_details, status) VALUES (?, ?, ?, ?)", (st.session_state.current_user, w_val, routing_string, "PENDING"), commit=True)
+                        st.success("Outflow pipeline cache registration entry recorded. Settlement updates follow processing blocks.")
                         st.rerun()
-                    else: st.error("Shortfall allocation index bounds error. Insufficient current balance.")
+                    else: st.error("Shortfall tracking allocation index limits. Insufficient current balance index funds.")
             st.markdown('</div>', unsafe_allow_html=True)
 
         elif st.session_state.active_sidebar_tab == "History":
-            st.markdown("<div class='form-wrapper-box'><h4>Sejarah Transaksi Terkini Accounts Nodes Tracker</h4>", unsafe_allow_html=True)
-            all_deps = query_db("SELECT level, amount, status FROM deposits WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
-            if not all_deps: st.markdown("<p style='color:#64748b; text-align:center;'>No structural logging transaction steps traced.</p>", unsafe_allow_html=True)
+            st.markdown("<div class='form-wrapper-box'><h4>Recent Account Nodes Transaction History Statements Ledger</h4>", unsafe_allow_html=True)
+            all_deps = query_db("SELECT level, amount, status, method FROM deposits WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
+            if not all_deps: st.markdown("<p style='color:#64748b; text-align:center;'>No structural ledger transactions traced in data pipelines.</p>", unsafe_allow_html=True)
             for dl in all_deps:
                 badge_cls = "b-success" if dl[2] == "APPROVED" else "b-pending"
                 st.markdown(f"""
                 <div class="history-row">
-                    <div>Node Level Tier Config Model: <b>{dl[0]}</b></div>
+                    <div>Node Model: <b>{dl[0]}</b><br><small style="color:#64748b;">Source: {dl[3]}</small></div>
                     <div style="text-align: right;">
                         <b>RM {dl[1]:,.2f}</b><br><span class="badge {badge_cls}">{dl[2]}</span>
                     </div>
