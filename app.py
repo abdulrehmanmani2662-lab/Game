@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- ADVANCED PREMIUM INJECTION CSS ENGINE (STRICT OVERRIDES FOR TEXT VISIBILITY) ---
+# --- ADVANCED PREMIUM INJECTION CSS ENGINE (GRID BUTTONS + EXTRA BOLD FONTS) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -135,12 +135,13 @@ st.markdown("""
     
     .stApp { background-color: #f8fafc !important; }
     
-    /* Font Weight Config */
-    body, h1, h2, h3, h4, h5, h6, p, label, span { 
+    /* Strict Global Font Configuration for Heavy Bold */
+    *, p, label, span, button, div { 
         font-family: 'Plus Jakarta Sans', sans-serif !important; 
+        font-weight: 800 !important; 
     }
     
-    h1, h2, h3, h4, h5, h6, label { font-weight: 800 !important; }
+    h1, h2, h3, h4, h5, h6 { font-weight: 900 !important; }
     
     .app-brand-header {
         background: #0f172a !important;
@@ -169,7 +170,7 @@ st.markdown("""
         border-radius: 14px !important;
         padding: 18px !important;
         color: #ffffff !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 15px !important;
     }
     .card-top-title { font-size: 14px !important; color: #cbd5e1 !important; font-weight: 800 !important; }
     .card-sub-banner { font-size: 11px !important; color: #fbbf24 !important; font-weight: 900 !important; margin-top: 2px; margin-bottom: 10px; }
@@ -187,50 +188,40 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
     .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* NATIVE BUTTON OVERRIDES - FIXED BUTTON INNER TEXT VISIBILITY */
-    div.stButton { margin-bottom: -14px !important; }
+    /* NATIVE BUTTON OVERRIDES - SQUARE DABY + SOLID BLACK READABLE TEXT */
+    div.stButton { margin-bottom: 10px !important; }
     
     div.stButton > button {
-        display: block !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         width: 100% !important;
-        padding: 10px 14px !important;
-        border-radius: 10px !important;
-        border: none !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
-        transition: transform 0.1s ease !important;
+        height: 70px !important; /* Square Daba Height */
+        border-radius: 12px !important;
+        background-color: #ffffff !important; /* Clean White Daby */
+        border: 2px solid #cbd5e1 !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.04) !important;
+        padding: 10px !important;
     }
     
-    /* Direct Target For Button Inner Text Blocks */
+    /* Super Heavy Bold Text Inside Buttons - ALWAYS VISIBLE */
     div.stButton > button p, 
     div.stButton > button span, 
     div.stButton > button div {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        font-size: 14px !important;
+        color: #0f172a !important; /* Premium Dark Navy/Black text */
+        font-weight: 900 !important;
+        font-size: 13px !important;
+        text-align: center !important;
+        white-space: normal !important;
+        line-height: 1.2 !important;
     }
     
-    /* Custom Fallback colors for Standard/Auth View Buttons */
-    div.stButton > button {
-        background-color: #1e62d0 !important; /* Default Elegant Blue */
-    }
-    
-    /* Colored Wrapper Classes For Navigation Hub */
-    .btn-blue button { background-color: #1e62d0 !important; }
-    .btn-green button { background-color: #10b981 !important; }
-    .btn-orange button { background-color: #f97316 !important; }
-    .btn-purple button { background-color: #8b5cf6 !important; }
-    .btn-slate button { background-color: #475569 !important; }
-    .btn-red button { background-color: #ef4444 !important; }
-
-    /* For Auth Sub-buttons (Make them look clean and dark/readable) */
-    .auth-sub-btn button {
+    div.stButton > button:hover { 
         background-color: #f1f5f9 !important;
-        border: 1px solid #cbd5e1 !important;
+        border-color: #94a3b8 !important; 
     }
-    .auth-sub-btn button p {
-        color: #1e293b !important;
-        font-weight: 700 !important;
-    }
+    
+    div.stButton > button:active { transform: scale(0.98); }
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -304,11 +295,9 @@ if not st.session_state.logged_in:
                     st.rerun()
                 else: st.error("Target email layout node not found in system storage.")
         st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('<div class="auth-sub-btn">', unsafe_allow_html=True)
         if st.button("Back to Sign In Login Portal"):
             st.session_state.auth_view = "login"
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.auth_view == "forgot_password_verification":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
@@ -341,11 +330,9 @@ if not st.session_state.logged_in:
                     st.session_state.verification_stage = "awaiting_otp"
                     st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('<div class="auth-sub-btn">', unsafe_allow_html=True)
         if st.button("Already have an account? Access Portal"):
             st.session_state.auth_view = "login"
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.auth_view == "login":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
@@ -368,13 +355,11 @@ if not st.session_state.logged_in:
                     else: st.error("Credentials security pairing failed database matching.")
         st.markdown('</div>', unsafe_allow_html=True)
         
-        st.markdown('<div class="auth-sub-btn">', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
         with c1:
             if st.button("Create Profile Account"): st.session_state.auth_view = "signup"; st.rerun()
         with c2:
             if st.button("🔑 Forgot Passwords?"): st.session_state.auth_view = "forgot_password_request"; st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
 # --- MAIN WORKSPACE INTERFACE ---
 else:
@@ -419,33 +404,37 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- ⚡ STATE ROUTING NAVIGATION HUBS ⚡ ---
-        st.markdown('<div class="btn-blue">', unsafe_allow_html=True)
-        if st.button("🔹 Fund Deposit / Dashboard Overview", key="nav_dash"):
-            st.session_state.active_sidebar_tab = "Dashboard"
-            st.rerun()
-        st.markdown('</div><div class="btn-green">', unsafe_allow_html=True)
-        if st.button("🟢 Claim Revenue / Stream Video Tasks", key="nav_tasks"):
-            st.session_state.active_sidebar_tab = "Tasks"
-            st.rerun()
-        st.markdown('</div><div class="btn-orange">', unsafe_allow_html=True)
-        if st.button("➕ Add Wallet Funds Balance Node", key="nav_dep"):
-            st.session_state.active_sidebar_tab = "Deposit"
-            st.rerun()
-        st.markdown('</div><div class="btn-purple">', unsafe_allow_html=True)
-        if st.button("📤 Bank Cashout Liquidation Settlement", key="nav_with"):
-            st.session_state.active_sidebar_tab = "Withdrawal"
-            st.rerun()
-        st.markdown('</div><div class="btn-slate">', unsafe_allow_html=True)
-        if st.button("📜 Ledger Statements Account Logs", key="nav_hist"):
-            st.session_state.active_sidebar_tab = "History"
-            st.rerun()
-        st.markdown('</div><div class="btn-red">', unsafe_allow_html=True)
-        if st.button("🚪 Disconnect Secure Portal Access", key="nav_logout"):
-            st.session_state.logged_in = False
-            st.session_state.auth_view = "login"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        # --- ⚡ TWO-COLUMN GRID LAYOUT FOR DABY BUTTONS (NO EMOJIS, EXTRA BOLD) ⚡ ---
+        row1_c1, row1_c2 = st.columns(2)
+        with row1_c1:
+            if st.button("Deposit / Dashboard Overview", key="nav_dash"):
+                st.session_state.active_sidebar_tab = "Dashboard"
+                st.rerun()
+        with row1_c2:
+            if st.button("Claim Revenue / Video Tasks", key="nav_tasks"):
+                st.session_state.active_sidebar_tab = "Tasks"
+                st.rerun()
+
+        row2_c1, row2_c2 = st.columns(2)
+        with row2_c1:
+            if st.button("Add Wallet Funds Balance", key="nav_dep"):
+                st.session_state.active_sidebar_tab = "Deposit"
+                st.rerun()
+        with row2_c2:
+            if st.button("Bank Cashout Settlement", key="nav_with"):
+                st.session_state.active_sidebar_tab = "Withdrawal"
+                st.rerun()
+
+        row3_c1, row3_c2 = st.columns(2)
+        with row3_c1:
+            if st.button("Ledger Statements Logs", key="nav_hist"):
+                st.session_state.active_sidebar_tab = "History"
+                st.rerun()
+        with row3_c2:
+            if st.button("Disconnect Portal Access", key="nav_logout"):
+                st.session_state.logged_in = False
+                st.session_state.auth_view = "login"
+                st.rerun()
 
         # --- DYNAMIC ACTION VIEWS HOOK PANEL MODULES ---
         if st.session_state.active_sidebar_tab == "Dashboard":
