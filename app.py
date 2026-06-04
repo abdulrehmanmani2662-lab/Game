@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- ADVANCED PREMIUM INJECTION CSS ENGINE (BLUE WIDE BUTTONS + EXTRA BOLD FONTS) ---
+# --- ADVANCED MIXED COLOR CSS INJECTION ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -135,7 +135,6 @@ st.markdown("""
     
     .stApp { background-color: #f8fafc !important; }
     
-    /* Strict Global Font Configuration for Heavy Bold */
     *, p, label, span, button, div { 
         font-family: 'Plus Jakarta Sans', sans-serif !important; 
         font-weight: 800 !important; 
@@ -164,7 +163,6 @@ st.markdown("""
         margin: 15px auto !important;
     }
 
-    /* PREMIUM BALANCE BANNER COMPONENT */
     .earnwise-main-card {
         background: #0d1e3d !important;
         border-radius: 14px !important;
@@ -188,40 +186,37 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
     .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* NATIVE BUTTON OVERRIDES - ORIGINAL BLUE BACKGROUND + FULL WIDTH WIDE BARS */
+    /* MIXED COLOR CUSTOM BUTTONS */
     div.stButton { margin-bottom: 12px !important; width: 100% !important; }
     
     div.stButton > button {
         display: flex !important;
         align-items: center !important;
-        justify-content: flex-start !important; /* Left alignment like original image */
+        justify-content: flex-start !important;
         width: 100% !important;
-        height: auto !important;
         min-height: 54px !important;
         border-radius: 12px !important;
-        background-color: #1e62d0 !important; /* Original Premium Blue Color */
         border: none !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.06) !important;
         padding: 12px 20px !important;
     }
     
-    /* Super Mota (Heavy Bold) White Text Inside Original Blue Buttons */
     div.stButton > button p, 
     div.stButton > button span, 
     div.stButton > button div {
-        color: #ffffff !important; /* Sharp White Text on Blue Background */
+        color: #ffffff !important;
         font-weight: 800 !important;
         font-size: 15px !important;
         text-align: left !important;
-        white-space: normal !important;
-        line-height: 1.2 !important;
     }
-    
-    div.stButton > button:hover { 
-        background-color: #1a56b7 !important; /* Slightly darker blue on hover */
-    }
-    
-    div.stButton > button:active { transform: scale(0.99); }
+
+    /* Key-wise Specific Color Mixing Assignment */
+    div.stButton:has(button[key="nav_dash"]) > button { background-color: #ec4899 !important; } /* Pink */
+    div.stButton:has(button[key="nav_tasks"]) > button { background-color: #ef4444 !important; } /* Red */
+    div.stButton:has(button[key="nav_dep"]) > button { background-color: #22c55e !important; } /* Green */
+    div.stButton:has(button[key="nav_with"]) > button { background-color: #f97316 !important; } /* Orange */
+    div.stButton:has(button[key="nav_hist"]) > button { background-color: #06b6d4 !important; } /* Cyan */
+    div.stButton:has(button[key="nav_logout"]) > button { background-color: #64748b !important; } /* Slate Gray */
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -363,25 +358,65 @@ if not st.session_state.logged_in:
 
 # --- MAIN WORKSPACE INTERFACE ---
 else:
-    st.markdown('<div class="app-brand-header">👑 GLOBAL MATRIX PREMIUM SYSTEM</div>', unsafe_allow_html=True)
-    
     if st.session_state.is_admin:
-        st.markdown("## Admin Matrix Controller Terminal")
-        st.session_state.admin_video_url = st.text_input("Video URL Target Link Configuration:", value=st.session_state.admin_video_url)
-        if st.button("Logout Admin Workspace Instance", use_container_width=True):
+        st.markdown('<div class="app-brand-header">🚨 MASTER CONTROL PANEL (ADMIN)</div>', unsafe_allow_html=True)
+        
+        # Logout button for Admin
+        if st.button("Logout Admin Console", key="nav_logout"):
             st.session_state.logged_in = False
             st.session_state.is_admin = False
             st.rerun()
             
+        st.session_state.admin_video_url = st.text_input("Global Task Video URL Link:", value=st.session_state.admin_video_url)
+        
+        st.markdown("---")
+        
+        # --- NEW LIVE USER DATABASE MANAGEMENT TERMINAL ---
+        st.markdown("### 👥 All Registered Registered Users Database")
+        all_users = query_db("SELECT username, full_name, balance, active_level FROM users")
+        
+        if all_users:
+            df_users = pd.DataFrame(all_users, columns=["Email/Username", "Full Name", "Balance (RM)", "VIP Level"])
+            st.dataframe(df_users, use_container_width=True)
+            
+            # Interactive Control Rig
+            st.markdown("#### ⚡ Quick Actions: Modify User Record Data")
+            selected_user = st.selectbox("Select Target User Node to Control:", df_users["Email/Username"].tolist())
+            
+            if selected_user:
+                current_meta = query_db("SELECT balance, active_level FROM users WHERE username=?", (selected_user,), one=True)
+                
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    new_balance_val = st.number_input("Modify Wallet Balance (RM):", value=float(current_meta[0]), step=10.0)
+                with col_b2:
+                    current_lvls = ["None", "VIP LEVEL 1", "VIP LEVEL 2", "VIP LEVEL 3"]
+                    try: initial_idx = current_lvls.index(current_meta[1])
+                    except: initial_idx = 0
+                    new_level_select = st.selectbox("Change Forced Tier Level:", current_lvls, index=initial_idx)
+                
+                if st.button("Save Changes and Overwrite Data Node", use_container_width=True):
+                    query_db("UPDATE users SET balance=?, active_level=? WHERE username=?", (new_balance_val, new_level_select, selected_user), commit=True)
+                    st.success(f"Successfully updated data logs for {selected_user}!")
+                    st.rerun()
+        else:
+            st.info("No active user modules found in database infrastructure pools.")
+
+        st.markdown("---")
+        st.markdown("### 📥 Pending Deposits Approval Matrix")
         deps = query_db("SELECT * FROM deposits WHERE status='PENDING'")
+        if not deps:
+            st.write("No incoming pending requests trace flags found.")
         for d in deps:
-            st.markdown(f"User: {d[1]} | Plan Tier Target: {d[2]} | Verification Trx ID: {d[6]}")
-            if st.button(f"Approve Sequence Processing Allocation ID {d[0]}", use_container_width=True):
+            st.markdown(f"User: **{d[1]}** | Level Plan: **{d[2]}** | Trx ID Reference: `{d[6]}`")
+            if st.button(f"Approve Payment Allocation Block ID {d[0]}", use_container_width=True):
                 query_db("UPDATE users SET active_level=? WHERE username=?", (d[2], d[1]), commit=True)
                 query_db("UPDATE deposits SET status='APPROVED' WHERE id=?", (d[0],), commit=True)
+                st.success("Target profile package status upgraded safely!")
                 st.rerun()
                 
     else:
+        st.markdown('<div class="app-brand-header">👑 GLOBAL MATRIX PREMIUM SYSTEM</div>', unsafe_allow_html=True)
         u_data = query_db("SELECT balance, active_level, ref_code, last_claim_timestamp FROM users WHERE username=?", (st.session_state.current_user,), one=True)
         bal, lvl, code, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", 0)
         ready_withdrawal = bal * 0.70
@@ -404,7 +439,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- ⚡ ORIGINAL FULL-WIDTH BLUE BARS (NO EMOJIS, EXTRA MOTAY FONTS) ⚡ ---
+        # --- MIXED VIBRANT COLORS FULL-WIDTH BUTTON NAVIGATION BAR ---
         if st.button("Fund Deposit / Dashboard Overview", key="nav_dash"):
             st.session_state.active_sidebar_tab = "Dashboard"
             st.rerun()
