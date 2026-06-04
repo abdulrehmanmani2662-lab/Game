@@ -112,7 +112,7 @@ def send_real_verification_email(receiver_email, otp_code, user_name, subject_ti
     except:
         return False
 
-# Session routers state engine (PERSISTENT IN-MEMORY ROUTING)
+# Session routers state engine
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- ADVANCED PREMIUM INJECTION CSS ENGINE (EXTRA BOLD FONTS) ---
+# --- ADVANCED PREMIUM INJECTION CSS ENGINE (FIXED TEXT VISIBILITY) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -135,21 +135,20 @@ st.markdown("""
     
     .stApp { background-color: #f8fafc !important; }
     
-    /* Global Motay Fonts Style */
-    * { 
-        font-family: 'Plus Jakarta Sans', sans-serif !important; 
-        font-weight: 700 !important; 
-    }
+    /* Global Font Settings */
+    * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    
+    h1, h2, h3, h4, h5, h6, p, label { font-weight: 800 !important; }
     
     .app-brand-header {
         background: #0f172a !important;
-        padding: 16px !important;
+        padding: 14px !important;
         border-radius: 10px !important;
         color: #ffffff !important;
         font-weight: 900 !important;
-        font-size: 18px !important;
+        font-size: 16px !important;
         text-align: center !important;
-        margin-bottom: 14px !important;
+        margin-bottom: 12px !important;
         text-transform: uppercase;
     }
 
@@ -157,55 +156,59 @@ st.markdown("""
         background: #ffffff !important;
         border: 2px solid #cbd5e1 !important;
         border-radius: 16px !important;
-        padding: 26px !important;
+        padding: 24px !important;
         max-width: 450px;
-        margin: 35px auto !important;
+        margin: 30px auto !important;
     }
 
     /* PREMIUM BALANCE BANNER COMPONENT */
     .earnwise-main-card {
         background: #0d1e3d !important;
         border-radius: 14px !important;
-        padding: 20px !important;
+        padding: 18px !important;
         color: #ffffff !important;
-        margin-bottom: 18px !important;
-        border: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 14px !important;
     }
-    .card-top-title { font-size: 15px !important; color: #cbd5e1 !important; font-weight: 800 !important; }
-    .card-sub-banner { font-size: 12px !important; color: #fbbf24 !important; font-weight: 900 !important; margin-top: 4px; margin-bottom: 14px; }
+    .card-top-title { font-size: 14px !important; color: #cbd5e1 !important; font-weight: 800 !important; }
+    .card-sub-banner { font-size: 11px !important; color: #fbbf24 !important; font-weight: 900 !important; margin-top: 2px; margin-bottom: 10px; }
     
     .wallet-grid {
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-between !important;
         background: rgba(255, 255, 255, 0.07) !important;
-        border: 2px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 12px !important;
-        padding: 14px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        padding: 12px !important;
     }
     .wallet-box { width: 49% !important; }
-    .wallet-lbl { font-size: 11px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; line-height: 1.3; }
-    .wallet-val { font-size: 20px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 5px; }
+    .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
+    .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* DYNAMIC ACTION BUTTON DABBA ELEMENT FOR STREAMLIT INTERNAL BINDING */
+    /* NATIVE BUTTON OVERRIDES - TEXT CORRECTION AND COMPACT LAYOUT */
+    div.stButton { margin-bottom: -16px !important; }
+    
     div.stButton > button {
         display: block !important;
         width: 100% !important;
-        padding: 16px 20px !important;
-        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        border-radius: 10px !important;
+        border: none !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        transition: transform 0.1s ease !important;
+    }
+    
+    /* Strong Text Color and Weight Forcing inside buttons */
+    div.stButton > button p {
         color: #ffffff !important;
         font-weight: 800 !important;
-        font-size: 14px !important;
-        text-align: left !important;
-        border: none !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.06) !important;
-        transition: transform 0.1s ease !important;
-        margin-bottom: -10px !important;
+        font-size: 13px !important;
     }
-    div.stButton > button:hover { color: #ffffff !important; transform: scale(1.01); }
+    
+    div.stButton > button:hover { transform: scale(1.01); }
     div.stButton > button:active { transform: scale(0.99); }
     
-    /* Pure CSS Overrides for Button Dabba Mappings Verbatim to 1000048041.jpg */
+    /* Button Wrapper Color Themes */
     .btn-blue button { background: #1e62d0 !important; }
     .btn-green button { background: #10b981 !important; }
     .btn-orange button { background: #f97316 !important; }
@@ -217,27 +220,27 @@ st.markdown("""
         background: #ffffff !important;
         border: 2px solid #e2e8f0 !important;
         border-radius: 12px !important;
-        padding: 18px !important;
-        margin-bottom: 14px !important;
+        padding: 16px !important;
+        margin-bottom: 12px !important;
     }
-    .widget-title-head { font-size: 15px !important; font-weight: 800 !important; color: #0f172a !important; margin-bottom: 10px !important; }
+    .widget-title-head { font-size: 14px !important; font-weight: 800 !important; color: #0f172a !important; margin-bottom: 8px !important; }
     
     .form-wrapper-box {
         background: #ffffff !important;
         border: 2px solid #e2e8f0 !important;
         border-radius: 14px !important;
-        padding: 20px !important;
+        padding: 18px !important;
+        margin-top: 10px !important;
     }
 
     .history-row {
         display: flex !important; justify-content: space-between !important; align-items: center !important;
-        padding: 12px 0 !important; border-bottom: 2px solid #f1f5f9 !important; font-size: 14px !important;
+        padding: 10px 0 !important; border-bottom: 2px solid #f1f5f9 !important; font-size: 13px !important;
     }
-    .badge { font-size: 12px !important; font-weight: 800 !important; padding: 4px 8px !important; border-radius: 6px; }
+    .badge { font-size: 11px !important; font-weight: 800 !important; padding: 4px 6px !important; border-radius: 4px; }
     .b-success { background: #dcfce7 !important; color: #15803d !important; }
     .b-pending { background: #fef3c7 !important; color: #b45309 !important; }
     
-    /* Make Form labels thicker */
     label p { font-weight: 800 !important; font-size: 14px !important; color: #1e293b !important; }
     </style>
 """, unsafe_allow_html=True)
@@ -394,8 +397,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- ⚡ 100% SECURE STATE-BASED MENU (NO LOGOUT BUG) ⚡ ---
-        # Query Strings ko click handlers me badal diya hai taake memory lock safe rahe.
+        # --- ⚡ STATE ROUTING BUTTONS WITH COMPACT SPACING ⚡ ---
         st.markdown('<div class="btn-blue">', unsafe_allow_html=True)
         if st.button("🔹 Fund Deposit / Dashboard Overview", key="nav_dash"):
             st.session_state.active_sidebar_tab = "Dashboard"
@@ -423,22 +425,21 @@ else:
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown("<br><br>", unsafe_allow_html=True)
-
         # --- DYNAMIC ACTION VIEWS HOOK PANEL MODULES ---
         if st.session_state.active_sidebar_tab == "Dashboard":
+            st.markdown("<br>", unsafe_allow_html=True)
             st.markdown("### Profile Meta Allocation Nodes Overview")
             col_l, col_r = st.columns(2)
             with col_l:
                 st.markdown("""
-                <div class="premium-widget-box" style="height:140px;">
+                <div class="premium-widget-box" style="height:130px;">
                     <div class="widget-title-head">Video Stream Engine &amp; Daily Rewards Module</div>
                     <p style="font-size:13px; color:#4b5563; margin:0; font-weight:700;">Watch allocated video stream loop playback logs within the interface tasks workspace to unlock cloud matrix balances instantly into tracking pipelines.</p>
                 </div>
                 """, unsafe_allow_html=True)
             with col_r:
                 st.markdown(f"""
-                <div class="premium-widget-box" style="height:140px;">
+                <div class="premium-widget-box" style="height:130px;">
                     <div class="widget-title-head">YouTube Streams Tasks Core Center (Active Tier)</div>
                     <p style="font-size:13px; color:#4b5563; margin:0; font-weight:700;">Active Functional Node Profile Level Status: <b style="color:#2563eb;">{lvl}</b></p>
                     <p style="font-size:13px; color:#64748b; margin-top:5px; font-weight:700;">Unique Invitation Hash Tracking Identification Token ID: <b>{code}</b></p>
