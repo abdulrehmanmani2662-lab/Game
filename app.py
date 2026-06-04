@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- ADVANCED PREMIUM INJECTION CSS ENGINE (GRID BUTTONS + EXTRA BOLD FONTS) ---
+# --- ADVANCED PREMIUM INJECTION CSS ENGINE (BLUE WIDE BUTTONS + EXTRA BOLD FONTS) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -188,40 +188,40 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
     .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* NATIVE BUTTON OVERRIDES - SQUARE DABY + SOLID BLACK READABLE TEXT */
-    div.stButton { margin-bottom: 10px !important; }
+    /* NATIVE BUTTON OVERRIDES - ORIGINAL BLUE BACKGROUND + FULL WIDTH WIDE BARS */
+    div.stButton { margin-bottom: 12px !important; width: 100% !important; }
     
     div.stButton > button {
         display: flex !important;
         align-items: center !important;
-        justify-content: center !important;
+        justify-content: flex-start !important; /* Left alignment like original image */
         width: 100% !important;
-        height: 70px !important; /* Square Daba Height */
+        height: auto !important;
+        min-height: 54px !important;
         border-radius: 12px !important;
-        background-color: #ffffff !important; /* Clean White Daby */
-        border: 2px solid #cbd5e1 !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04) !important;
-        padding: 10px !important;
+        background-color: #1e62d0 !important; /* Original Premium Blue Color */
+        border: none !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.06) !important;
+        padding: 12px 20px !important;
     }
     
-    /* Super Heavy Bold Text Inside Buttons - ALWAYS VISIBLE */
+    /* Super Mota (Heavy Bold) White Text Inside Original Blue Buttons */
     div.stButton > button p, 
     div.stButton > button span, 
     div.stButton > button div {
-        color: #0f172a !important; /* Premium Dark Navy/Black text */
-        font-weight: 900 !important;
-        font-size: 13px !important;
-        text-align: center !important;
+        color: #ffffff !important; /* Sharp White Text on Blue Background */
+        font-weight: 800 !important;
+        font-size: 15px !important;
+        text-align: left !important;
         white-space: normal !important;
         line-height: 1.2 !important;
     }
     
     div.stButton > button:hover { 
-        background-color: #f1f5f9 !important;
-        border-color: #94a3b8 !important; 
+        background-color: #1a56b7 !important; /* Slightly darker blue on hover */
     }
     
-    div.stButton > button:active { transform: scale(0.98); }
+    div.stButton > button:active { transform: scale(0.99); }
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -404,37 +404,31 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- ⚡ TWO-COLUMN GRID LAYOUT FOR DABY BUTTONS (NO EMOJIS, EXTRA BOLD) ⚡ ---
-        row1_c1, row1_c2 = st.columns(2)
-        with row1_c1:
-            if st.button("Deposit / Dashboard Overview", key="nav_dash"):
-                st.session_state.active_sidebar_tab = "Dashboard"
-                st.rerun()
-        with row1_c2:
-            if st.button("Claim Revenue / Video Tasks", key="nav_tasks"):
-                st.session_state.active_sidebar_tab = "Tasks"
-                st.rerun()
-
-        row2_c1, row2_c2 = st.columns(2)
-        with row2_c1:
-            if st.button("Add Wallet Funds Balance", key="nav_dep"):
-                st.session_state.active_sidebar_tab = "Deposit"
-                st.rerun()
-        with row2_c2:
-            if st.button("Bank Cashout Settlement", key="nav_with"):
-                st.session_state.active_sidebar_tab = "Withdrawal"
-                st.rerun()
-
-        row3_c1, row3_c2 = st.columns(2)
-        with row3_c1:
-            if st.button("Ledger Statements Logs", key="nav_hist"):
-                st.session_state.active_sidebar_tab = "History"
-                st.rerun()
-        with row3_c2:
-            if st.button("Disconnect Portal Access", key="nav_logout"):
-                st.session_state.logged_in = False
-                st.session_state.auth_view = "login"
-                st.rerun()
+        # --- ⚡ ORIGINAL FULL-WIDTH BLUE BARS (NO EMOJIS, EXTRA MOTAY FONTS) ⚡ ---
+        if st.button("Fund Deposit / Dashboard Overview", key="nav_dash"):
+            st.session_state.active_sidebar_tab = "Dashboard"
+            st.rerun()
+            
+        if st.button("Claim Revenue / Stream Video Tasks", key="nav_tasks"):
+            st.session_state.active_sidebar_tab = "Tasks"
+            st.rerun()
+            
+        if st.button("Add Wallet Funds Balance Node", key="nav_dep"):
+            st.session_state.active_sidebar_tab = "Deposit"
+            st.rerun()
+            
+        if st.button("Bank Cashout Liquidation Settlement", key="nav_with"):
+            st.session_state.active_sidebar_tab = "Withdrawal"
+            st.rerun()
+            
+        if st.button("Ledger Statements Account Logs", key="nav_hist"):
+            st.session_state.active_sidebar_tab = "History"
+            st.rerun()
+            
+        if st.button("Disconnect Secure Portal Access", key="nav_logout"):
+            st.session_state.logged_in = False
+            st.session_state.auth_view = "login"
+            st.rerun()
 
         # --- DYNAMIC ACTION VIEWS HOOK PANEL MODULES ---
         if st.session_state.active_sidebar_tab == "Dashboard":
