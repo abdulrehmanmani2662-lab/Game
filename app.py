@@ -123,30 +123,37 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- GLOBAL STYLING ENGINE (Cleaned to avoid Mobile Invisible Glitch) ---
+# --- GLOBAL STYLING ENGINE (Cleaned to fix the Invisible Text / White Box Bug) ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"] { 
         display: none !important; visibility: hidden !important;
     }
-    .stApp { background-color: #f1f5f9 !important; }
+    .stApp { background-color: #f8fafc !important; }
     
-    /* Native metrics styling replacement to ensure visibility */
     .premium-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 20px;
+        padding: 22px;
         border-radius: 12px;
         color: white;
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     }
     .wallet-card-container {
-        background: #0d1e3d;
+        background: #0f172a;
         border-radius: 12px;
-        padding: 20px;
+        padding: 24px;
         color: white;
-        margin-bottom: 20px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+        box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.3);
+        border: 1px solid #1e293b;
+    }
+    
+    /* Ensuring all standard button text remains strictly visible on mobile dark/light shifts */
+    div.stButton > button {
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -165,7 +172,7 @@ if not st.session_state.logged_in:
         with st.container(border=True):
             st.subheader("Verify Account")
             u_otp = st.text_input("Enter 6-Digit Token")
-            if st.button("Submit Token", use_container_width=True):
+            if st.button("Submit Token", use_container_width=True, type="primary"):
                 if u_otp.strip() == st.session_state.generated_otp:
                     t_data = st.session_state.temp_register_data
                     m_code = "GM" + str(random.randint(1000, 9999))
@@ -183,7 +190,7 @@ if not st.session_state.logged_in:
             st.subheader("Reset Password Account")
             r_email = st.text_input("Enter Registered Email Address")
             
-            if st.button("Send Token", use_container_width=True):
+            if st.button("Send Token", use_container_width=True, type="primary"):
                 user_match = query_db("SELECT full_name FROM users WHERE username=?", (r_email.strip(),), one=True)
                 if user_match:
                     st.session_state.generated_otp = str(random.randint(100000, 999999))
@@ -203,7 +210,7 @@ if not st.session_state.logged_in:
             st.subheader("Enter Recovery Security Token")
             input_token = st.text_input("6-Digit Token Code", max_chars=6)
             new_pass = st.text_input("New Secure Access Password", type="password")
-            if st.button("Overwrite Credentials", use_container_width=True):
+            if st.button("Overwrite Credentials", use_container_width=True, type="primary"):
                 if input_token.strip() == st.session_state.generated_otp:
                     query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.temp_register_data['email']), commit=True)
                     st.success("Password overwritten! Proceed to login.")
@@ -230,7 +237,7 @@ if not st.session_state.logged_in:
                 else:
                     st.error("Please fill all valid parameters fields.")
                     
-            if st.button("← Back to Login", use_container_width=True):
+            if st.button("← Back to Login", use_container_width=True, type="secondary"):
                 st.session_state.auth_view = "login"
                 st.rerun()
 
@@ -258,11 +265,11 @@ if not st.session_state.logged_in:
             st.markdown("---")
             col_b1, col_b2 = st.columns(2)
             with col_b1:
-                if st.button("Create Account", use_container_width=True):
+                if st.button("Create Account", use_container_width=True, type="secondary"):
                     st.session_state.auth_view = "signup"
                     st.rerun()
             with col_b2:
-                if st.button("🔑 Forgot Pass?", use_container_width=True):
+                if st.button("🔑 Forgot Pass?", use_container_width=True, type="secondary"):
                     st.session_state.auth_view = "forgot_password_request"
                     st.rerun()
 
@@ -271,7 +278,7 @@ else:
     if st.session_state.is_admin:
         st.markdown('<div class="premium-header"><h1>🚨 MASTER CONTROL PANEL (ADMIN)</h1></div>', unsafe_allow_html=True)
         
-        if st.button("Logout Admin Console", type="inverse"):
+        if st.button("Logout Admin Console", type="primary"):
             st.session_state.logged_in = False
             st.session_state.is_admin = False
             st.rerun()
@@ -300,7 +307,7 @@ else:
                     except: initial_idx = 0
                     new_level_select = st.selectbox("Change Forced Tier Level:", current_lvls, index=initial_idx)
                 
-                if st.button("Save Changes and Overwrite Data Node", use_container_width=True):
+                if st.button("Save Changes and Overwrite Data Node", use_container_width=True, type="primary"):
                     query_db("UPDATE users SET balance=?, active_level=? WHERE username=?", (new_balance_val, new_level_select, selected_user), commit=True)
                     st.success(f"Successfully updated data logs for {selected_user}!")
                     st.rerun()
@@ -314,7 +321,7 @@ else:
             st.write("No incoming pending requests trace flags found.")
         for d in deps:
             st.markdown(f"User: **{d[1]}** | Level Plan: **{d[2]}** | Trx ID Reference: `{d[6]}`")
-            if st.button(f"Approve Payment Allocation Block ID {d[0]}", use_container_width=True):
+            if st.button(f"Approve Payment Allocation Block ID {d[0]}", use_container_width=True, type="primary"):
                 query_db("UPDATE users SET active_level=? WHERE username=?", (d[2], d[1]), commit=True)
                 query_db("UPDATE deposits SET status='APPROVED' WHERE id=?", (d[0],), commit=True)
                 st.success("Target profile package status upgraded safely!")
@@ -326,35 +333,47 @@ else:
         bal, lvl, code, claim_stamp = u_data if u_data else (0.00, "None", "GM0000", 0)
         ready_withdrawal = bal * 0.70
 
-        # --- PREMIUM WALLET CARD BANNER (Pure Clean CSS) ---
+        # --- PREMIUM WALLET CARD BANNER ---
         st.markdown(f"""
         <div class="wallet-card-container">
-            <div style="font-size: 14px; opacity: 0.8; font-weight: bold;">EarnWise: Your Earnings Overview Hub Dashboard (MY)</div>
-            <div style="font-size: 11px; color: #fbbf24; font-weight: bold; margin-bottom: 15px;">VIP/SVIP Tiers &amp; Social Video Streams Active Tasks Systems Live!</div>
-            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="font-size: 15px; opacity: 0.9; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 3px;">EarnWise: Papan Pemuka Perolehan Anda (MY)</div>
+            <div style="font-size: 12px; color: #fbbf24; font-weight: bold; margin-bottom: 18px;">Pelan VIP/SVIP &amp; Tugasan Media Sosial Diperkenalkan!</div>
+            <hr style="border-color: rgba(255,255,255,0.1); margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
                 <div>
-                    <div style="font-size: 11px; opacity: 0.7;">💼 MY EARNINGS WALLET NODE (CURRENT BALANCE)</div>
-                    <div style="font-size: 24px; font-weight: bold; color: white;">RM {bal:,.2f}</div>
+                    <div style="font-size: 12px; opacity: 0.7; font-weight: 600;">💼 DOMPET PEROLEHAN SAYA (CURRENT BALANCE)</div>
+                    <div style="font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 4px;">RM {bal:,.2f}</div>
                 </div>
-                <div style="border-left: 2px solid rgba(255,255,255,0.2); padding-left: 15px;">
-                    <div style="font-size: 11px; opacity: 0.7;">📤 READY FOR CASHOUT LIQUIDATION OUTFLOW</div>
-                    <div style="font-size: 24px; font-weight: bold; color: #10b981;">RM {ready_withdrawal:,.2f}</div>
+                <div style="border-left: 2px solid rgba(255,255,255,0.15); padding-left: 20px;">
+                    <div style="font-size: 12px; opacity: 0.7; font-weight: 600;">📤 READY FOR CASHOUT OUTFLOW</div>
+                    <div style="font-size: 26px; font-weight: bold; color: #10b981; margin-top: 4px;">RM {ready_withdrawal:,.2f}</div>
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # --- MOBILE FRIENDLY TOP SELECTION LINK BUTTONS ---
-        # Instead of sidebar which collapses weirdly on chrome mobile, we use clean top segment selectors
-        app_tab = st.selectbox(
-            "Navigation Panel Options Routing Hub:",
-            ["Dashboard Overview", "Stream Video Tasks", "Add Wallet Funds", "Bank Cashout Liquidation", "Ledger Logs Statements"],
-            index=["Dashboard Overview", "Stream Video Tasks", "Add Wallet Funds", "Bank Cashout Liquidation", "Ledger Logs Statements"].index(st.session_state.active_sidebar_tab)
+        # --- FIXED MOBILE TABS ROUTER (Goodbye invisible glitch!) ---
+        st.markdown("### 📱 Navigation Panel")
+        app_tab = st.radio(
+            "Select View Workspace Tab:",
+            ["Dashboard Hub", "Play Video Tasks", "Add Balance Funds", "Settlement Outflow", "Ledger Statements"],
+            index=["Dashboard Overview", "Stream Video Tasks", "Add Wallet Funds", "Bank Cashout Liquidation", "Ledger Logs Statements"].index(st.session_state.active_sidebar_tab),
+            horizontal=True
         )
-        st.session_state.active_sidebar_tab = app_tab
+        
+        # Syncing state names
+        tabs_map = {
+            "Dashboard Hub": "Dashboard Overview",
+            "Play Video Tasks": "Stream Video Tasks",
+            "Add Balance Funds": "Add Wallet Funds",
+            "Settlement Outflow": "Bank Cashout Liquidation",
+            "Ledger Statements": "Ledger Logs Statements"
+        }
+        st.session_state.active_sidebar_tab = tabs_map[app_tab]
+        st.markdown("---")
 
         # --- DYNAMIC ACTION VIEWS ---
-        if app_tab == "Dashboard Overview":
+        if st.session_state.active_sidebar_tab == "Dashboard Overview":
             st.markdown("### Profile Meta Allocation Nodes Overview")
             with st.container(border=True):
                 st.markdown("#### Video Stream Engine & Daily Rewards Module")
@@ -365,7 +384,7 @@ else:
                 st.markdown(f"Active Functional Node Profile Level Status: **{lvl}**")
                 st.markdown(f"Unique Invitation Hash Tracking Identification Token ID: **{code}**")
 
-        elif app_tab == "Stream Video Tasks":
+        elif st.session_state.active_sidebar_tab == "Stream Video Tasks":
             with st.container(border=True):
                 st.markdown("#### Stream Video Playback & Earn Matrix Settlement Tokens")
                 st.video(st.session_state.admin_video_url)
@@ -381,7 +400,7 @@ else:
                         st.success(f"Execution tracking settlement stream balance assigned logged: +RM {bonus:.2f}")
                         st.rerun()
 
-        elif app_tab == "Add Wallet Funds":
+        elif st.session_state.active_sidebar_tab == "Add Wallet Funds":
             with st.container(border=True):
                 st.markdown("#### Submit Local Malaysian Bank Transfer Deposit Proof Slip")
                 deposit_bank = st.selectbox("Select Your Malaysian Bank Node Used for Deposit Transfer:", MALAYSIAN_BANKS)
@@ -396,7 +415,7 @@ else:
                                  (st.session_state.current_user, p_select, LEVELS_CONF[p_select]["cost"], method_string, holder, tx_str, "PENDING"), commit=True)
                         st.success("Log submission payment confirmation pending admin verification check.")
 
-        elif app_tab == "Bank Cashout Liquidation":
+        elif st.session_state.active_sidebar_tab == "Bank Cashout Liquidation":
             with st.container(border=True):
                 st.markdown("#### Configure Bank Liquidation Cashout Outflow Node Connection")
                 withdrawal_bank = st.selectbox("Select Target Malaysian Bank Destination Node Account Receive:", MALAYSIAN_BANKS)
@@ -414,7 +433,7 @@ else:
                     else:
                         st.error("Shortfall tracking allocation index limits. Insufficient current balance index funds.")
 
-        elif app_tab == "Ledger Logs Statements":
+        elif st.session_state.active_sidebar_tab == "Ledger Logs Statements":
             with st.container(border=True):
                 st.markdown("#### Recent Account Nodes Transaction History Statements Ledger")
                 all_deps = query_db("SELECT level, amount, status, method FROM deposits WHERE user=? ORDER BY id DESC", (st.session_state.current_user,))
@@ -424,8 +443,8 @@ else:
                     st.markdown(f"**Node Model:** {dl[0]} | **Amount:** RM {dl[1]:,.2f} | **Status:** {dl[2]} ({dl[3]})")
                     st.markdown("---")
 
-        # --- DISCONNECT BUTTON ---
-        st.markdown("<br><br>", unsafe_allow_html=True)
+        # --- DISCONNECT SECURE PORTAL ---
+        st.markdown("<br>", unsafe_allow_html=True)
         if st.button("🚪 Disconnect Secure Portal Connection", use_container_width=True, type="secondary"):
             st.session_state.logged_in = False
             st.session_state.auth_view = "login"
