@@ -123,7 +123,7 @@ if 'temp_register_data' not in st.session_state: st.session_state.temp_register_
 if 'generated_otp' not in st.session_state: st.session_state.generated_otp = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 
-# --- ADVANCED MIXED COLOR CSS INJECTION ENGINE ---
+# --- FIXED & IMMUNE COLOR INJECTION CSS ENGINE ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
@@ -186,7 +186,7 @@ st.markdown("""
     .wallet-lbl { font-size: 10px !important; color: #94a3b8 !important; text-transform: uppercase; font-weight: 800 !important; }
     .wallet-val { font-size: 18px !important; font-weight: 900 !important; color: #ffffff !important; margin-top: 4px; }
 
-    /* MIXED COLOR CUSTOM BUTTONS */
+    /* CORE NATIVE BUTTON GLOBAL STYLING */
     div.stButton { margin-bottom: 12px !important; width: 100% !important; }
     
     div.stButton > button {
@@ -201,22 +201,32 @@ st.markdown("""
         padding: 12px 20px !important;
     }
     
+    /* Strict Force White Text Color inside Elements */
     div.stButton > button p, 
     div.stButton > button span, 
-    div.stButton > button div {
+    div.stButton > button div,
+    div.stButton > button data {
         color: #ffffff !important;
         font-weight: 800 !important;
         font-size: 15px !important;
         text-align: left !important;
     }
 
-    /* Key-wise Specific Color Mixing Assignment */
-    div.stButton:has(button[key="nav_dash"]) > button { background-color: #ec4899 !important; } /* Pink */
-    div.stButton:has(button[key="nav_tasks"]) > button { background-color: #ef4444 !important; } /* Red */
-    div.stButton:has(button[key="nav_dep"]) > button { background-color: #22c55e !important; } /* Green */
-    div.stButton:has(button[key="nav_with"]) > button { background-color: #f97316 !important; } /* Orange */
-    div.stButton:has(button[key="nav_hist"]) > button { background-color: #06b6d4 !important; } /* Cyan */
-    div.stButton:has(button[key="nav_logout"]) > button { background-color: #64748b !important; } /* Slate Gray */
+    /* Target Elements By Sequential Structural Indexes to Bypass Attribute Drops */
+    div.stButton:nth-of-type(1) > button { background-color: #ec4899 !important; } /* Pink */
+    div.stButton:nth-of-type(2) > button { background-color: #ef4444 !important; } /* Red */
+    div.stButton:nth-of-type(3) > button { background-color: #22c55e !important; } /* Green */
+    div.stButton:nth-of-type(4) > button { background-color: #f97316 !important; } /* Orange */
+    div.stButton:nth-of-type(5) > button { background-color: #06b6d4 !important; } /* Cyan */
+    div.stButton:nth-of-type(6) > button { background-color: #64748b !important; } /* Slate Gray */
+
+    /* Ensure hover matches dynamic coloring cleanly without white flashing */
+    div.stButton:nth-of-type(1) > button:hover { background-color: #db2777 !important; }
+    div.stButton:nth-of-type(2) > button:hover { background-color: #dc2626 !important; }
+    div.stButton:nth-of-type(3) > button:hover { background-color: #16a34a !important; }
+    div.stButton:nth-of-type(4) > button:hover { background-color: #ea580c !important; }
+    div.stButton:nth-of-type(5) > button:hover { background-color: #0891b2 !important; }
+    div.stButton:nth-of-type(6) > button:hover { background-color: #475569 !important; }
 
     .premium-widget-box {
         background: #ffffff !important;
@@ -312,7 +322,7 @@ if not st.session_state.logged_in:
     elif st.session_state.auth_view == "signup":
         st.markdown('<div class="clean-auth-card">', unsafe_allow_html=True)
         with st.form("reg_form"):
-            st.markdown("### Create Platform Node Profile", unsafe_allow_html=True)
+            st.markdown("### Create Profile Account", unsafe_allow_html=True)
             reg_name = st.text_input("Full Profile Name")
             reg_email = st.text_input("Valid Email Address")
             reg_pass = st.text_input("Secure Account Password", type="password")
@@ -361,31 +371,26 @@ else:
     if st.session_state.is_admin:
         st.markdown('<div class="app-brand-header">🚨 MASTER CONTROL PANEL (ADMIN)</div>', unsafe_allow_html=True)
         
-        # Logout button for Admin
-        if st.button("Logout Admin Console", key="nav_logout"):
+        if st.button("Logout Admin Console", key="nav_logout_admin"):
             st.session_state.logged_in = False
             st.session_state.is_admin = False
             st.rerun()
             
         st.session_state.admin_video_url = st.text_input("Global Task Video URL Link:", value=st.session_state.admin_video_url)
-        
         st.markdown("---")
         
-        # --- NEW LIVE USER DATABASE MANAGEMENT TERMINAL ---
-        st.markdown("### 👥 All Registered Registered Users Database")
+        st.markdown("### 👥 All Registered Users Database")
         all_users = query_db("SELECT username, full_name, balance, active_level FROM users")
         
         if all_users:
             df_users = pd.DataFrame(all_users, columns=["Email/Username", "Full Name", "Balance (RM)", "VIP Level"])
             st.dataframe(df_users, use_container_width=True)
             
-            # Interactive Control Rig
             st.markdown("#### ⚡ Quick Actions: Modify User Record Data")
             selected_user = st.selectbox("Select Target User Node to Control:", df_users["Email/Username"].tolist())
             
             if selected_user:
                 current_meta = query_db("SELECT balance, active_level FROM users WHERE username=?", (selected_user,), one=True)
-                
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:
                     new_balance_val = st.number_input("Modify Wallet Balance (RM):", value=float(current_meta[0]), step=10.0)
@@ -400,7 +405,7 @@ else:
                     st.success(f"Successfully updated data logs for {selected_user}!")
                     st.rerun()
         else:
-            st.info("No active user modules found in database infrastructure pools.")
+            st.info("No active user modules found in database pools.")
 
         st.markdown("---")
         st.markdown("### 📥 Pending Deposits Approval Matrix")
@@ -439,7 +444,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- MIXED VIBRANT COLORS FULL-WIDTH BUTTON NAVIGATION BAR ---
+        # --- MIXED VIBRANT COLORS STRIP ---
         if st.button("Fund Deposit / Dashboard Overview", key="nav_dash"):
             st.session_state.active_sidebar_tab = "Dashboard"
             st.rerun()
