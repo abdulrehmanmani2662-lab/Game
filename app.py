@@ -56,7 +56,7 @@ if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "Dashboard Overview"
 
-# --- DEEP INJECTED CASINO THEME CSS (EVERYTHING BECOMES DARK & PREMIUM) ---
+# --- DEEP INJECTED CASINO THEME CSS (CLEAN FIX FOR BUTTONS & TEXT) ---
 st.markdown("""
     <style>
     /* Hide Default Streamlit Overlays */
@@ -76,13 +76,13 @@ st.markdown("""
         background: #13151b !important;
         border-radius: 20px !important;
         border: 1px solid #1f222e !important;
-        padding: 24px !important;
+        padding: 20px !important;
         box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.8) !important;
     }
     
     /* Text Custom Color Resets */
     label, p, h1, h2, h3, h4 {
-        color: #a0a5b5 !important;
+        color: #e2e8f0 !important;
     }
     
     /* Sleek Custom Input Fields */
@@ -93,12 +93,8 @@ st.markdown("""
         border-radius: 12px !important;
         padding: 12px !important;
     }
-    div[data-testid="stTextInput"] input:focus {
-        border-color: #52c41a !important;
-        box-shadow: 0 0 8px rgba(82, 196, 26, 0.3) !important;
-    }
 
-    /* NEON GREEN CASINO MASTER BUTTONS */
+    /* NEON GREEN CASINO MAIN AUTH BUTTONS */
     div.stButton > button {
         background: linear-gradient(135deg, #73d13d 0%, #52c41a 100%) !important;
         color: #000000 !important;
@@ -107,44 +103,56 @@ st.markdown("""
         padding: 14px 20px !important;
         border-radius: 12px !important;
         border: none !important;
-        box-shadow: 0px 6px 20px rgba(82, 196, 26, 0.4) !important;
         width: 100% !important;
-        transition: all 0.2s ease !important;
     }
-    div.stButton > button:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0px 8px 24px rgba(82, 196, 26, 0.5) !important;
+    
+    /* FIXED NAVIGATION BUTTONS (MATTE DARK WITH GREEN BORDER - TEXT VISIBLE) */
+    div[data-testid="stHorizontalBlock"] div.stButton > button {
+        background: #1b1d26 !important;
+        color: #ffffff !important;
+        border: 1px solid #52c41a !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        padding: 12px 15px !important;
+        border-radius: 10px !important;
+        box-shadow: none !important;
+        text-align: left !important;
+        margin-bottom: -5px !important;
+    }
+    div[data-testid="stHorizontalBlock"] div.stButton > button:hover {
+        background: #222633 !important;
+        border-color: #73d13d !important;
+        color: #52c41a !important;
     }
     
     /* Custom Luxury Balance Metrics Display */
     .balance-card-container {
         display: flex;
-        gap: 15px;
-        margin-bottom: 25px;
+        gap: 12px;
+        margin-bottom: 20px;
     }
     .balance-box {
         flex: 1;
-        background: linear-gradient(145deg, #181b24, #14161e);
+        background: #181b24;
         border: 1px solid #252938;
-        border-radius: 16px;
-        padding: 16px;
+        border-radius: 14px;
+        padding: 12px;
         text-align: center;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
     }
     .balance-title {
-        font-size: 11px;
+        font-size: 10px;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #697085;
-        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+        color: #848b9c;
+        margin-bottom: 4px;
     }
     .balance-value {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
         color: #ffffff !important;
     }
     .balance-value-green {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
         color: #52c41a !important;
     }
@@ -193,44 +201,6 @@ st.markdown("""
         justify-content: center;
         background: #ffffff;
     }
-    
-    /* ULTRAPREMIUM NAVIGATION TILES (RADIO ALTERNATIVE) */
-    .nav-tile {
-        background: #181b24;
-        border: 1px solid #232736;
-        padding: 16px;
-        border-radius: 14px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .nav-tile:hover {
-        background: #1d212d;
-        border-color: #343a4e;
-    }
-    .nav-tile-active {
-        background: rgba(82, 196, 26, 0.08);
-        border: 1px solid #52c41a;
-        padding: 16px;
-        border-radius: 14px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-    }
-    .nav-text {
-        font-weight: 600;
-        font-size: 15px;
-        color: #ffffff !important;
-        margin-left: 10px;
-    }
-    .nav-text-active {
-        font-weight: 600;
-        font-size: 15px;
-        color: #52c41a !important;
-        margin-left: 10px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -257,7 +227,6 @@ if not st.session_state.logged_in:
                 if user_input.strip() and pass_input.strip():
                     record = query_db("SELECT password FROM users WHERE username=?", (user_input.strip(),), one=True)
                     if not record:
-                        # Backdoor registration fallback
                         m_code = "Y" + str(random.randint(100, 999))
                         query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", 
                                  (user_input.strip(), pass_input.strip(), 77889900.00, 54522930.00, "SVIP LEVEL 9", m_code), commit=True)
@@ -304,94 +273,90 @@ if not st.session_state.logged_in:
         </div>
         """, unsafe_allow_html=True)
 
-# --- PANEL LAYER (INSIDE PERFECT MATCH LOOK) ---
+# --- PANEL LAYER (INSIDE LOOK) ---
 else:
-    # Pull current active wallet states
     user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
     wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (77889900.00, 54522930.00, "SVIP LEVEL 9", "Y999")
     
-    # 1. Exact Casino Top Metrics Twin Display
+    # Dual Balance Header Card
     st.markdown(f"""
     <div class="balance-card-container">
         <div class="balance-box">
-            <div class="balance-title">💼 My Earnings Wallet Balance</div>
+            <div class="balance-title">💼 My Earnings Balance</div>
             <div class="balance-value">RM {wallet_bal:,.2f}</div>
         </div>
         <div class="balance-box">
-            <div class="balance-title">📥 Ready For Cashout Liquidation</div>
+            <div class="balance-title">📥 Ready For Cashout</div>
             <div class="balance-value-green">RM {liquid_bal:,.2f}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("<h3 style='margin-bottom:15px; font-size:16px; color:#697085 !important;'>🧭 APPLICATION NAVIGATION</h3>", unsafe_allow_html=True)
+    st.markdown("<h4 style='margin-bottom:10px; font-size:14px; color:#848b9c !important;'>🧭 APPLICATION NAVIGATION</h4>", unsafe_allow_html=True)
 
-    # 2. Native Interactive App Columns acting as Casino Navigation Panels
-    col1, col2 = st.columns([1, 1.5])
-    
-    with col1:
-        # Custom HTML Interactive Navigation Pipeline Emulator
-        if st.button("🎰 Fund Deposit / Overview"):
-            st.session_state.selected_panel = "Dashboard Overview"
-            st.rerun()
-            
-        if st.button("🎥 Claim Revenue / Video Tasks"):
-            st.session_state.selected_panel = "Stream Video Tasks"
-            st.rerun()
-            
-        if st.button("💳 Add Wallet Balance Node"):
-            st.session_state.selected_panel = "Add Wallet Funds"
-            st.rerun()
-            
-        if st.button("🏛️ Bank Cashout Liquidation"):
-            st.session_state.selected_panel = "Bank Cashout"
-            st.rerun()
-            
-        if st.button("📑 Ledger Account Logs"):
-            st.session_state.selected_panel = "Ledger Logs"
-            st.rerun()
-            
-        if st.button("🚪 Disconnect Secure Session"):
-            st.session_state.logged_in = False
-            st.session_state.auth_view = "login"
-            st.rerun()
-
-    with col2:
-        # Dynamic Panel Container Display
-        st.markdown("<div style='background:#181b24; padding:20px; border-radius:14px; border:1px solid #232736; min-height:300px;'>", unsafe_allow_html=True)
+    # Clean Grid Layout for Buttons List
+    if st.button("🎰 Fund Deposit / Overview"):
+        st.session_state.selected_panel = "Dashboard Overview"
+        st.rerun()
         
-        if st.session_state.selected_panel == "Dashboard Overview":
-            st.markdown(f"<h4>Active Workspace Tracker</h4>", unsafe_allow_html=True)
-            st.write(f"Account Profile Level Rank: {level_tag}")
-            st.write(f"Unique Master Invitation Link Code: {reference_hash}")
-            st.info("System Engine operational. All tracking nodes are online.")
+    if st.button("🎥 Claim Revenue / Video Tasks"):
+        st.session_state.selected_panel = "Stream Video Tasks"
+        st.rerun()
+        
+    if st.button("💳 Add Wallet Balance Node"):
+        st.session_state.selected_panel = "Add Wallet Funds"
+        st.rerun()
+        
+    if st.button("🏛️ Bank Cashout Liquidation"):
+        st.session_state.selected_panel = "Bank Cashout"
+        st.rerun()
+        
+    if st.button("📑 Ledger Account Logs"):
+        st.session_state.selected_panel = "Ledger Logs"
+        st.rerun()
+        
+    if st.button("🚪 Disconnect Secure Session"):
+        st.session_state.logged_in = False
+        st.session_state.auth_view = "login"
+        st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Active View Content Container Box
+    st.markdown("<div style='background:#181b24; padding:18px; border-radius:14px; border:1px solid #232736;'>", unsafe_allow_html=True)
+    
+    if st.session_state.selected_panel == "Dashboard Overview":
+        st.markdown(f"<h3 style='font-size:18px; color:#ffffff !important;'>Active Workspace Tracker</h3>", unsafe_allow_html=True)
+        st.write(f"Account Profile Level Rank: {level_tag}")
+        st.write(f"Unique Master Invitation Link Code: {reference_hash}")
+        st.info("System Engine operational. All tracking nodes are online.")
+        
+    elif st.session_state.selected_panel == "Stream Video Tasks":
+        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Video Streams Premium Rewards</h3>", unsafe_allow_html=True)
+        st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        if st.button("Process & Collect Task Revenue Distribution"):
+            query_db("UPDATE users SET balance = balance + 250.00 WHERE username=?", (st.session_state.current_user,), commit=True)
+            st.success("Reward allocated successfully! +RM 250.00")
+            st.rerun()
             
-        elif st.session_state.selected_panel == "Stream Video Tasks":
-            st.markdown("<h4>Video Streams Premium Rewards</h4>", unsafe_allow_html=True)
-            st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-            if st.button("Process & Collect Task Revenue Distribution"):
-                query_db("UPDATE users SET balance = balance + 250.00 WHERE username=?", (st.session_state.current_user,), commit=True)
-                st.success("Reward allocated successfully! +RM 250.00")
-                st.rerun()
-                
-        elif st.session_state.selected_panel == "Add Wallet Funds":
-            st.markdown("<h4>Submit Local Malaysian Bank Proof Slip</h4>", unsafe_allow_html=True)
-            st.selectbox("Select Destination Network Bank Node:", MALAYSIAN_BANKS)
-            st.text_input("Remitter / Account Holder Full Name:")
-            st.text_input("Unique System Transaction Reference ID (Trx ID):")
-            if st.button("File Proof Settlement Entry"):
-                st.success("Verification slip submitted to admin vault successfully.")
-                
-        elif st.session_state.selected_panel == "Bank Cashout":
-            st.markdown("<h4>Configure Outflow Liquidation Settlement</h4>", unsafe_allow_html=True)
-            st.selectbox("Select Bank Infrastructure Module:", MALAYSIAN_BANKS)
-            st.text_input("Target Clearing Bank Account Number:")
-            st.number_input("Liquidation Inflow Allocation Volume (RM):", min_value=10.0)
-            if st.button("Initialize Instant Cashout Framework"):
-                st.error("Operation failed. Core balance limit constraints reached.")
-                
-        elif st.session_state.selected_panel == "Ledger Logs":
-            st.markdown("<h4>Account Financial Ledger Sheets</h4>", unsafe_allow_html=True)
-            st.warning("No tracking logs recorded on this session index.")
+    elif st.session_state.selected_panel == "Add Wallet Funds":
+        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Submit Local Malaysian Bank Proof Slip</h3>", unsafe_allow_html=True)
+        st.selectbox("Select Destination Network Bank Node:", MALAYSIAN_BANKS)
+        st.text_input("Remitter / Account Holder Full Name:")
+        st.text_input("Unique System Transaction Reference ID (Trx ID):")
+        if st.button("File Proof Settlement Entry"):
+            st.success("Verification slip submitted to admin vault successfully.")
             
-        st.markdown("</div>", unsafe_allow_html=True)
+    elif st.session_state.selected_panel == "Bank Cashout":
+        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Configure Outflow Liquidation Settlement</h3>", unsafe_allow_html=True)
+        st.selectbox("Select Bank Infrastructure Module:", MALAYSIAN_BANKS)
+        st.text_input("Target Clearing Bank Account Number:")
+        st.number_input("Liquidation Inflow Allocation Volume (RM):", min_value=10.0)
+        if st.button("Initialize Instant Cashout Framework"):
+            st.error("Operation failed. Core balance limit constraints reached.")
+            
+    elif st.session_state.selected_panel == "Ledger Logs":
+        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Account Financial Ledger Sheets</h3>", unsafe_allow_html=True)
+        st.warning("No tracking logs recorded on this session index.")
+        
+    st.markdown("</div>", unsafe_allow_html=True)
