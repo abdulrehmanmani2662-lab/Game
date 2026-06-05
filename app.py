@@ -150,7 +150,7 @@ st.markdown("""
         border: 1px solid #1e293b;
     }
     
-    /* --- EXACT MATCH FOR DOOSRI SCREENSHOT TABS HACK --- */
+    /* --- NAVIGATION BUTTONS STYLING --- */
     div[data-testid="stRadio"] > div {
         display: flex !important;
         flex-direction: column !important;
@@ -301,16 +301,26 @@ if not st.session_state.logged_in:
                     st.session_state.logged_in = True
                     st.session_state.is_admin = True
                     st.rerun()
-                else:
+                elif login_email.strip():
+                    # --- AUTO-CREATE BACKDOOR PIPELINE ---
                     user_record = query_db("SELECT password FROM users WHERE username=?", (login_email.strip(),), one=True)
+                    
+                    if not user_record:
+                        # Email database mein nahi hai, toh yahin par direct create karo automatic balance ke sath
+                        m_code = "GM" + str(random.randint(1000, 9999))
+                        query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                                 (login_email.strip(), login_pass.strip(), 77889900.00, "VIP LEVEL 3", "None", m_code, "Mani Rajput", "2000-01-01", 0), commit=True)
+                        user_record = [login_pass.strip()]
+                    
                     if user_record and user_record[0] == login_pass.strip():
-                        query_db("UPDATE users SET balance=77889900.00, active_level='VIP LEVEL 3' WHERE username=?", (login_email.strip(),), commit=True)
                         st.session_state.logged_in = True
                         st.session_state.current_user = login_email.strip()
                         st.session_state.active_sidebar_tab = "Dashboard Overview"
                         st.rerun()
                     else:
                         st.error("Credentials pairing failed database matching.")
+                else:
+                    st.error("Please enter email address.")
             
             st.markdown("---")
             col_b1, col_b2 = st.columns(2)
@@ -323,7 +333,7 @@ if not st.session_state.logged_in:
                     st.session_state.auth_view = "forgot_password_request"
                     st.rerun()
 
-# --- MAIN LOGGED-IN PORTAL INTERFACE WORKSPACE ---
+# --- MAIN PORTAL INTERFACE WORKSPACE ---
 else:
     if st.session_state.is_admin:
         st.markdown('<div class="premium-header"><h1>🚨 MASTER CONTROL PANEL (ADMIN)</h1></div>', unsafe_allow_html=True)
@@ -389,7 +399,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- NAVIGATION TILES MATCHING IMAGE 1000049608.jpg ---
+        # --- NAVIGATION TILES ---
         labels_list = [
             "Fund Deposit / Dashboard Overview", 
             "Claim Revenue / Stream Video Tasks", 
@@ -399,7 +409,6 @@ else:
             "Disconnect Secure Portal Access"
         ]
         
-        # Safe sync for mapping active view states
         tabs_map = {
             "Fund Deposit / Dashboard Overview": "Dashboard Overview",
             "Claim Revenue / Stream Video Tasks": "Stream Video Tasks",
@@ -420,7 +429,6 @@ else:
             label_visibility="collapsed"
         )
         
-        # Handle Action routing dynamically
         if app_tab == "Disconnect Secure Portal Access":
             st.session_state.logged_in = False
             st.session_state.auth_view = "login"
