@@ -56,7 +56,7 @@ if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "Dashboard Overview"
 
-# --- INJECTING PREMIUM FONTS & DEVILXD THEME ENGINE ---
+# --- INJECTING PREMIUM FONTS & THEME ENGINE ---
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
@@ -66,14 +66,14 @@ st.markdown("""
         display: none !important; visibility: hidden !important;
     }
     
-    /* Cyberpunk Space Background Gradient from DevilXD */
+    /* Cyberpunk Space Background Gradient */
     html, body, .stApp { 
         background: linear-gradient(135deg, #0a0a1a 0%, #0d0d2b 40%, #1a0a2e 70%, #0a1a2e 100%) !important;
         color: #e0e0ff !important;
         font-family: 'Rajdhani', sans-serif !important;
     }
     
-    /* Elegant DevilXD Translucent Blurry Containers */
+    /* Elegant Translucent Blurry Containers */
     [data-testid="stVerticalBlockBorderWrapper"] {
         background: rgba(15, 10, 40, 0.85) !important;
         border: 1px solid rgba(255, 105, 180, 0.3) !important;
@@ -117,20 +117,31 @@ st.markdown("""
         100% { background-position: 200% 50%; }
     }
     
-    /* Input Modules Styling */
-    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div {
-        background: rgba(255,255,255,0.05) !important;
-        border: 1px solid rgba(255,105,180,0.25) !important;
-        color: #e0e0ff !important;
+    /* FIX: Input Fields Text Color Visibility Solution */
+    div[data-testid="stTextInput"] input, 
+    div[data-testid="stNumberInput"] input, 
+    div[data-testid="stSelectbox"] div {
+        background: #ffffff !important; /* Input box background white rahega */
+        color: #111111 !important;    /* Text bilkul dark black ho jayega taake saaf dikhe */
+        -webkit-text-fill-color: #111111 !important; /* Mobile browsers ke liye fix */
+        border: 1px solid rgba(255,105,180,0.4) !important;
         border-radius: 10px !important;
         font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 700 !important;
     }
+    
+    /* Placeholder Text Alignment */
+    div[data-testid="stTextInput"] input::placeholder {
+        color: #888888 !important;
+        -webkit-text-fill-color: #888888 !important;
+    }
+    
     div[data-testid="stTextInput"] input:focus {
-        border-color: rgba(255,105,180,0.7) !important;
-        box-shadow: 0 0 12px rgba(255,105,180,0.2) !important;
+        border-color: rgba(255,105,180,0.8) !important;
+        box-shadow: 0 0 12px rgba(255,105,180,0.3) !important;
     }
 
-    /* AUTH AND ACTION MAIN BUTTONS (PINK/SKY DEVILXD GRADIENTS) */
+    /* AUTH AND ACTION MAIN BUTTONS */
     div.stButton > button {
         background: linear-gradient(135deg, #ff1493, #ff69b4) !important;
         color: #ffffff !important;
@@ -149,7 +160,7 @@ st.markdown("""
         filter: brightness(1.15) !important;
     }
 
-    /* SPECIFIC INNER NAVIGATION MODULE BUTTONS (MATTE DARK WITH SKY BLUE GLOW) */
+    /* SPECIFIC INNER NAVIGATION MODULE BUTTONS */
     .nav-container div.stButton > button {
         background: rgba(15, 10, 40, 0.6) !important;
         color: #e0e0ff !important;
@@ -230,7 +241,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- AUTH LAYER (OUTSIDE LOOK) ---
+# --- AUTH LAYER ---
 if not st.session_state.logged_in:
     st.markdown("<div class='shimmer-logo'> 💵 ONLINE EARNINGS</div>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; color: rgba(135,206,235,0.7); letter-spacing:2px; text-transform:uppercase; font-size:11px; margin-bottom:20px;'>Secured Authorization Node</p>", unsafe_allow_html=True)
@@ -300,12 +311,11 @@ if not st.session_state.logged_in:
         </div>
         """, unsafe_allow_html=True)
 
-# --- PANEL LAYER (INSIDE DESIGN MATCH) ---
+# --- PANEL LAYER ---
 else:
     user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
     wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (77889900.00, 54522930.00, "SVIP LEVEL 9", "Y999")
     
-    # DevilXD Styled Twin Space Metric Display Cards
     st.markdown(f"""
     <div class="balance-card-container">
         <div class="balance-box">
@@ -321,7 +331,6 @@ else:
     
     st.markdown("<h4 style='font-family:\"Orbitron\", sans-serif; font-size:12px; color:rgba(135,206,235,0.6) !important; margin-bottom:12px;'>🧭 SYSTEM NAVIGATION INDEX</h4>", unsafe_allow_html=True)
 
-    # Injected class wrapper to lock sleek sub-buttons styles
     st.markdown('<div class="nav-container">', unsafe_allow_html=True)
     
     if st.button("🎰 Fund Deposit / Overview Hub"):
@@ -351,7 +360,6 @@ else:
 
     st.markdown('</div><br>', unsafe_allow_html=True)
     
-    # Active Frame Content Block Container
     st.markdown("<div style='background: rgba(15,10,40,0.85); padding:20px; border-radius:14px; border:1px solid rgba(255,105,180,0.2);'>", unsafe_allow_html=True)
     
     if st.session_state.selected_panel == "Dashboard Overview":
