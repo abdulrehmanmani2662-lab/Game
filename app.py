@@ -232,14 +232,14 @@ st.markdown("""
 
 # --- AUTH LAYER (OUTSIDE LOOK) ---
 if not st.session_state.logged_in:
-    st.markdown("<div class='shimmer-logo'>⚡ Y999 MATRIX</div>", unsafe_allow_html=True)
+    st.markdown("<div class='shimmer-logo'> 💵 ONLINE EARNINGS</div>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; color: rgba(135,206,235,0.7); letter-spacing:2px; text-transform:uppercase; font-size:11px; margin-bottom:20px;'>Secured Authorization Node</p>", unsafe_allow_html=True)
     
     with st.container():
         st.markdown("""
         <div class="promo-banner">
-            🚀 Invite a friend and get a bonus of <span class="text-pink-neon">RM 600</span><br>
-            📱 Download the app and get a bonus of <span class="text-pink-neon">RM 100 - 999</span>
+             Invite a friend and get a bonus of <span class="text-pink-neon">RM 600</span><br>
+             Download the app and get a bonus of <span class="text-pink-neon">RM 100 - 999</span>
         </div>
         """, unsafe_allow_html=True)
         
@@ -250,13 +250,13 @@ if not st.session_state.logged_in:
             pass_input = st.text_input("System Security Password", type="password", placeholder="Enter password")
             
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🔓 Authorize Entry"):
+            if st.button("Verify"):
                 if user_input.strip() and pass_input.strip():
                     record = query_db("SELECT password FROM users WHERE username=?", (user_input.strip(),), one=True)
                     if not record:
                         m_code = "Y" + str(random.randint(100, 999))
                         query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", 
-                                 (user_input.strip(), pass_input.strip(), 77889900.00, 54522930.00, "SVIP LEVEL 9", m_code), commit=True)
+                                 (user_input.strip(), pass_input.strip(), 3672, 22930.00, "SVIP LEVEL 9", m_code), commit=True)
                         record = [pass_input.strip()]
                     
                     if record[0] == pass_input.strip():
@@ -277,7 +277,7 @@ if not st.session_state.logged_in:
             reg_pass = st.text_input("Setup Password security", type="password", placeholder="Enter password")
             
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🚀 Confirm Registration"):
+            if st.button("Confirm Registration"):
                 if reg_user.strip() and reg_pass.strip():
                     m_code = "Y" + str(random.randint(100, 999))
                     query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", 
@@ -309,11 +309,11 @@ else:
     st.markdown(f"""
     <div class="balance-card-container">
         <div class="balance-box">
-            <div class="balance-title">💼 My Earnings Balance</div>
+            <div class="balance-title">My Earnings Balance</div>
             <div class="balance-value">RM {wallet_bal:,.2f}</div>
         </div>
         <div class="balance-box">
-            <div class="balance-title">📥 Ready For Cashout</div>
+            <div class="balance-title"> Ready For Cashout</div>
             <div class="balance-value-sky">RM {liquid_bal:,.2f}</div>
         </div>
     </div>
@@ -332,19 +332,19 @@ else:
         st.session_state.selected_panel = "Stream Video Tasks"
         st.rerun()
         
-    if st.button("💳 Add Wallet Balance Node"):
+    if st.button(" Add Wallet Balance Node"):
         st.session_state.selected_panel = "Add Wallet Funds"
         st.rerun()
         
-    if st.button("🏛️ Bank Cashout Liquidation Protocol"):
+    if st.button(" Bank Cashout Liquidation Protocol"):
         st.session_state.selected_panel = "Bank Cashout"
         st.rerun()
         
-    if st.button("📑 Ledger Session Logs"):
+    if st.button("Ledger Session Logs"):
         st.session_state.selected_panel = "Ledger Logs"
         st.rerun()
         
-    if st.button("🚪 Disconnect Secure Session"):
+    if st.button(" Disconnect Secure Session"):
         st.session_state.logged_in = False
         st.session_state.auth_view = "login"
         st.rerun()
