@@ -56,136 +56,161 @@ if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'auth_view' not in st.session_state: st.session_state.auth_view = "login"
 if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "Dashboard Overview"
 
-# --- DEEP INJECTED CASINO THEME CSS (CLEAN FIX FOR BUTTONS & TEXT) ---
+# --- INJECTING PREMIUM FONTS & DEVILXD THEME ENGINE ---
 st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
     /* Hide Default Streamlit Overlays */
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stSidebar"] { 
         display: none !important; visibility: hidden !important;
     }
     
-    /* Force Deep Dark Casino Canvas Globally */
+    /* Cyberpunk Space Background Gradient from DevilXD */
     html, body, .stApp { 
-        background-color: #0b0c10 !important; 
-        color: #ffffff !important;
-        font-family: 'Inter', sans-serif !important;
+        background: linear-gradient(135deg, #0a0a1a 0%, #0d0d2b 40%, #1a0a2e 70%, #0a1a2e 100%) !important;
+        color: #e0e0ff !important;
+        font-family: 'Rajdhani', sans-serif !important;
     }
     
-    /* Premium Central Container Card */
+    /* Elegant DevilXD Translucent Blurry Containers */
     [data-testid="stVerticalBlockBorderWrapper"] {
-        background: #13151b !important;
+        background: rgba(15, 10, 40, 0.85) !important;
+        border: 1px solid rgba(255, 105, 180, 0.3) !important;
         border-radius: 20px !important;
-        border: 1px solid #1f222e !important;
-        padding: 20px !important;
-        box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.8) !important;
+        padding: 30px !important;
+        box-shadow: 0 0 40px rgba(255,105,180,0.15), 0 0 80px rgba(135,206,235,0.08), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(20px) !important;
     }
     
-    /* Text Custom Color Resets */
-    label, p, h1, h2, h3, h4 {
-        color: #e2e8f0 !important;
-    }
-    
-    /* Sleek Custom Input Fields */
-    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div {
-        background-color: #1a1d26 !important;
-        border: 1px solid #282d3d !important;
-        color: #ffffff !important;
-        border-radius: 12px !important;
-        padding: 12px !important;
-    }
-
-    /* NEON GREEN CASINO MAIN AUTH BUTTONS */
-    div.stButton > button {
-        background: linear-gradient(135deg, #73d13d 0%, #52c41a 100%) !important;
-        color: #000000 !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
-        padding: 14px 20px !important;
-        border-radius: 12px !important;
-        border: none !important;
-        width: 100% !important;
-    }
-    
-    /* FIXED NAVIGATION BUTTONS (MATTE DARK WITH GREEN BORDER - TEXT VISIBLE) */
-    div[data-testid="stHorizontalBlock"] div.stButton > button {
-        background: #1b1d26 !important;
-        color: #ffffff !important;
-        border: 1px solid #52c41a !important;
+    /* Typography Global Reset to Cyberpunk Specs */
+    label, p, span, li {
+        color: rgba(135,206,235,0.8) !important;
+        font-family: 'Rajdhani', sans-serif !important;
         font-weight: 600 !important;
         font-size: 14px !important;
-        padding: 12px 15px !important;
-        border-radius: 10px !important;
-        box-shadow: none !important;
-        text-align: left !important;
-        margin-bottom: -5px !important;
-    }
-    div[data-testid="stHorizontalBlock"] div.stButton > button:hover {
-        background: #222633 !important;
-        border-color: #73d13d !important;
-        color: #52c41a !important;
+        letter-spacing: 1px !important;
     }
     
-    /* Custom Luxury Balance Metrics Display */
+    h1, h2, h3, h4 {
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 900 !important;
+        letter-spacing: 2px !important;
+    }
+    
+    /* Animated Glowing Header System */
+    .shimmer-logo {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 38px;
+        font-weight: 900;
+        text-align: center;
+        background: linear-gradient(90deg, #ff69b4, #87ceeb, #ff1493, #00bfff);
+        background-size: 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 3s linear infinite;
+        letter-spacing: 3px;
+        margin-bottom: 5px;
+    }
+    @keyframes shimmer {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+    
+    /* Input Modules Styling */
+    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,105,180,0.25) !important;
+        color: #e0e0ff !important;
+        border-radius: 10px !important;
+        font-family: 'Rajdhani', sans-serif !important;
+    }
+    div[data-testid="stTextInput"] input:focus {
+        border-color: rgba(255,105,180,0.7) !important;
+        box-shadow: 0 0 12px rgba(255,105,180,0.2) !important;
+    }
+
+    /* AUTH AND ACTION MAIN BUTTONS (PINK/SKY DEVILXD GRADIENTS) */
+    div.stButton > button {
+        background: linear-gradient(135deg, #ff1493, #ff69b4) !important;
+        color: #ffffff !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 700 !important;
+        letter-spacing: 1.5px !important;
+        text-transform: uppercase !important;
+        border-radius: 10px !important;
+        border: none !important;
+        box-shadow: 0 4px 20px rgba(255,20,147,0.4) !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px) scale(1.02) !important;
+        filter: brightness(1.15) !important;
+    }
+
+    /* SPECIFIC INNER NAVIGATION MODULE BUTTONS (MATTE DARK WITH SKY BLUE GLOW) */
+    .nav-container div.stButton > button {
+        background: rgba(15, 10, 40, 0.6) !important;
+        color: #e0e0ff !important;
+        border: 1px solid rgba(135,206,235,0.3) !important;
+        box-shadow: none !important;
+        text-align: left !important;
+    }
+    .nav-container div.stButton > button:hover {
+        border-color: rgba(135,206,235,0.8) !important;
+        box-shadow: 0 0 15px rgba(135,206,235,0.2) !important;
+        color: #87ceeb !important;
+    }
+    
+    /* Premium Twin Balance Display Grid */
     .balance-card-container {
         display: flex;
-        gap: 12px;
-        margin-bottom: 20px;
+        gap: 15px;
+        margin-bottom: 25px;
     }
     .balance-box {
         flex: 1;
-        background: #181b24;
-        border: 1px solid #252938;
+        background: rgba(15, 10, 40, 0.7);
+        border: 1px solid rgba(255, 105, 180, 0.25);
         border-radius: 14px;
-        padding: 12px;
+        padding: 16px;
         text-align: center;
+        box-shadow: 0 0 20px rgba(255,105,180,0.05);
     }
     .balance-title {
-        font-size: 10px;
+        font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #848b9c;
-        margin-bottom: 4px;
+        letter-spacing: 1px;
+        color: rgba(135,206,235,0.6);
+        margin-bottom: 6px;
     }
     .balance-value {
-        font-size: 18px;
-        font-weight: 800;
-        color: #ffffff !important;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 20px;
+        font-weight: 900;
+        color: #ff69b4 !important;
     }
-    .balance-value-green {
-        font-size: 18px;
-        font-weight: 800;
-        color: #52c41a !important;
+    .balance-value-sky {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 20px;
+        font-weight: 900;
+        color: #87ceeb !important;
     }
 
-    /* Top Horizontal Promo Strip Banner */
+    /* Dashed Promo Strip */
     .promo-banner {
-        background: #1a1d26;
-        border: 1px dashed #343a4e;
+        background: rgba(255,105,180,0.05);
+        border: 1px dashed rgba(255,105,180,0.3);
         padding: 12px;
         border-radius: 12px;
         text-align: center;
         margin-bottom: 20px;
-        font-size: 13px;
+        font-size: 14px;
     }
-    .text-neon { color: #52c41a !important; font-weight: bold; }
+    .text-pink-neon { color: #ff69b4 !important; font-weight: bold; }
     
-    /* Auth Navigation Tabs Header Look */
-    .auth-toggle-header {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 25px;
-        border-bottom: 1px solid #1f222e;
-    }
-    .auth-tab {
-        padding-bottom: 12px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        color: #52c41a;
-        border-bottom: 3px solid #52c41a;
-    }
-
-    /* Social Binding Icon Wrappers */
+    /* Social Media Shortcut Rows */
     .social-row {
         display: flex;
         justify-content: center;
@@ -199,31 +224,33 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #ffffff;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
     }
     </style>
 """, unsafe_allow_html=True)
 
 # --- AUTH LAYER (OUTSIDE LOOK) ---
 if not st.session_state.logged_in:
-    st.markdown("<div style='text-align:center; padding: 15px 0;'><h1 style='color:#52c41a !important; font-size:36px; font-weight:900; margin:0;'>🎰 Y999.COM</h1></div>", unsafe_allow_html=True)
+    st.markdown("<div class='shimmer-logo'>⚡ Y999 MATRIX</div>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color: rgba(135,206,235,0.7); letter-spacing:2px; text-transform:uppercase; font-size:11px; margin-bottom:20px;'>Secured Authorization Node</p>", unsafe_allow_html=True)
     
     with st.container():
         st.markdown("""
         <div class="promo-banner">
-            🚀 Invite a friend and get a bonus of <span class="text-neon">RM 600</span><br>
-            📱 Download the app and get a bonus of <span class="text-neon">RM 100 - 999</span>
+            🚀 Invite a friend and get a bonus of <span class="text-pink-neon">RM 600</span><br>
+            📱 Download the app and get a bonus of <span class="text-pink-neon">RM 100 - 999</span>
         </div>
         """, unsafe_allow_html=True)
         
         if st.session_state.auth_view == "login":
-            st.markdown('<div class="auth-toggle-header"><div class="auth-tab">Login Portal</div></div>', unsafe_allow_html=True)
+            st.markdown("<h3 style='font-size:16px; color:#ff69b4; border-bottom:1px solid rgba(255,105,180,0.2); padding-bottom:8px; margin-bottom:15px;'>LOGIN TO ACCOUNT</h3>", unsafe_allow_html=True)
             
-            user_input = st.text_input("Registered Phone number / Email Address", placeholder="Please enter Phone number/Email")
+            user_input = st.text_input("Registered Phone number / Email Address", placeholder="Please enter Phone/Email")
             pass_input = st.text_input("System Security Password", type="password", placeholder="Enter password")
             
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Authorize & Entry"):
+            if st.button("🔓 Authorize Entry"):
                 if user_input.strip() and pass_input.strip():
                     record = query_db("SELECT password FROM users WHERE username=?", (user_input.strip(),), one=True)
                     if not record:
@@ -238,19 +265,19 @@ if not st.session_state.logged_in:
                         st.session_state.selected_panel = "Dashboard Overview"
                         st.rerun()
             
-            st.markdown("<p style='text-align:center; margin-top:15px; font-size:13px;'>Don't have an asset profile?</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align:center; margin-top:15px; font-size:13px;'>Don't have an asset profile account?</p>", unsafe_allow_html=True)
             if st.button("Create Profile Account"):
                 st.session_state.auth_view = "signup"
                 st.rerun()
                 
         else:
-            st.markdown('<div class="auth-toggle-header"><div class="auth-tab">Register Profile</div></div>', unsafe_allow_html=True)
+            st.markdown("<h3 style='font-size:16px; color:#ff69b4; border-bottom:1px solid rgba(255,105,180,0.2); padding-bottom:8px; margin-bottom:15px;'>REGISTER SECURE PROFILE</h3>", unsafe_allow_html=True)
             
-            reg_user = st.text_input("Account Phone number / Email", placeholder="Please enter Phone number/Email")
+            reg_user = st.text_input("Account Phone number / Email", placeholder="Please enter Phone/Email")
             reg_pass = st.text_input("Setup Password security", type="password", placeholder="Enter password")
             
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Confirm Registration"):
+            if st.button("🚀 Confirm Registration"):
                 if reg_user.strip() and reg_pass.strip():
                     m_code = "Y" + str(random.randint(100, 999))
                     query_db("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", 
@@ -264,21 +291,21 @@ if not st.session_state.logged_in:
                 st.session_state.auth_view = "login"
                 st.rerun()
 
-        st.markdown("<div style='text-align:center; color:#4e5366; margin-top:25px; font-size:12px;'>— Binding Registration Shortcuts —</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align:center; color:rgba(135,206,235,0.4); margin-top:25px; font-size:12px; letter-spacing:1px;'>— BINDING REGISTRATION SHORTCUTS —</div>", unsafe_allow_html=True)
         st.markdown("""
         <div class="social-row">
-            <div class="social-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="22"></div>
-            <div class="social-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="22"></div>
-            <div class="social-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" width="22"></div>
+            <div class="social-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="20"></div>
+            <div class="social-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="20"></div>
+            <div class="social-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" width="20"></div>
         </div>
         """, unsafe_allow_html=True)
 
-# --- PANEL LAYER (INSIDE LOOK) ---
+# --- PANEL LAYER (INSIDE DESIGN MATCH) ---
 else:
     user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
     wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (77889900.00, 54522930.00, "SVIP LEVEL 9", "Y999")
     
-    # Dual Balance Header Card
+    # DevilXD Styled Twin Space Metric Display Cards
     st.markdown(f"""
     <div class="balance-card-container">
         <div class="balance-box">
@@ -287,19 +314,21 @@ else:
         </div>
         <div class="balance-box">
             <div class="balance-title">📥 Ready For Cashout</div>
-            <div class="balance-value-green">RM {liquid_bal:,.2f}</div>
+            <div class="balance-value-sky">RM {liquid_bal:,.2f}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("<h4 style='margin-bottom:10px; font-size:14px; color:#848b9c !important;'>🧭 APPLICATION NAVIGATION</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='font-family:\"Orbitron\", sans-serif; font-size:12px; color:rgba(135,206,235,0.6) !important; margin-bottom:12px;'>🧭 SYSTEM NAVIGATION INDEX</h4>", unsafe_allow_html=True)
 
-    # Clean Grid Layout for Buttons List
-    if st.button("🎰 Fund Deposit / Overview"):
+    # Injected class wrapper to lock sleek sub-buttons styles
+    st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+    
+    if st.button("🎰 Fund Deposit / Overview Hub"):
         st.session_state.selected_panel = "Dashboard Overview"
         st.rerun()
         
-    if st.button("🎥 Claim Revenue / Video Tasks"):
+    if st.button("🎥 Claim Revenue / Video Task Node"):
         st.session_state.selected_panel = "Stream Video Tasks"
         st.rerun()
         
@@ -307,11 +336,11 @@ else:
         st.session_state.selected_panel = "Add Wallet Funds"
         st.rerun()
         
-    if st.button("🏛️ Bank Cashout Liquidation"):
+    if st.button("🏛️ Bank Cashout Liquidation Protocol"):
         st.session_state.selected_panel = "Bank Cashout"
         st.rerun()
         
-    if st.button("📑 Ledger Account Logs"):
+    if st.button("📑 Ledger Session Logs"):
         st.session_state.selected_panel = "Ledger Logs"
         st.rerun()
         
@@ -320,19 +349,19 @@ else:
         st.session_state.auth_view = "login"
         st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('</div><br>', unsafe_allow_html=True)
     
-    # Active View Content Container Box
-    st.markdown("<div style='background:#181b24; padding:18px; border-radius:14px; border:1px solid #232736;'>", unsafe_allow_html=True)
+    # Active Frame Content Block Container
+    st.markdown("<div style='background: rgba(15,10,40,0.85); padding:20px; border-radius:14px; border:1px solid rgba(255,105,180,0.2);'>", unsafe_allow_html=True)
     
     if st.session_state.selected_panel == "Dashboard Overview":
-        st.markdown(f"<h3 style='font-size:18px; color:#ffffff !important;'>Active Workspace Tracker</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='font-size:18px; color:#ff69b4 !important;'>Active Workspace Tracker</h3>", unsafe_allow_html=True)
         st.write(f"Account Profile Level Rank: {level_tag}")
         st.write(f"Unique Master Invitation Link Code: {reference_hash}")
         st.info("System Engine operational. All tracking nodes are online.")
         
     elif st.session_state.selected_panel == "Stream Video Tasks":
-        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Video Streams Premium Rewards</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:18px; color:#ff69b4 !important;'>Video Streams Premium Rewards</h3>", unsafe_allow_html=True)
         st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         if st.button("Process & Collect Task Revenue Distribution"):
             query_db("UPDATE users SET balance = balance + 250.00 WHERE username=?", (st.session_state.current_user,), commit=True)
@@ -340,7 +369,7 @@ else:
             st.rerun()
             
     elif st.session_state.selected_panel == "Add Wallet Funds":
-        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Submit Local Malaysian Bank Proof Slip</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:18px; color:#ff69b4 !important;'>Submit Local Malaysian Bank Proof Slip</h3>", unsafe_allow_html=True)
         st.selectbox("Select Destination Network Bank Node:", MALAYSIAN_BANKS)
         st.text_input("Remitter / Account Holder Full Name:")
         st.text_input("Unique System Transaction Reference ID (Trx ID):")
@@ -348,7 +377,7 @@ else:
             st.success("Verification slip submitted to admin vault successfully.")
             
     elif st.session_state.selected_panel == "Bank Cashout":
-        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Configure Outflow Liquidation Settlement</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:18px; color:#ff69b4 !important;'>Configure Outflow Liquidation Settlement</h3>", unsafe_allow_html=True)
         st.selectbox("Select Bank Infrastructure Module:", MALAYSIAN_BANKS)
         st.text_input("Target Clearing Bank Account Number:")
         st.number_input("Liquidation Inflow Allocation Volume (RM):", min_value=10.0)
@@ -356,7 +385,7 @@ else:
             st.error("Operation failed. Core balance limit constraints reached.")
             
     elif st.session_state.selected_panel == "Ledger Logs":
-        st.markdown("<h3 style='font-size:18px; color:#ffffff !important;'>Account Financial Ledger Sheets</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:18px; color:#ff69b4 !important;'>Account Financial Ledger Sheets</h3>", unsafe_allow_html=True)
         st.warning("No tracking logs recorded on this session index.")
         
     st.markdown("</div>", unsafe_allow_html=True)
