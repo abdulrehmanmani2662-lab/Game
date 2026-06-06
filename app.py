@@ -238,7 +238,7 @@ if not st.session_state.logged_in:
     with st.container():
         st.markdown("""
         <div class="promo-banner">
-             Invite a friend and get a bonus of <span class="text-pink-neon">RM 600</span><br>
+             Invite a friend and get a bonus of <span class="text-pink-neon">RM 50</span><br>
              Download the app and get a bonus of <span class="text-pink-neon">RM 100 - 999</span>
         </div>
         """, unsafe_allow_html=True)
