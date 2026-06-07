@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 import random
 import smtplib
+import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -20,32 +21,25 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         msg['To'] = receiver_email
         msg['Subject'] = f"🔑 Security Code: {otp_code}"
         
-        # Premium Dark Matrix Theme with Neon Borders & Styled Text
         body = f"""
         <html>
         <body style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #06040f; padding: 30px; margin: 0;">
             <div style="max-width: 480px; margin: 0 auto; background-color: #131021; border: 2px solid #ff007f; border-radius: 16px; padding: 30px; text-align: center; box-shadow: 0 8px 24px rgba(255, 0, 127, 0.2);">
-                
                 <h2 style="background: linear-gradient(135deg, #ffffff 30%, #00ffcc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: #00ffcc; font-size: 24px; font-weight: 900; margin-top: 0; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1.5px;">
                     GLOBAL MATRIX
                 </h2>
                 <p style="color: #a5a1c2; font-size: 12px; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
                     Network Security Node Sync
                 </p>
-                
                 <hr style="border: 0; height: 1px; background: linear-gradient(90deg, transparent, #ff007f, transparent); margin-bottom: 25px;">
-                
                 <p style="font-size: 14px; color: #ffffff; margin: 0 0 10px 0; text-align: left; font-weight: 500;">Hello Operator,</p>
                 <p style="font-size: 14px; color: #a5a1c2; line-height: 1.5; margin: 0 0 25px 0; text-align: left;">
                     A verification request for <span style="color: #00ffcc; font-weight: 700;">{purpose}</span> has been initialized. Please use the secure access token below to complete the handshake connection.
                 </p>
-                
                 <div style="font-size: 36px; font-weight: 800; color: #00ffcc; letter-spacing: 5px; margin: 25px 0; padding: 15px; background: rgba(0, 255, 204, 0.05); border: 1px solid rgba(0, 255, 204, 0.3); text-align: center; border-radius: 10px; text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);">
                     {otp_code}
                 </div>
-                
                 <hr style="border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin-top: 25px; margin-bottom: 20px;">
-                
                 <p style="font-size: 11px; color: #6b6687; margin-bottom: 0; line-height: 1.4;">
                     Secure automated notification. If you did not trigger this action, no further steps are required. Please protect your verification credentials.
                 </p>
@@ -124,6 +118,11 @@ if 'is_admin' not in st.session_state: st.session_state.is_admin = False
 if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "Overview"
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
+
+# OTP Counter Trackers
+if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = None
+if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
+if 'generated_code' not in st.session_state: st.session_state.generated_code = ""
 
 # --- MASTER ENGINE UI STYLING ENGINE ---
 st.markdown("""
@@ -210,11 +209,56 @@ st.markdown("""
         border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 12px;
         border: 2px solid #00ffcc; box-shadow: 0 5px 15px rgba(0, 255, 204, 0.1);
     }
+
+    .timer-container {
+        text-align: center;
+        background: rgba(255, 0, 127, 0.05);
+        border: 1px solid rgba(255, 0, 127, 0.3);
+        border-radius: 8px;
+        padding: 8px;
+        margin: 10px 0;
+        font-weight: bold;
+        color: #ff007f;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="rgb-moving-strip"></div>', unsafe_allow_html=True)
 st.markdown('<div class="running-header-container"><div class="running-text">Online earnings Websites</div></div>', unsafe_allow_html=True)
+
+# --- LIVE FRAGMENTED COUNTDOWN COUNTER ENGINE ---
+@st.fragment
+def render_otp_countdown_engine():
+    """Renders a real-time responsive 2-minute ticking UI node."""
+    if st.session_state.otp_start_time is not None:
+        elapsed = time.time() - st.session_state.otp_start_time
+        remaining = max(0, 120 - int(elapsed))
+        
+        if remaining > 0:
+            mins, secs = divmod(remaining, 60)
+            st.markdown(f"""
+            <div class="timer-container">
+                ⏳ Resend Code in: <span style="color:#00ffcc; font-family:monospace;">{mins:02d}:{secs:02d}</span>
+            </div>
+            """, unsafe_allow_html=True)
+            time.sleep(1)
+            st.rerun()
+        else:
+            st.markdown("<p style='color:#00ffcc; text-align:center; font-size:12px; margin:5px 0;'> didn't receive the code?</p>", unsafe_allow_html=True)
+            if st.button("🔄 RESEND NEW OTP CODE", use_container_width=True, key="resend_otp_trigger"):
+                new_otp = str(random.randint(102938, 984731))
+                st.session_state.otp_start_time = time.time()
+                
+                # Check current active mode and trigger correct pipeline
+                if st.session_state.auth_mode == "VerifyNewAccount":
+                    st.session_state.reg_verify_code = new_otp
+                    send_verification_email(st.session_state.temp_reg_user, new_otp, purpose="Account Creation")
+                elif st.session_state.auth_mode == "Forgot":
+                    st.session_state.generated_code = new_otp
+                    send_verification_email(st.session_state.reset_email, new_otp, purpose="Password Reset Authorization")
+                    
+                st.success("A brand new fresh security token code has been routed!")
+                st.rerun()
 
 # --- AUTHENTICATION FLOW ---
 if not st.session_state.logged_in:
@@ -264,10 +308,11 @@ if not st.session_state.logged_in:
                                 st.session_state.temp_reg_user = reg_username.strip()
                                 st.session_state.temp_reg_pass = reg_password.strip()
                                 st.session_state.reg_verify_code = generated_otp
+                                st.session_state.otp_start_time = time.time() # Start 2-min clock
                                 st.session_state.auth_mode = "VerifyNewAccount"
                                 st.rerun()
                             else:
-                                st.error("Email Gateway execution failed. Secure parameters configuration handshake timeout.")
+                                st.error("Email Gateway execution failed.")
 
     elif st.session_state.auth_mode == "VerifyNewAccount":
         st.markdown("<h6 style='color:#ff007f; text-align:center;'>🔒 EMAIL CODE SYNC-VERIFICATION</h6>", unsafe_allow_html=True)
@@ -279,10 +324,14 @@ if not st.session_state.logged_in:
                 query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
                 st.success("Registration compiled completely!")
+                st.session_state.otp_start_time = None # Reset clock
                 st.session_state.auth_mode = "Login"
                 st.rerun()
             else:
                 st.error("Encryption code mismatch.")
+        
+        # Render dynamic ticker frame under form actions
+        render_otp_countdown_engine()
 
     elif st.session_state.auth_mode == "Forgot":
         st.markdown("<h6 style='color:#00ffcc;'>ACCESS KEY RECOVERY PANEL</h6>", unsafe_allow_html=True)
@@ -297,10 +346,11 @@ if not st.session_state.logged_in:
                         if send_verification_email(f_email.strip(), generated_otp, purpose="Password Reset Authorization"):
                             st.session_state.reset_email = f_email.strip()
                             st.session_state.generated_code = generated_otp
+                            st.session_state.otp_start_time = time.time() # Start 2-min clock
                             st.session_state.reset_step = 2
                             st.rerun()
                         else:
-                            st.error("Failed to execute outbound routing. Network timeout.")
+                            st.error("Failed to execute outbound routing.")
                 else: 
                     st.error("No context records found matching identity key.")
                         
@@ -314,11 +364,15 @@ if not st.session_state.logged_in:
                     if len(new_pass.strip()) >= 4:
                         query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.reset_email), commit=True)
                         st.success("Vault structure recompiled clear.")
+                        st.session_state.otp_start_time = None # Reset clock
                         st.session_state.auth_mode = "Login"
                         st.session_state.reset_step = 1
                         st.rerun()
                     else: st.error("Password too short.")
                 else: st.error("Verification parameters mismatch.")
+            
+            # Render dynamic ticker frame under form actions
+            render_otp_countdown_engine()
 
     st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
@@ -326,15 +380,18 @@ if not st.session_state.logged_in:
     with nav_col1:
         if st.button("🔑 LOGIN", key="set_login"):
             st.session_state.auth_mode = "Login"
+            st.session_state.otp_start_time = None
             st.rerun()
     with nav_col2:
         if st.button("📝 JOIN", key="set_reg"):
             st.session_state.auth_mode = "Register"
+            st.session_state.otp_start_time = None
             st.rerun()
     with nav_col3:
         if st.button("🔄 RESET", key="set_forgot"):
             st.session_state.auth_mode = "Forgot"
             st.session_state.reset_step = 1
+            st.session_state.otp_start_time = None
             st.rerun()
 
 # --- DASHBOARD (LOGGED IN SYSTEM ACCESS) ---
