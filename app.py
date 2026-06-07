@@ -8,36 +8,37 @@ from email.mime.multipart import MIMEMultipart
 # --- CORE APPLICATION CONFIGURATION ---
 st.set_page_config(page_title="GLOBAL NETWORK MATRIX", page_icon="📈", layout="wide")
 
-# --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION (LIVE PARAMS INJECTED) ---
+# --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION ---
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
 SENDER_APP_PASSWORD = "lddf merstvil icby"  
 
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
-    """Sends a security token via secure TLS SMTP gateway with fallback handling."""
+    """Sends a simplified verification email to bypass strict spam filters."""
     try:
         msg = MIMEMultipart()
         msg['From'] = SENDER_EMAIL
         msg['To'] = receiver_email
-        msg['Subject'] = f"🛡️ MATRIX SECURITY CODE: {otp_code}"
+        # Simple, professional subject line passes spam filters easily
+        msg['Subject'] = f"Verification Code: {otp_code}"
         
+        # Cleaner text structure to reduce spam score triggering
         body = f"""
         <html>
-        <body style="font-family: Arial, sans-serif; background-color: #0b091a; color: #ffffff; padding: 20px;">
-            <div style="max-width: 500px; margin: 0 auto; background-color: #131021; border: 2px solid #ff007f; border-radius: 12px; padding: 20px; text-align: center;">
-                <h2 style="color: #00ffcc;">GLOBAL MATRIX NETWORK</h2>
-                <p style="font-size: 14px; color: #a5a1c2;">Secure Authentication & Node Synchronization Verification Token.</p>
-                <hr style="border-color: rgba(255,255,255,0.1);">
-                <p style="font-size: 12px; text-transform: uppercase; color: #ff007f; font-weight: bold;">Action Required: {purpose}</p>
-                <div style="font-size: 32px; font-weight: bold; color: #00ffcc; letter-spacing: 2px; margin: 20px 0; padding: 10px; background: rgba(0,255,204,0.1); border-radius: 8px;">
+        <body style="font-family: Arial, sans-serif; color: #333333; padding: 20px; background-color: #f9f9f9;">
+            <div style="max-width: 450px; margin: 0 auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; padding: 25px;">
+                <h3 style="color: #111111; margin-top: 0;">Global Matrix Platform</h3>
+                <p style="font-size: 14px; color: #555555;">Hello,</p>
+                <p style="font-size: 14px; color: #555555;">Your verification safety token for {purpose} is requested below:</p>
+                <div style="font-size: 28px; font-weight: bold; color: #0066cc; letter-spacing: 3px; margin: 20px 0; padding: 12px; background: #f0f7ff; text-align: center; border-radius: 6px;">
                     {otp_code}
                 </div>
+                <p style="font-size: 12px; color: #888888; margin-bottom: 0;">If you did not request this code, please ignore this security email.</p>
             </div>
         </body>
         </html>
         """
         msg.attach(MIMEText(body, 'html'))
         
-        # Secured Connection block
         server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
         server.starttls()
         server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
@@ -45,7 +46,7 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         server.quit()
         return True
     except Exception as e:
-        print(f"SMTP Critical Error Core Setup: {str(e)}")
+        print(f"SMTP Error: {str(e)}")
         return False
 
 MALAYSIAN_BANKS = [
