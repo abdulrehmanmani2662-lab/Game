@@ -13,26 +13,42 @@ SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
 SENDER_APP_PASSWORD = "lddf merstvil icby"  
 
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
-    """Sends a simplified verification email to bypass strict spam filters."""
+    """Sends a premium, matrix-themed stylized email optimized to bypass spam filters."""
     try:
         msg = MIMEMultipart()
-        msg['From'] = SENDER_EMAIL
+        msg['From'] = f"Global Matrix Network <{SENDER_EMAIL}>"
         msg['To'] = receiver_email
-        # Simple, professional subject line passes spam filters easily
-        msg['Subject'] = f"Verification Code: {otp_code}"
+        msg['Subject'] = f"🔑 Security Code: {otp_code}"
         
-        # Cleaner text structure to reduce spam score triggering
+        # Premium Dark Matrix Theme with Neon Borders & Styled Text
         body = f"""
         <html>
-        <body style="font-family: Arial, sans-serif; color: #333333; padding: 20px; background-color: #f9f9f9;">
-            <div style="max-width: 450px; margin: 0 auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; padding: 25px;">
-                <h3 style="color: #111111; margin-top: 0;">Global Matrix Platform</h3>
-                <p style="font-size: 14px; color: #555555;">Hello,</p>
-                <p style="font-size: 14px; color: #555555;">Your verification safety token for {purpose} is requested below:</p>
-                <div style="font-size: 28px; font-weight: bold; color: #0066cc; letter-spacing: 3px; margin: 20px 0; padding: 12px; background: #f0f7ff; text-align: center; border-radius: 6px;">
+        <body style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #06040f; padding: 30px; margin: 0;">
+            <div style="max-width: 480px; margin: 0 auto; background-color: #131021; border: 2px solid #ff007f; border-radius: 16px; padding: 30px; text-align: center; box-shadow: 0 8px 24px rgba(255, 0, 127, 0.2);">
+                
+                <h2 style="background: linear-gradient(135deg, #ffffff 30%, #00ffcc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: #00ffcc; font-size: 24px; font-weight: 900; margin-top: 0; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1.5px;">
+                    GLOBAL MATRIX
+                </h2>
+                <p style="color: #a5a1c2; font-size: 12px; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+                    Network Security Node Sync
+                </p>
+                
+                <hr style="border: 0; height: 1px; background: linear-gradient(90deg, transparent, #ff007f, transparent); margin-bottom: 25px;">
+                
+                <p style="font-size: 14px; color: #ffffff; margin: 0 0 10px 0; text-align: left; font-weight: 500;">Hello Operator,</p>
+                <p style="font-size: 14px; color: #a5a1c2; line-height: 1.5; margin: 0 0 25px 0; text-align: left;">
+                    A verification request for <span style="color: #00ffcc; font-weight: 700;">{purpose}</span> has been initialized. Please use the secure access token below to complete the handshake connection.
+                </p>
+                
+                <div style="font-size: 36px; font-weight: 800; color: #00ffcc; letter-spacing: 5px; margin: 25px 0; padding: 15px; background: rgba(0, 255, 204, 0.05); border: 1px solid rgba(0, 255, 204, 0.3); text-align: center; border-radius: 10px; text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);">
                     {otp_code}
                 </div>
-                <p style="font-size: 12px; color: #888888; margin-bottom: 0;">If you did not request this code, please ignore this security email.</p>
+                
+                <hr style="border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin-top: 25px; margin-bottom: 20px;">
+                
+                <p style="font-size: 11px; color: #6b6687; margin-bottom: 0; line-height: 1.4;">
+                    Secure automated notification. If you did not trigger this action, no further steps are required. Please protect your verification credentials.
+                </p>
             </div>
         </body>
         </html>
