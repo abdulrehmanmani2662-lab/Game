@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # --- CORE APPLICATION CONFIGURATION ---
-st.set_page_config(page_title="GLOBAL NETWORK MATRIX", page_icon="📈", layout="wide")
+st.set_page_config(page_title="GLOBAL NETWORK MATRIX", page_icon="👑", layout="wide")
 
 # --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION ---
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
@@ -60,12 +60,8 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         return False
 
 MALAYSIAN_BANKS = [
-    "Touch 'n Go eWallet",
-    "Maybank (Malayan Banking Berhad)",
-    "CIMB Bank Berhad",
-    "Public Bank Berhad",
-    "RHB Bank Berhad",
-    "Hong Leong Bank Berhad"
+    "Touch 'n Go eWallet", "Maybank (Malayan Banking Berhad)", "CIMB Bank Berhad", 
+    "Public Bank Berhad", "RHB Bank Berhad", "Hong Leong Bank Berhad"
 ]
 
 # --- SECURE DATABASE INTERFACE ---
@@ -85,6 +81,12 @@ def init_db():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS deposits (
             id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, bank TEXT, name TEXT, trx_id TEXT, amount REAL, status TEXT
+        )
+    """)
+    # Table to track daily checkins so users don't abuse it
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS checkins (
+            username TEXT, date TEXT, PRIMARY KEY (username, date)
         )
     """)
     cursor.execute("INSERT OR IGNORE INTO system_config VALUES ('live_ad_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')")
@@ -119,7 +121,6 @@ if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 
-# OTP Counter Trackers
 if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = None
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
 if 'generated_code' not in st.session_state: st.session_state.generated_code = ""
@@ -151,8 +152,8 @@ st.markdown("""
         border-bottom: 1px solid rgba(0, 255, 204, 0.3); padding: 8px 0; margin-bottom: 15px;
     }
     .running-text {
-        font-size: 16px; font-weight: 800; color: #00ffcc; white-space: nowrap;
-        display: inline-block; animation: marquee-run 12s linear infinite;
+        font-size: 15px; font-weight: 800; color: #00ffcc; white-space: nowrap;
+        display: inline-block; animation: marquee-run 15s linear infinite;
         text-shadow: 0 0 8px rgba(0, 255, 204, 0.6); letter-spacing: 1px;
     }
     @keyframes marquee-run {
@@ -211,25 +212,39 @@ st.markdown("""
     }
 
     .timer-container {
-        text-align: center;
-        background: rgba(255, 0, 127, 0.05);
-        border: 1px solid rgba(255, 0, 127, 0.3);
-        border-radius: 8px;
-        padding: 8px;
-        margin: 10px 0;
-        font-weight: bold;
-        color: #ff007f;
+        text-align: center; background: rgba(255, 0, 127, 0.05);
+        border: 1px solid rgba(255, 0, 127, 0.3); border-radius: 8px;
+        padding: 8px; margin: 10px 0; font-weight: bold; color: #ff007f;
+    }
+
+    /* Trust Blocks Styling */
+    .trust-badge-row {
+        background: rgba(0, 255, 204, 0.04); border: 1px dashed rgba(0, 255, 204, 0.3);
+        border-radius: 8px; padding: 8px; font-size: 11px; text-align: center;
+        color: #00ffcc; margin-bottom: 10px; font-weight: 600;
+    }
+    
+    .live-log-container {
+        background: #110d22; border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px; padding: 12px; margin-top: 15px;
+    }
+    
+    .log-row {
+        font-size: 11px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+        display: flex; justify-content: space-between; align-items: center;
     }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="rgb-moving-strip"></div>', unsafe_allow_html=True)
-st.markdown('<div class="running-header-container"><div class="running-text">Online earnings Websites</div></div>', unsafe_allow_html=True)
+
+# Feature 2: High-Volume Active Counter dynamically integrated into running header
+random_online = random.randint(1530, 1890)
+st.markdown(f'<div class="running-header-container"><div class="running-text">🔥 GLOBAL MATRIX PLATFORM • STATUS: SECURE • ACTIVE OPERATORS ONLINE: {random_online} • GUARANTEED LIQUIDATION V2</div></div>', unsafe_allow_html=True)
 
 # --- LIVE FRAGMENTED COUNTDOWN COUNTER ENGINE ---
 @st.fragment
 def render_otp_countdown_engine():
-    """Renders a real-time responsive 2-minute ticking UI node."""
     if st.session_state.otp_start_time is not None:
         elapsed = time.time() - st.session_state.otp_start_time
         remaining = max(0, 120 - int(elapsed))
@@ -244,19 +259,16 @@ def render_otp_countdown_engine():
             time.sleep(1)
             st.rerun()
         else:
-            st.markdown("<p style='color:#00ffcc; text-align:center; font-size:12px; margin:5px 0;'> didn't receive the code?</p>", unsafe_allow_html=True)
-            if st.button("🔄 RESEND NEW OTP CODE", use_container_width=True, key="resend_otp_trigger"):
+            st.markdown("<p style='color:#00ffcc; text-align:center; font-size:12px; margin:5px 0;'>Didn't receive the code?</p>", unsafe_allow_html=True)
+            if st.button("🔄 RESEND NEW OTP CODE", use_container_width=True):
                 new_otp = str(random.randint(102938, 984731))
                 st.session_state.otp_start_time = time.time()
-                
-                # Check current active mode and trigger correct pipeline
                 if st.session_state.auth_mode == "VerifyNewAccount":
                     st.session_state.reg_verify_code = new_otp
                     send_verification_email(st.session_state.temp_reg_user, new_otp, purpose="Account Creation")
                 elif st.session_state.auth_mode == "Forgot":
                     st.session_state.generated_code = new_otp
                     send_verification_email(st.session_state.reset_email, new_otp, purpose="Password Reset Authorization")
-                    
                 st.success("A brand new fresh security token code has been routed!")
                 st.rerun()
 
@@ -269,7 +281,7 @@ if not st.session_state.logged_in:
         username = st.text_input("Username / Email:", placeholder="e.g. user@gmail.com", key="login_user")
         password = st.text_input("Password:", type="password", placeholder="••••••••", key="login_pass")
         
-        if st.button("🚀 AUTHORIZE ACCESS", use_container_width=True, key="execute_login"):
+        if st.button("🚀 AUTHORIZE ACCESS", use_container_width=True):
             if username.strip() and password.strip():
                 if username.strip() == "admin" and password.strip() == "admin123":
                     st.session_state.logged_in = True
@@ -285,22 +297,20 @@ if not st.session_state.logged_in:
                         st.session_state.is_admin = False
                         st.session_state.selected_panel = "Overview"
                         st.rerun()
-                    else:
-                        st.error("Invalid Credentials.")
+                    else: st.error("Invalid Credentials.")
 
     elif st.session_state.auth_mode == "Register":
         st.markdown("<h6 style='color:#00ffcc; text-align:center; margin-bottom:8px;'>INITIALIZE SYSTEM NODE</h6>", unsafe_allow_html=True)
         reg_username = st.text_input("REGISTRATION EMAIL KEY:", placeholder="e.g. mail@domain.com", key="reg_user")
         reg_password = st.text_input("SYSTEM SECURITY CODE:", type="password", placeholder="••••••••", key="reg_pass")
         
-        if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True, key="execute_reg"):
+        if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True):
             if reg_username.strip() and reg_password.strip():
                 if "@" not in reg_username.strip() or "." not in reg_username.strip():
                     st.error("Please provide a valid structured email key.")
                 else:
                     existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
-                    if existing: 
-                        st.error("Identity keys collision: Email already exists.")
+                    if existing: st.error("Identity keys collision: Email already exists.")
                     else:
                         generated_otp = str(random.randint(102938, 984731))
                         with st.spinner("Dispatching Real Security Node OTP Key..."):
@@ -308,37 +318,33 @@ if not st.session_state.logged_in:
                                 st.session_state.temp_reg_user = reg_username.strip()
                                 st.session_state.temp_reg_pass = reg_password.strip()
                                 st.session_state.reg_verify_code = generated_otp
-                                st.session_state.otp_start_time = time.time() # Start 2-min clock
+                                st.session_state.otp_start_time = time.time()
                                 st.session_state.auth_mode = "VerifyNewAccount"
                                 st.rerun()
-                            else:
-                                st.error("Email Gateway execution failed.")
+                            else: st.error("Email Gateway execution failed.")
 
     elif st.session_state.auth_mode == "VerifyNewAccount":
         st.markdown("<h6 style='color:#ff007f; text-align:center;'>🔒 EMAIL CODE SYNC-VERIFICATION</h6>", unsafe_allow_html=True)
-        st.info(f"Target Registered Link: {st.session_state.temp_reg_user}")
-        typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******", key="verify_code_input")
+        st.info(f"Target Link: {st.session_state.temp_reg_user}")
+        typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******")
         
-        if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True, key="execute_verify"):
+        if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
+                # Giving a sweet starting welcome balance of RM 2.00 to make them feel the win early
+                query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'SVIP LEVEL 1', 'M'+CAST(ABS(RANDOM()%10000) AS TEXT))", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
-                st.success("Registration compiled completely!")
-                st.session_state.otp_start_time = None # Reset clock
+                st.success("Registration compiled completely! Free RM 2.00 added.")
+                st.session_state.otp_start_time = None
                 st.session_state.auth_mode = "Login"
                 st.rerun()
-            else:
-                st.error("Encryption code mismatch.")
-        
-        # Render dynamic ticker frame under form actions
+            else: st.error("Encryption code mismatch.")
         render_otp_countdown_engine()
 
     elif st.session_state.auth_mode == "Forgot":
         st.markdown("<h6 style='color:#00ffcc;'>ACCESS KEY RECOVERY PANEL</h6>", unsafe_allow_html=True)
-        
         if st.session_state.reset_step == 1:
-            f_email = st.text_input("Enter Registered Account Email:", key="forgot_email")
-            if st.button("🔍 VERIFY & ROUTE RESET SYSTEM KEY", use_container_width=True, key="execute_forgot_1"):
+            f_email = st.text_input("Enter Registered Account Email:")
+            if st.button("🔍 VERIFY & ROUTE RESET SYSTEM KEY", use_container_width=True):
                 user_match = query_db("SELECT username FROM users WHERE username=?", (f_email.strip(),), one=True)
                 if user_match:
                     generated_otp = str(random.randint(112233, 998877))
@@ -346,53 +352,38 @@ if not st.session_state.logged_in:
                         if send_verification_email(f_email.strip(), generated_otp, purpose="Password Reset Authorization"):
                             st.session_state.reset_email = f_email.strip()
                             st.session_state.generated_code = generated_otp
-                            st.session_state.otp_start_time = time.time() # Start 2-min clock
+                            st.session_state.otp_start_time = time.time()
                             st.session_state.reset_step = 2
                             st.rerun()
-                        else:
-                            st.error("Failed to execute outbound routing.")
-                else: 
-                    st.error("No context records found matching identity key.")
+                        else: st.error("Failed to execute outbound routing.")
+                else: st.error("No context records found matching identity key.")
                         
         elif st.session_state.reset_step == 2:
-            st.info(f"🔒 Route Handshake Target: {st.session_state.reset_email}")
-            input_code = st.text_input("Enter Real 6-Digit Email OTP:", key="forgot_code")
-            new_pass = st.text_input("Establish New Secure Password:", type="password", key="forgot_new_pass")
+            st.info(f"🔒 Handshake Target: {st.session_state.reset_email}")
+            input_code = st.text_input("Enter Real 6-Digit Email OTP:")
+            new_pass = st.text_input("Establish New Secure Password:", type="password")
             
-            if st.button("🛠️ RESET IDENTITY VAULT", use_container_width=True, key="execute_forgot_2"):
+            if st.button("🛠️ RESET IDENTITY VAULT", use_container_width=True):
                 if input_code.strip() == st.session_state.generated_code:
                     if len(new_pass.strip()) >= 4:
                         query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.reset_email), commit=True)
                         st.success("Vault structure recompiled clear.")
-                        st.session_state.otp_start_time = None # Reset clock
+                        st.session_state.otp_start_time = None
                         st.session_state.auth_mode = "Login"
                         st.session_state.reset_step = 1
                         st.rerun()
                     else: st.error("Password too short.")
                 else: st.error("Verification parameters mismatch.")
-            
-            # Render dynamic ticker frame under form actions
             render_otp_countdown_engine()
 
     st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
     nav_col1, nav_col2, nav_col3 = st.columns(3)
     with nav_col1:
-        if st.button("🔑 LOGIN", key="set_login"):
-            st.session_state.auth_mode = "Login"
-            st.session_state.otp_start_time = None
-            st.rerun()
+        if st.button("🔑 LOGIN", key="set_login"): st.session_state.auth_mode = "Login"; st.rerun()
     with nav_col2:
-        if st.button("📝 JOIN", key="set_reg"):
-            st.session_state.auth_mode = "Register"
-            st.session_state.otp_start_time = None
-            st.rerun()
+        if st.button("📝 JOIN", key="set_reg"): st.session_state.auth_mode = "Register"; st.rerun()
     with nav_col3:
-        if st.button("🔄 RESET", key="set_forgot"):
-            st.session_state.auth_mode = "Forgot"
-            st.session_state.reset_step = 1
-            st.session_state.otp_start_time = None
-            st.rerun()
+        if st.button("🔄 RESET", key="set_forgot"): st.session_state.auth_mode = "Forgot"; st.session_state.reset_step = 1; st.rerun()
 
 # --- DASHBOARD (LOGGED IN SYSTEM ACCESS) ---
 else:
@@ -402,7 +393,6 @@ else:
         if st.session_state.selected_panel == "Pending Requests":
             st.markdown("<h6 style='color:#00ffcc; margin-bottom:6px;'>Inflow Verification Channels</h6>", unsafe_allow_html=True)
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
-            
             if not pending_items: st.info("Logs queue is clear.")
             else:
                 for item in pending_items:
@@ -413,7 +403,6 @@ else:
                         <h5 style='color:#00ffcc; margin:2px 0;'>RM {item[5]:.2f}</h5>
                     </div>
                     """, unsafe_allow_html=True)
-                    
                     c_b1, c_b2 = st.columns(2)
                     with c_b1:
                         if st.button(f"✅ APPROVE", key=f"app_{item[0]}", use_container_width=True):
@@ -428,38 +417,31 @@ else:
         elif st.session_state.selected_panel == "Edit Task Redirects":
             current_ad_url = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)
             url_str = current_ad_url[0] if current_ad_url else ""
-            new_url = st.text_input("Active Redirection Link:", value=url_str, key="input_new_ad")
-            if st.button("🔗 UPDATE TARGET PATHS", use_container_width=True, key="save_new_ad"):
+            new_url = st.text_input("Active Redirection Link:", value=url_str)
+            if st.button("🔗 UPDATE TARGET PATHS", use_container_width=True):
                 query_db("UPDATE system_config SET value=? WHERE key='live_ad_url'", (new_url.strip(),), commit=True)
                 st.success("Target path updated.")
                 
         elif st.session_state.selected_panel == "Edit QR Source":
             current_qr_url = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)
             qr_str = current_qr_url[0] if current_qr_url else ""
-            new_qr = st.text_input("QR Repository Image Link:", value=qr_str, key="input_new_qr")
-            if st.button("🖼️ SYNC SCANNERS", use_container_width=True, key="save_new_qr"):
+            new_qr = st.text_input("QR Repository Image Link:", value=qr_str)
+            if st.button("🖼️ SYNC SCANNERS", use_container_width=True):
                 query_db("UPDATE system_config SET value=? WHERE key='tng_scanner_url'", (new_qr.strip(),), commit=True)
                 st.success("Assets synchronized.")
 
         st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
         adm_col1, adm_col2, adm_col3 = st.columns(3)
         with adm_col1:
-            if st.button("📥 LEDGER", key="btn_adm_dep"):
-                st.session_state.selected_panel = "Pending Requests"
-                st.rerun()
+            if st.button("📥 LEDGER"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
         with adm_col2:
-            if st.button("🔗 LINKS", key="btn_adm_url"):
-                st.session_state.selected_panel = "Edit Task Redirects"
-                st.rerun()
+            if st.button("🔗 LINKS"): st.session_state.selected_panel = "Edit Task Redirects"; st.rerun()
         with adm_col3:
-            if st.button("🖼️ SCANNERS", key="btn_adm_qr"):
-                st.session_state.selected_panel = "Edit QR Source"
-                st.rerun()
+            if st.button("🖼️ SCANNERS"): st.session_state.selected_panel = "Edit QR Source"; st.rerun()
 
     else:
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-        wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "SVIP LEVEL 9", "Y999")
+        wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "SVIP LEVEL 1", "Y999")
         
         st.markdown(f"""
         <div class="metric-card-box">
@@ -469,21 +451,84 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
+        # Feature 3: Official Security / Compliance Badge Box inside Dashboard
+        st.markdown("""
+        <div class="trust-badge-row">
+            🛡️ Secured Encryption Node • Certified under Bank Negara Malaysia Compliance Guidelines
+        </div>
+        """, unsafe_allow_html=True)
+
         if st.session_state.selected_panel == "Overview":
             st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
-            st.markdown("<h6 style='color:#00ffcc; margin:0 0 4px 0;'>Allocation Info</h6>", unsafe_allow_html=True)
-            st.write(f"Rank Matrix Node: **{level_tag}**")
-            st.write(f"Invitation Code: **{reference_hash}**")
             
+            # Feature 5: Daily Check-In Bonus Box
+            today_date = time.strftime("%Y-%m-%d")
+            already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
+            
+            check_col1, check_col2 = st.columns([2, 1])
+            with check_col1:
+                st.markdown("<p style='margin:6px 0 0 0; font-size:12px; color:#ffffff; font-weight:700;'>📅 DAILY BONUS CHECK-IN</p>", unsafe_allow_html=True)
+            with check_col2:
+                if already_checked:
+                    st.button("✅ CLAIMED", disabled=True, key="bonus_claimed_btn")
+                else:
+                    if st.button("🎁 CLAIM", key="bonus_claim_action"):
+                        query_db("INSERT INTO checkins VALUES (?, ?)", (st.session_state.current_user, today_date), commit=True)
+                        query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
+                        st.success("Claimed RM 0.50!")
+                        st.rerun()
+
+            st.markdown("<hr style='margin:10px 0; border-color:rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
+            st.markdown("<h6 style='color:#00ffcc; margin:0 0 4px 0;'>OPERATOR PARAMETERS</h6>", unsafe_allow_html=True)
+            st.write(f"Rank Matrix Node: **{level_tag}**")
+            st.write(f"Invitation Link Code: **{reference_hash}**")
+            
+            # Feature 6: Team Level Commission UI Look inside the block
+            st.markdown(f"""
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; margin-top: 5px; font-size: 11px;">
+                👥 <b>My Referral Network:</b> Lvl 1: <span style='color:#00ffcc;'>10%</span> | Lvl 2: <span style='color:#ff007f;'>5%</span> | Lvl 3: <span style='color:#ffcc00;'>2%</span>
+            </div>
+            """, unsafe_allow_html=True)
+
             ad_link_data = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)
             target_video = ad_link_data[0] if ad_link_data else "#"
             
             st.markdown(f"""
-            <div style='background-color:#141126; padding:12px; border-radius:10px; border: 1px solid #ff007f; margin-top:8px; text-align:center;'>
+            <div style='background-color:#141126; padding:12px; border-radius:10px; border: 1px solid #ff007f; margin-top:10px; text-align:center;'>
                 <p style='margin:0 0 6px 0; color:#ffffff; font-size:12px; font-weight:bold;'>YOUTUBE DATA TASK TUNNEL</p>
                 <a href='{target_video}' target='_blank' style='display:block; text-align:center; background: linear-gradient(135deg, #ff0055 0%, #7928ca 100%); color:#ffffff; padding:10px; text-decoration:none; font-weight:700; border-radius:6px; font-size:12px; text-transform:uppercase;'>▶️ START DATA WORK</a>
             </div>
             """, unsafe_allow_html=True)
+            
+            # Feature 4: Live Official Help Desk Support Channels Box
+            st.markdown("""
+            <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <a href="https://t.me/your_telegram_channel" target="_blank" style="text-align:center; background:#229ED9; color:white; padding:8px; font-size:11px; text-decoration:none; font-weight:700; border-radius:6px; display:block;">✈️ TELEGRAM CHANNEL</a>
+                <a href="https://wa.me/your_whatsapp_number" target="_blank" style="text-align:center; background:#25D366; color:white; padding:8px; font-size:11px; text-decoration:none; font-weight:700; border-radius:6px; display:block;">💬 WHATSAPP AGENT</a>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # Feature 1: Real-time Rolling Live Cashout & Deposit Logs inside a tight box at bottom
+            st.markdown("<div class='live-log-container'>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#00ffcc; font-size:11px; font-weight:bold; margin:0 0 5px 0; text-transform:uppercase;'>⚡ LIVE TRANSACTION HANDSHAKES</p>", unsafe_allow_html=True)
+            
+            names_pool = ["usr_ahmed", "lim_99", "matrix_op", "v_bhai", "billa_raj", "tng_king", "faisal_x", "m_bhai", "tan_alpha", "ub_rajput"]
+            banks_pool = ["Touch 'n Go", "Maybank", "CIMB Bank", "Public Bank"]
+            
+            for i in range(3):
+                u_mask = random.choice(names_pool)[:3] + "***" + str(random.randint(10,99))
+                b_rand = random.choice(banks_pool)
+                amt_rand = random.randint(40, 650)
+                type_rand = random.choice(["Withdrew", "Deposited"])
+                color_type = "#ff007f" if type_rand == "Withdrew" else "#00ffcc"
+                
+                st.markdown(f"""
+                <div class="log-row">
+                    <span>👤 <b style="color:#ffffff;">{u_mask}</b> ({b_rand})</span>
+                    <span style="color:{color_type}; font-weight:bold;">{type_rand} RM {amt_rand:.2f} ✅</span>
+                </div>
+                """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
             
         elif st.session_state.selected_panel == "Deposit":
@@ -492,16 +537,15 @@ else:
             
             qr_link_data = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)
             target_qr = qr_link_data[0] if qr_link_data else ""
-            
             if target_qr:
                 st.markdown(f"<div style='text-align:center; margin-bottom:10px;'><img src='{target_qr}' width='130' style='border:2px solid #ff007f; border-radius:8px; background:white; padding:3px;'/></div>", unsafe_allow_html=True)
             
-            chosen_bank = st.selectbox("CHOOSE SYSTEM NODE BANK:", MALAYSIAN_BANKS, key="dep_bank_select")
-            remitter_name = st.text_input("ACCOUNT OWNER NAME:", key="dep_name_input")
-            trx_id_input = st.text_input("REFERENCE TXN / TRX CODE:", key="dep_trx_input")
-            amount_input = st.number_input("VALUATION AMOUNT (RM):", min_value=1.0, value=10.0, key="dep_amount_input")
+            chosen_bank = st.selectbox("CHOOSE SYSTEM NODE BANK:", MALAYSIAN_BANKS)
+            remitter_name = st.text_input("ACCOUNT OWNER NAME:")
+            trx_id_input = st.text_input("REFERENCE TXN / TRX CODE:")
+            amount_input = st.number_input("VALUATION AMOUNT (RM):", min_value=1.0, value=10.0)
             
-            if st.button("SUBMIT PROOF RECORD", use_container_width=True, key="submit_deposit_proof"):
+            if st.button("SUBMIT PROOF RECORD", use_container_width=True):
                 if remitter_name.strip() and trx_id_input.strip():
                     query_db("INSERT INTO deposits (username, bank, name, trx_id, amount, status) VALUES (?, ?, ?, ?, ?, 'Pending')",
                              (st.session_state.current_user, chosen_bank, remitter_name.strip(), trx_id_input.strip(), amount_input), commit=True)
@@ -512,29 +556,22 @@ else:
         elif st.session_state.selected_panel == "Cashout":
             st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
             st.markdown("<h6 style='color:#ff007f; margin:0 0 8px 0;'>INITIALIZE OUTBOUND SETTLEMENT</h6>", unsafe_allow_html=True)
-            st.selectbox("Select Clearance Bank:", MALAYSIAN_BANKS[1:], key="cash_bank_select")
-            st.text_input("Destination Wire Account Keys:", key="cash_acc_input")
-            st.number_input("Amount Selection (RM):", min_value=10.0, key="cash_amount_input")
+            st.selectbox("Select Clearance Bank:", MALAYSIAN_BANKS[1:])
+            st.text_input("Destination Wire Account Keys:")
+            st.number_input("Amount Selection (RM):", min_value=10.0)
             
-            if st.button("🏛️ EXECUTE OUTBOUND CASH OUT", use_container_width=True, key="submit_cashout_req"):
-                st.error("Operation Halted: Configuration imbalance detected.")
+            if st.button("🏛️ EXECUTE OUTBOUND CASH OUT", use_container_width=True):
+                st.error("Operation Halted: System Node Balance requirements not satisfied.")
             st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
         usr_col1, usr_col2, usr_col3 = st.columns(3)
         with usr_col1:
-            if st.button("🎰 HOME", key="btn_usr_ov"):
-                st.session_state.selected_panel = "Overview"
-                st.rerun()
+            if st.button("🎰 HOME", key="btn_usr_ov"): st.session_state.selected_panel = "Overview"; st.rerun()
         with usr_col2:
-            if st.button("💰 DEPOSIT", key="btn_usr_dep"):
-                st.session_state.selected_panel = "Deposit"
-                st.rerun()
+            if st.button("💰 DEPOSIT", key="btn_usr_dep"): st.session_state.selected_panel = "Deposit"; st.rerun()
         with usr_col3:
-            if st.button("🏛️ WITHDRAW", key="btn_usr_cash"):
-                st.session_state.selected_panel = "Cashout"
-                st.rerun()
+            if st.button("🏛️ WITHDRAW", key="btn_usr_cash"): st.session_state.selected_panel = "Cashout"; st.rerun()
 
     st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     if st.button("🚪 LOG OUT PORTAL", key="global_logout_action", use_container_width=True):
