@@ -57,11 +57,7 @@ def query_db(query, args=(), one=False, commit=False):
         conn.close()
         return None if one else []
 
-# --- ANTIFLICKER NAVIGATION ARCHITECTURE ---
-params = st.query_params
-if "nav" in params:
-    st.session_state.selected_panel = params["nav"]
-
+# Session State Initialization
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -69,9 +65,10 @@ if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 
-# --- MASTER CSS INJECTION (FORCED COLOR & INPUT FIXES) ---
+# --- MASTER CSS INJECTION (FORCED GLOBAL HIGH-CONTRAST DARK THEME) ---
 st.markdown("""
     <style>
+    /* Hide top elements and default menus completely */
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
         display: none !important; visibility: hidden !important;
     }
@@ -92,42 +89,54 @@ st.markdown("""
     @keyframes rgb-strip-move { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
 
     .brand-title {
-        text-align: center; font-size: 30px; font-weight: 900; letter-spacing: 1px;
+        text-align: center; font-size: 32px; font-weight: 900; letter-spacing: 1px;
         background: linear-gradient(135deg, #ffffff 40%, #00ffcc 100%);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        margin-top: 35px; margin-bottom: 20px; text-transform: uppercase;
+        margin-top: 35px; margin-bottom: 25px; text-transform: uppercase;
     }
 
-    /* ✍️ TEXT INPUT & LABELS COLOR CORRECTION (FIXES WHITE/TRANSPARENT TEXT) */
-    div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label {
+    /* ✍️ TEXT INPUTS, DROPDOWNS & LABELS COLOR CORRECTION */
+    div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stWidgetLabel"] p {
         color: #00ffcc !important; font-weight: 800 !important; font-size: 14px !important; text-transform: uppercase !important;
+        margin-bottom: 8px !important;
     }
     
-    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div {
+    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
         background-color: #161326 !important; color: #ffffff !important;
-        border: 2px solid #3c3761 !important; border-radius: 10px !important; font-weight: 700 !important;
+        border: 2px solid #00ffcc !important; border-radius: 10px !important; font-weight: 700 !important;
+        height: 48px !important;
     }
     
-    /* Chrome/Safari placeholders fix */
-    ::placeholder { color: #8a84a3 !important; opacity: 1 !important; }
-
-    /* 💎 HIGH CONTRAST MATRIX ANCHOR LINK BUTTONS (ANTI-WHITE BLOCK) */
-    .matrix-btn {
-        display: block !important; width: 100% !important; text-align: center !important;
-        padding: 14px 20px !important; margin: 12px 0px !important; border-radius: 12px !important;
-        font-size: 15px !important; font-weight: 900 !important; text-transform: uppercase !important;
-        letter-spacing: 1px !important; text-decoration: none !important; transition: all 0.2s ease-in-out !important;
-        border: none !important;
+    /* Input field focus glow */
+    div[data-testid="stTextInput"] input:focus, div[data-testid="stNumberInput"] input:focus {
+        border-color: #ff00aa !important; box-shadow: 0 0 10px rgba(255, 0, 170, 0.5) !important;
     }
-    .matrix-btn:hover { transform: scale(1.02); filter: brightness(1.2); }
 
-    /* Forcing clear text colors inside backgrounds */
-    .m-cyan { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important; color: #000000 !important; box-shadow: 0 4px 15px rgba(0,242,254,0.4); }
-    .m-gold { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%) !important; color: #000000 !important; box-shadow: 0 4px 15px rgba(246,211,101,0.4); }
-    .m-pink { background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%) !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(248,87,166,0.4); }
-    .m-green { background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(0,176,155,0.4); }
-    .m-violet { background: linear-gradient(135deg, #7f00ff 0%, #e100ff 100%) !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(127,0,255,0.4); }
-    .m-red { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%) !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(255,65,108,0.4); }
+    /* 💎 NATIVE BUTTON OVERRIDES (No more white boxes) */
+    div.stButton > button {
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
+        color: #000000 !important;
+        font-size: 16px !important; font-weight: 900 !important;
+        text-transform: uppercase !important; letter-spacing: 1px !important;
+        padding: 12px 24px !important; border-radius: 12px !important;
+        border: none !important; width: 100% !important;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4) !important;
+        transition: all 0.2s ease-in-out !important;
+        margin-top: 10px !important; margin-bottom: 10px !important;
+    }
+    
+    div.stButton > button:hover {
+        transform: scale(1.02) !important;
+        background: linear-gradient(135deg, #ff00aa 0%, #ff5858 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 15px rgba(255, 0, 170, 0.4) !important;
+    }
+
+    /* Secondary Navigation Buttons styling */
+    .nav-box {
+        background: rgba(22, 19, 38, 0.85); border: 1px solid #3c3761;
+        padding: 15px; border-radius: 14px; margin-top: 15px; text-align: center;
+    }
 
     .metric-card-box {
         background: linear-gradient(135deg, rgba(32, 28, 59, 0.95) 0%, rgba(20, 17, 38, 0.95) 100%);
@@ -138,22 +147,6 @@ st.markdown("""
 
 st.markdown('<div class="rgb-moving-strip"></div>', unsafe_allow_html=True)
 
-# --- ENGINE REROUTE ROUTINE ---
-if "action" in params:
-    action_type = params["action"]
-    st.query_params.clear()
-    if action_type == "logout":
-        st.session_state.logged_in = False
-        st.session_state.is_admin = False
-    elif action_type == "switch_reg":
-        st.session_state.auth_mode = "Register"
-    elif action_type == "switch_log":
-        st.session_state.auth_mode = "Login"
-    elif action_type == "switch_forgot":
-        st.session_state.auth_mode = "Forgot"
-        st.session_state.reset_step = 1
-    st.rerun()
-
 # --- GATEWAY MANAGEMENT RENDER LAYER ---
 if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">👑 GLOBAL MATRIX INVESTMENT</div>', unsafe_allow_html=True)
@@ -162,47 +155,60 @@ if not st.session_state.logged_in:
         username = st.text_input("Registered Account Email / Username:", placeholder="e.g. user@gmail.com")
         password = st.text_input("System Security Password:", type="password", placeholder="••••••••")
         
-        # 🔑 LOGIN ACTION TRIGGER (Rendered as robust HTML to ensure text/style never breaks)
-        st.markdown('<a href="?nav=Overview" target="_self" class="matrix-btn m-cyan">🔑 AUTHORIZE SECURE ACCESS</a>', unsafe_allow_html=True)
-        
-        # Fallback mechanism if user actually inputs details and clicks native element
-        if username.strip() and password.strip():
-            if username.strip() == "admin" and password.strip() == "admin123":
-                st.session_state.logged_in = True
-                st.session_state.current_user = "admin"
-                st.session_state.is_admin = True
-                st.session_state.selected_panel = "Pending Requests"
-                st.rerun()
-            else:
-                record = query_db("SELECT password, username FROM users WHERE username=?", (username.strip(),), one=True)
-                if record and record[0] == password.strip():
+        # 🔑 Core Secure Button Interface
+        if st.button("🔑 AUTHORIZE SECURE ACCESS", use_container_width=True):
+            if username.strip() and password.strip():
+                if username.strip() == "admin" and password.strip() == "admin123":
                     st.session_state.logged_in = True
-                    st.session_state.current_user = record[1]
-                    st.session_state.is_admin = False
-                    st.session_state.selected_panel = "Overview"
+                    st.session_state.current_user = "admin"
+                    st.session_state.is_admin = True
+                    st.session_state.selected_panel = "Pending Requests"
                     st.rerun()
-        
-        # Navigation Links
-        st.markdown('<a href="?action=switch_reg" target="_self" class="matrix-btn m-gold">➕ CREATE PROFILE ACCOUNT</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?action=switch_forgot" target="_self" class="matrix-btn m-violet">❓ FORGOT SECURITY PASSWORD?</a>', unsafe_allow_html=True)
+                else:
+                    record = query_db("SELECT password, username FROM users WHERE username=?", (username.strip(),), one=True)
+                    if record and record[0] == password.strip():
+                        st.session_state.logged_in = True
+                        st.session_state.current_user = record[1]
+                        st.session_state.is_admin = False
+                        st.session_state.selected_panel = "Overview"
+                        st.rerun()
+                    else:
+                        st.error("Invalid Username or Password Secure Credentials.")
+
+        # Navigation Links wrapped safely without <a> href white breaking boxes
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("➕ CREATE ACCOUNT Node", use_container_width=True):
+                st.session_state.auth_mode = "Register"
+                st.rerun()
+        with col2:
+            if st.button("❓ FORGOT PASSWORD?", use_container_width=True):
+                st.session_state.auth_mode = "Forgot"
+                st.session_state.reset_step = 1
+                st.rerun()
 
     elif st.session_state.auth_mode == "Register":
-        st.markdown("<h4 style='color:#00ffcc;'>Initialize New Registry Node</h4>", unsafe_allow_html=True)
-        reg_username = st.text_input("Provide Profile Registration Email Key:")
-        reg_password = st.text_input("Establish System Security Code:", type="password")
+        st.markdown("<h3 style='color:#00ffcc; text-align:center;'>Initialize New Registry Node</h3>", unsafe_allow_html=True)
+        reg_username = st.text_input("PROVIDE PROFILE REGISTRATION EMAIL KEY:", placeholder="username or email")
+        reg_password = st.text_input("ESTABLISH SYSTEM SECURITY CODE:", type="password", placeholder="••••••••")
         
         if st.button("💾 CONFIRM NEW REPOSITORY ENTRY", use_container_width=True):
             if reg_username.strip() and reg_password.strip():
                 existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
-                if existing: st.error("Identity keys collision: Already defined.")
+                if existing: 
+                    st.error("Identity keys collision: Already defined.")
                 else:
                     query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
                              (reg_username.strip(), reg_password.strip()), commit=True)
                     st.success("Allocation logged complete.")
                     st.session_state.auth_mode = "Login"
                     st.rerun()
+            else:
+                st.error("Please fill all configuration nodes.")
                     
-        st.markdown('<a href="?action=switch_log" target="_self" class="matrix-btn m-red">↩️ RETURN TO LOG IN HUB</a>', unsafe_allow_html=True)
+        if st.button("↩️ RETURN TO LOG IN HUB", use_container_width=True):
+            st.session_state.auth_mode = "Login"
+            st.rerun()
 
     elif st.session_state.auth_mode == "Forgot":
         st.markdown("<h4 style='color:#00ffcc;'>System Access Key Recovery Matrix</h4>", unsafe_allow_html=True)
@@ -217,7 +223,10 @@ if not st.session_state.logged_in:
                     st.session_state.reset_step = 2
                     st.rerun()
                 else: st.error("Identity mapping out of context records.")
-            st.markdown('<a href="?action=switch_log" target="_self" class="matrix-btn m-red">CANCEL OPERATION</a>', unsafe_allow_html=True)
+            
+            if st.button("CANCEL OPERATION", use_container_width=True):
+                st.session_state.auth_mode = "Login"
+                st.rerun()
                         
         elif st.session_state.reset_step == 2:
             st.info(f"🔒 Route lock targets: {st.session_state.reset_email}")
@@ -238,15 +247,25 @@ if not st.session_state.logged_in:
 
 # --- APPLICATION DESKTOP INTERFACE RENDER LAYER ---
 else:
+    # Sidebar Navigation Controls
+    with st.sidebar:
+        st.markdown("### 🌐 ENGINE NAVIGATION")
+        if st.session_state.is_admin:
+            if st.button("📥 Action Deposits Pipeline", use_container_width=True): st.session_state.selected_panel = "Pending Requests"
+            if st.button("🔗 Modify Task URL Targets", use_container_width=True): st.session_state.selected_panel = "Edit Task Redirects"
+            if st.button("🖼️ Re-align TNG Scanner Asset", use_container_width=True): st.session_state.selected_panel = "Edit QR Source"
+        else:
+            if st.button("📊 System Metrics Overview", use_container_width=True): st.session_state.selected_panel = "Overview"
+            if st.button("💰 Add Dompet System Funds", use_container_width=True): st.session_state.selected_panel = "Deposit"
+            if st.button("🏛️ Cashout Settlement Protocol", use_container_width=True): st.session_state.selected_panel = "Cashout"
+            
+        if st.button("🚪 Terminate Global Core Session", use_container_width=True):
+            st.session_state.logged_in = False
+            st.session_state.is_admin = False
+            st.rerun()
+
     if st.session_state.is_admin:
         st.markdown("<h3 style='color:#00ffcc; font-weight:900; text-align:center;'>🛡️ MASTER ENGINE ADMINISTRATION</h3>", unsafe_allow_html=True)
-        
-        st.markdown('<a href="?nav=Pending Requests" target="_self" class="matrix-btn m-cyan">📥 Action Deposits Pipeline Channels</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?nav=Edit Task Redirects" target="_self" class="matrix-btn m-pink">🔗 Modify Task URL Targets</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?nav=Edit QR Source" target="_self" class="matrix-btn m-violet">🖼️ Re-align Terminal TNG Scanner Asset</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?action=logout" target="_self" class="matrix-btn m-red">🚪 Terminate Global Core Admin Session</a>', unsafe_allow_html=True)
-        
-        st.write("---")
         
         if st.session_state.selected_panel == "Pending Requests":
             st.markdown("<h4 style='color:#00ffcc;'>Inflow Ledger Verification Channels</h4>", unsafe_allow_html=True)
@@ -298,14 +317,6 @@ else:
             <p style="font-size:13px; color:#ffffff; margin:0; font-weight:700;">READY FOR IMMEDIATE CASHOUT LIQUIDATION: <span style='color:#ff0055;'>RM {liquid_bal:,.2f}</span></p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Perfect, persistent layout links
-        st.markdown('<a href="?nav=Overview" target="_self" class="matrix-btn m-cyan">📊 System Metrics Overview</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?nav=Deposit" target="_self" class="matrix-btn m-gold">💰 Add Dompet System Funds</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?nav=Cashout" target="_self" class="matrix-btn m-green">🏛️ Cashout Settlement Protocol</a>', unsafe_allow_html=True)
-        st.markdown('<a href="?action=logout" target="_self" class="matrix-btn m-red">🚪 Disconnect Portal Session Link</a>', unsafe_allow_html=True)
-        
-        st.write("---")
         
         if st.session_state.selected_panel == "Overview":
             st.markdown("<h4 style='color:#00f2fe;'>Operational Allocation Metrics</h4>", unsafe_allow_html=True)
