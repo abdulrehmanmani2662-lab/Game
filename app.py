@@ -65,7 +65,7 @@ if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 
-# --- MASTER ENGINE UI STYLING ENGINE (FB MOBILE CONTAINER MAX FIX) ---
+# --- MASTER ENGINE UI STYLING ENGINE (SWAPPED ORDER & RUNNING MARQUEE) ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
@@ -87,21 +87,36 @@ st.markdown("""
     }
     @keyframes rgb-strip-move { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
 
+    /* 24/7 Smooth Right-to-Left Running Heading */
+    .running-header-container {
+        width: 100%; overflow: hidden; background: rgba(255, 0, 127, 0.08);
+        border-bottom: 1px solid rgba(0, 255, 204, 0.3); padding: 8px 0; margin-bottom: 15px;
+    }
+    .running-text {
+        font-size: 16px; font-weight: 800; color: #00ffcc; white-space: nowrap;
+        display: inline-block; animation: marquee-run 12s linear infinite;
+        text-shadow: 0 0 8px rgba(0, 255, 204, 0.6); letter-spacing: 1px;
+    }
+    @keyframes marquee-run {
+        0% { transform: translate3d(100%, 0, 0); }
+        100% { transform: translate3d(-100%, 0, 0); }
+    }
+
     .brand-title {
         text-align: center; font-size: 24px; font-weight: 900; letter-spacing: 1.2px;
         background: linear-gradient(135deg, #ffffff 30%, #00ffcc 100%);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        margin-top: 15px; margin-bottom: 15px; text-transform: uppercase;
+        margin-top: 5px; margin-bottom: 15px; text-transform: uppercase;
     }
 
-    /* Fixed Centered Container to stop full screen stretching */
+    /* Absolute Max Mobile Boundary Structure */
     [data-testid="stVerticalBlock"] {
-        max-width: 480px !important;
+        max-width: 460px !important;
         margin: 0 auto !important;
-        padding: 10px !important;
+        padding: 5px !important;
     }
 
-    /* Input Fields Design */
+    /* Input Styling Node Fixes */
     div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stWidgetLabel"] p {
         color: #00ffcc !important; font-weight: 700 !important; font-size: 11px !important; 
         text-transform: uppercase !important; margin-bottom: 2px !important;
@@ -113,13 +128,13 @@ st.markdown("""
         padding: 6px 12px !important;
     }
 
-    /* 💎 FACEBOOK STYLE COMPACT RE-STYLED NAV BUTTONS */
+    /* Buttons Unified Design Parameters */
     div.stButton > button {
         background: linear-gradient(135deg, #ff007f 0%, #7928ca 100%) !important;
-        color: #ffffff !important; font-size: 13px !important; font-weight: 700 !important;
+        color: #ffffff !important; font-size: 12px !important; font-weight: 700 !important;
         text-transform: uppercase !important; border-radius: 10px !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important; width: 100% !important; 
-        padding: 10px !important; margin: 2px 0 !important;
+        padding: 10px !important; margin: 4px 0 !important;
         box-shadow: 0 4px 12px rgba(255, 0, 127, 0.2) !important;
     }
     
@@ -144,28 +159,14 @@ st.markdown("""
 
 st.markdown('<div class="rgb-moving-strip"></div>', unsafe_allow_html=True)
 
+# --- 24/7 CONTINUOUS RUNNING NEON MARQUEE HEADING ---
+st.markdown('<div class="running-header-container"><div class="running-text">Online earnings Websites</div></div>', unsafe_allow_html=True)
+
 # --- AUTHENTICATION FLOW MATRIX ---
 if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">👑 GLOBAL MATRIX</div>', unsafe_allow_html=True)
     
-    # 3 Flat Clean Option Row For Mobile Center (Facebook Style Compact Nav Bar)
-    nav_col1, nav_col2, nav_col3 = st.columns(3)
-    with nav_col1:
-        if st.button("🔑 LOGIN", key="set_login"):
-            st.session_state.auth_mode = "Login"
-            st.rerun()
-    with nav_col2:
-        if st.button("📝 JOIN", key="set_reg"):
-            st.session_state.auth_mode = "Register"
-            st.rerun()
-    with nav_col3:
-        if st.button("🔄 RESET", key="set_forgot"):
-            st.session_state.auth_mode = "Forgot"
-            st.session_state.reset_step = 1
-            st.rerun()
-
-    st.markdown("<hr style='margin:8px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
+    # 1. INPUT FORM SEGMENT RENDERED FIRST (ON TOP AS REQUESTED)
     if st.session_state.auth_mode == "Login":
         st.markdown("<h6 style='color:#00ffcc; text-align:center; margin-bottom:8px;'>SECURE GATEWAY SIGN-IN</h6>", unsafe_allow_html=True)
         username = st.text_input("Username / Email:", placeholder="e.g. user@gmail.com", key="login_user")
@@ -255,28 +256,30 @@ if not st.session_state.logged_in:
                     else: st.error("Length criteria violation.")
                 else: st.error("Verification failed.")
 
+    st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
+    # 2. NAVIGATION ROW SHIFTED TO THE BOTTOM (BELOW THE INPUT FORMS)
+    nav_col1, nav_col2, nav_col3 = st.columns(3)
+    with nav_col1:
+        if st.button("🔑 LOGIN", key="set_login"):
+            st.session_state.auth_mode = "Login"
+            st.rerun()
+    with nav_col2:
+        if st.button("📝 JOIN", key="set_reg"):
+            st.session_state.auth_mode = "Register"
+            st.rerun()
+    with nav_col3:
+        if st.button("🔄 RESET", key="set_forgot"):
+            st.session_state.auth_mode = "Forgot"
+            st.session_state.reset_step = 1
+            st.rerun()
+
 # --- DASHBOARD DECK ENGINE (LOGGED IN SYSTEM ACCESS) ---
 else:
     if st.session_state.is_admin:
         st.markdown("<h5 style='color:#00ffcc; text-align:center; font-weight:800;'>🛡️ MASTER ENGINE ADMIN</h5>", unsafe_allow_html=True)
         
-        # Tight Admin Button Ribbon Layout
-        adm_col1, adm_col2, adm_col3 = st.columns(3)
-        with adm_col1:
-            if st.button("📥 LEDGER", key="btn_adm_dep"):
-                st.session_state.selected_panel = "Pending Requests"
-                st.rerun()
-        with adm_col2:
-            if st.button("🔗 LINKS", key="btn_adm_url"):
-                st.session_state.selected_panel = "Edit Task Redirects"
-                st.rerun()
-        with adm_col3:
-            if st.button("🖼️ SCANNERS", key="btn_adm_qr"):
-                st.session_state.selected_panel = "Edit QR Source"
-                st.rerun()
-
-        st.markdown("<hr style='margin:8px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
+        # Admin Operations Container Rendering Top Layer
         if st.session_state.selected_panel == "Pending Requests":
             st.markdown("<h6 style='color:#00ffcc; margin-bottom:6px;'>Inflow Verification Channels</h6>", unsafe_allow_html=True)
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
@@ -319,6 +322,23 @@ else:
                 query_db("UPDATE system_config SET value=? WHERE key='tng_scanner_url'", (new_qr.strip(),), commit=True)
                 st.success("Assets synchronized.")
 
+        st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
+        # Admin Ribbon Buttons Shifted Neche
+        adm_col1, adm_col2, adm_col3 = st.columns(3)
+        with adm_col1:
+            if st.button("📥 LEDGER", key="btn_adm_dep"):
+                st.session_state.selected_panel = "Pending Requests"
+                st.rerun()
+        with adm_col2:
+            if st.button("🔗 LINKS", key="btn_adm_url"):
+                st.session_state.selected_panel = "Edit Task Redirects"
+                st.rerun()
+        with adm_col3:
+            if st.button("🖼️ SCANNERS", key="btn_adm_qr"):
+                st.session_state.selected_panel = "Edit QR Source"
+                st.rerun()
+
     else:
         # --- USER ENGINE INTERFACE ---
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
@@ -332,24 +352,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # 💎 PERSISTENT RESPONSIVE GRIDS (FACEBOOK STYLE FLUID BUTTONS RE-DESIGN)
-        usr_col1, usr_col2, usr_col3 = st.columns(3)
-        with usr_col1:
-            if st.button("🎰 HOME", key="btn_usr_ov"):
-                st.session_state.selected_panel = "Overview"
-                st.rerun()
-        with usr_col2:
-            if st.button("💰 DEPOSIT", key="btn_usr_dep"):
-                st.session_state.selected_panel = "Deposit"
-                st.rerun()
-        with usr_col3:
-            if st.button("🏛️ WITHDRAW", key="btn_usr_cash"):
-                st.session_state.selected_panel = "Cashout"
-                st.rerun()
-
-        st.markdown("<hr style='margin:8px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
-        # Section Processing Core Cards
+        # Section Content Blocks Loaded First
         if st.session_state.selected_panel == "Overview":
             st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
             st.markdown("<h6 style='color:#00ffcc; margin:0 0 4px 0;'>Allocation Info</h6>", unsafe_allow_html=True)
@@ -401,7 +404,24 @@ else:
                 st.error("Operation Halted: Configuration imbalance detected.")
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # Global Session Logout Daba
+        st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
+        # Navigation Options Row Rendered Downwards
+        usr_col1, usr_col2, usr_col3 = st.columns(3)
+        with usr_col1:
+            if st.button("🎰 HOME", key="btn_usr_ov"):
+                st.session_state.selected_panel = "Overview"
+                st.rerun()
+        with usr_col2:
+            if st.button("💰 DEPOSIT", key="btn_usr_dep"):
+                st.session_state.selected_panel = "Deposit"
+                st.rerun()
+        with usr_col3:
+            if st.button("🏛️ WITHDRAW", key="btn_usr_cash"):
+                st.session_state.selected_panel = "Cashout"
+                st.rerun()
+
+    # Global Session Logout Daba at Bottom Boundary
     st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     if st.button("🚪 LOG OUT PORTAL", key="global_logout_action", use_container_width=True):
         st.session_state.logged_in = False
