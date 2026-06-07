@@ -65,7 +65,7 @@ if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 
-# --- SYSTEM DESIGN SYSTEM (FIXED TEXT VISIBILITY & NEON OVERRIDES) ---
+# --- FIXED TEXT VISIBILITY & RADICAL INJECTED CSS SELECTORS ---
 st.markdown("""
     <style>
     /* Hide Streamlit Native Footers and Top Bars */
@@ -84,7 +84,7 @@ st.markdown("""
         font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
     
-    /* 🌈 ANIMATED RGB COLOR STRIP FIXED ON TOP */
+    /* RGB COLOR STRIP FIXED ON TOP */
     .rgb-moving-strip {
         height: 8px;
         width: 100%;
@@ -102,7 +102,6 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* Typography Upgrades - Mote Aur Wazni Fonts */
     h1, h2, h3, h4, p, label, .stMarkdown {
         font-weight: 800 !important;
     }
@@ -134,8 +133,10 @@ st.markdown("""
         padding: 12px !important;
     }
     
-    /* --- UNIVERSAL STRONG BUTTON DESIGN (NO MORE BLANK WHITE BLOCKS) --- */
-    div[data-testid="stButton"] > button {
+    /* --- CRITICAL DEEP TARGETING FOR ALL BUTTON STYLES --- */
+    div[data-testid="stButton"] button, 
+    div[data-testid="stButton"] button:div,
+    div[data-testid="stButton"] button:hover {
         width: 100% !important;
         display: block !important;
         font-weight: 900 !important;
@@ -147,49 +148,83 @@ st.markdown("""
         padding: 14px 20px !important;
         margin-top: 5px !important;
         margin-bottom: 5px !important;
-        transition: all 0.2s ease-in-out;
     }
 
-    /* Explicit Text Visibility Overrides */
-    div[data-testid="stButton"] > button p {
-        color: #ffffff !important;
+    /* Target inner native span/paragraph block tags inside any button container */
+    div[data-testid="stButton"] button span,
+    div[data-testid="stButton"] button p,
+    div[data-testid="stButton"] button data {
         font-weight: 900 !important;
     }
 
-    /* Individual Custom Color Logic Without Overlapping Containers */
-    div.btn-cyan div[data-testid="stButton"] > button {
+    /* --- COLOR CLASSES FORCE IMPLEMENTATION --- */
+    /* Cyan Core Theme Override */
+    div.btn-cyan div[data-testid="stButton"] button {
         background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
         box-shadow: 0px 4px 15px rgba(0, 242, 254, 0.4) !important;
     }
-    div.btn-cyan div[data-testid="stButton"] > button p { color: #000000 !important; }
+    div.btn-cyan div[data-testid="stButton"] button *,
+    div.btn-cyan div[data-testid="stButton"] button p,
+    div.btn-cyan div[data-testid="stButton"] button span {
+        color: #000000 !important;
+    }
     
-    div.btn-gold div[data-testid="stButton"] > button {
+    /* Gold Core Theme Override */
+    div.btn-gold div[data-testid="stButton"] button {
         background: linear-gradient(135deg, #f6d365 0%, #fda085 100%) !important;
         box-shadow: 0px 4px 15px rgba(246, 211, 101, 0.4) !important;
     }
-    div.btn-gold div[data-testid="stButton"] > button p { color: #000000 !important; }
+    div.btn-gold div[data-testid="stButton"] button *,
+    div.btn-gold div[data-testid="stButton"] button p,
+    div.btn-gold div[data-testid="stButton"] button span {
+        color: #000000 !important;
+    }
     
-    div.btn-pink div[data-testid="stButton"] > button {
+    /* Pink Core Theme Override */
+    div.btn-pink div[data-testid="stButton"] button {
         background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%) !important;
         box-shadow: 0px 4px 15px rgba(248, 87, 166, 0.4) !important;
     }
+    div.btn-pink div[data-testid="stButton"] button *,
+    div.btn-pink div[data-testid="stButton"] button p,
+    div.btn-pink div[data-testid="stButton"] button span {
+        color: #ffffff !important;
+    }
     
-    div.btn-green div[data-testid="stButton"] > button {
+    /* Green Core Theme Override */
+    div.btn-green div[data-testid="stButton"] button {
         background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
         box-shadow: 0px 4px 15px rgba(0, 176, 155, 0.4) !important;
     }
+    div.btn-green div[data-testid="stButton"] button *,
+    div.btn-green div[data-testid="stButton"] button p,
+    div.btn-green div[data-testid="stButton"] button span {
+        color: #ffffff !important;
+    }
 
-    div.btn-violet div[data-testid="stButton"] > button {
+    /* Violet Core Theme Override */
+    div.btn-violet div[data-testid="stButton"] button {
         background: linear-gradient(135deg, #7f00ff 0%, #e100ff 100%) !important;
         box-shadow: 0px 4px 15px rgba(127, 0, 255, 0.4) !important;
     }
+    div.btn-violet div[data-testid="stButton"] button *,
+    div.btn-violet div[data-testid="stButton"] button p,
+    div.btn-violet div[data-testid="stButton"] button span {
+        color: #ffffff !important;
+    }
     
-    div.btn-red div[data-testid="stButton"] > button {
+    /* Red Core Theme Override */
+    div.btn-red div[data-testid="stButton"] button {
         background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%) !important;
         box-shadow: 0px 4px 15px rgba(255, 65, 108, 0.4) !important;
     }
+    div.btn-red div[data-testid="stButton"] button *,
+    div.btn-red div[data-testid="stButton"] button p,
+    div.btn-red div[data-testid="stButton"] button span {
+        color: #ffffff !important;
+    }
     
-    div[data-testid="stButton"] > button:hover {
+    div[data-testid="stButton"] button:hover {
         transform: scale(1.02) !important;
         filter: brightness(1.15) !important;
     }
@@ -424,19 +459,19 @@ else:
         """, unsafe_allow_html=True)
         
         st.markdown('<div class="btn-cyan">', unsafe_allow_html=True)
-        if st.button("📊 System Tracking Metrics Overview"): switch_panel("Overview")
+        if st.button("📊 System Metrics Overview"): switch_panel("Overview")
         st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('<div class="btn-gold">', unsafe_allow_html=True)
-        if st.button("💰 Add Dompet Account System Funds"): switch_panel("Deposit")
+        if st.button("💰 Add Dompet System Funds"): switch_panel("Deposit")
         st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('<div class="btn-green">', unsafe_allow_html=True)
-        if st.button("🏛️ Cashout Settlement Clearing Protocol"): switch_panel("Cashout")
+        if st.button("🏛️ Cashout Settlement Protocol"): switch_panel("Cashout")
         st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('<div class="btn-red">', unsafe_allow_html=True)
-        if st.button("🚪 Disconnect Portal System Access Link"): 
+        if st.button("🚪 Disconnect Portal Session Link"): 
             st.session_state.logged_in = False
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
@@ -445,8 +480,8 @@ else:
         
         if st.session_state.selected_panel == "Overview":
             st.markdown("<h4 style='color:#00f2fe;'>Operational Allocation Metrics</h4>", unsafe_allow_html=True)
-            st.write(f"Verification Infrastructure Matrix Rank: **{level_tag}**")
-            st.write(f"Active Allocation Invitation Reference: **{reference_hash}**")
+            st.write(f"Verification Matrix Rank: **{level_tag}**")
+            st.write(f"Active Invitation Reference: **{reference_hash}**")
             
             ad_link_data = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)
             target_video = ad_link_data[0] if ad_link_data else "#"
