@@ -57,7 +57,7 @@ def query_db(query, args=(), one=False, commit=False):
         conn.close()
         return None if one else []
 
-# Session State Initialization
+# Session State Keys
 if 'logged_in' not in st.session_state: st.session_state.logged_in = False
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
@@ -65,10 +65,9 @@ if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 
-# --- MASTER CSS INJECTION (FORCED GLOBAL HIGH-CONTRAST DARK THEME) ---
+# --- MASTER CSS INJECTION (STRICT GLOBAL FORCED STYLES) ---
 st.markdown("""
     <style>
-    /* Hide top elements and default menus completely */
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
         display: none !important; visibility: hidden !important;
     }
@@ -95,47 +94,32 @@ st.markdown("""
         margin-top: 35px; margin-bottom: 25px; text-transform: uppercase;
     }
 
-    /* ✍️ TEXT INPUTS, DROPDOWNS & LABELS COLOR CORRECTION */
     div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stWidgetLabel"] p {
         color: #00ffcc !important; font-weight: 800 !important; font-size: 14px !important; text-transform: uppercase !important;
-        margin-bottom: 8px !important;
     }
     
     div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
         background-color: #161326 !important; color: #ffffff !important;
         border: 2px solid #00ffcc !important; border-radius: 10px !important; font-weight: 700 !important;
-        height: 48px !important;
-    }
-    
-    /* Input field focus glow */
-    div[data-testid="stTextInput"] input:focus, div[data-testid="stNumberInput"] input:focus {
-        border-color: #ff00aa !important; box-shadow: 0 0 10px rgba(255, 0, 170, 0.5) !important;
     }
 
-    /* 💎 NATIVE BUTTON OVERRIDES (No more white boxes) */
+    /* 💎 SEAMLESS BUTTON RE-STYLER (Forcing high visibility regardless of system theme) */
     div.stButton > button {
         background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
-        color: #000000 !important;
-        font-size: 16px !important; font-weight: 900 !important;
-        text-transform: uppercase !important; letter-spacing: 1px !important;
-        padding: 12px 24px !important; border-radius: 12px !important;
-        border: none !important; width: 100% !important;
+        color: #000000 !important; font-size: 15px !important; font-weight: 900 !important;
+        text-transform: uppercase !important; border-radius: 12px !important;
+        border: none !important; width: 100% !important; padding: 12px 20px !important;
         box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4) !important;
-        transition: all 0.2s ease-in-out !important;
-        margin-top: 10px !important; margin-bottom: 10px !important;
     }
     
     div.stButton > button:hover {
-        transform: scale(1.02) !important;
         background: linear-gradient(135deg, #ff00aa 0%, #ff5858 100%) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 15px rgba(255, 0, 170, 0.4) !important;
+        color: #ffffff !important; box-shadow: 0 4px 15px rgba(255, 0, 170, 0.4) !important;
     }
 
-    /* Secondary Navigation Buttons styling */
-    .nav-box {
-        background: rgba(22, 19, 38, 0.85); border: 1px solid #3c3761;
-        padding: 15px; border-radius: 14px; margin-top: 15px; text-align: center;
+    .action-deck {
+        background: rgba(22, 19, 38, 0.9); border: 2px solid #3c3761;
+        border-radius: 14px; padding: 20px; margin-top: 15px;
     }
 
     .metric-card-box {
@@ -155,7 +139,6 @@ if not st.session_state.logged_in:
         username = st.text_input("Registered Account Email / Username:", placeholder="e.g. user@gmail.com")
         password = st.text_input("System Security Password:", type="password", placeholder="••••••••")
         
-        # 🔑 Core Secure Button Interface
         if st.button("🔑 AUTHORIZE SECURE ACCESS", use_container_width=True):
             if username.strip() and password.strip():
                 if username.strip() == "admin" and password.strip() == "admin123":
@@ -175,10 +158,9 @@ if not st.session_state.logged_in:
                     else:
                         st.error("Invalid Username or Password Secure Credentials.")
 
-        # Navigation Links wrapped safely without <a> href white breaking boxes
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("➕ CREATE ACCOUNT Node", use_container_width=True):
+            if st.button("➕ CREATE ACCOUNT NODE", use_container_width=True):
                 st.session_state.auth_mode = "Register"
                 st.rerun()
         with col2:
@@ -192,16 +174,16 @@ if not st.session_state.logged_in:
         reg_username = st.text_input("PROVIDE PROFILE REGISTRATION EMAIL KEY:", placeholder="username or email")
         reg_password = st.text_input("ESTABLISH SYSTEM SECURITY CODE:", type="password", placeholder="••••••••")
         
-        if st.button("💾 CONFIRM NEW REPOSITORY ENTRY", use_container_width=True):
+        if st.button("💾 GENERATE VERIFICATION SECURE MATRIX", use_container_width=True):
             if reg_username.strip() and reg_password.strip():
                 existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
                 if existing: 
                     st.error("Identity keys collision: Already defined.")
                 else:
-                    query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
-                             (reg_username.strip(), reg_password.strip()), commit=True)
-                    st.success("Allocation logged complete.")
-                    st.session_state.auth_mode = "Login"
+                    st.session_state.temp_reg_user = reg_username.strip()
+                    st.session_state.temp_reg_pass = reg_password.strip()
+                    st.session_state.reg_verify_code = str(random.randint(222333, 999888))
+                    st.session_state.auth_mode = "VerifyNewAccount"
                     st.rerun()
             else:
                 st.error("Please fill all configuration nodes.")
@@ -209,6 +191,23 @@ if not st.session_state.logged_in:
         if st.button("↩️ RETURN TO LOG IN HUB", use_container_width=True):
             st.session_state.auth_mode = "Login"
             st.rerun()
+
+    elif st.session_state.auth_mode == "VerifyNewAccount":
+        st.markdown("<h3 style='color:#00ffcc; text-align:center;'>🔒 Security Core Verification Link</h3>", unsafe_allow_html=True)
+        st.info(f"Target Node Entry Email: {st.session_state.temp_reg_user}")
+        st.warning(f"🔧 Live System Registration Code: {st.session_state.reg_verify_code}")
+        
+        typed_code = st.text_input("ENTER 6-DIGIT CORE SYNC CODE:", placeholder="******")
+        
+        if st.button("✔️ CONFIRM SIGNUP REGISTRATION", use_container_width=True):
+            if typed_code.strip() == st.session_state.reg_verify_code:
+                query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
+                         (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
+                st.success("Identity registration compiled completely!")
+                st.session_state.auth_mode = "Login"
+                st.rerun()
+            else:
+                st.error("Code encryption mismatch. Check code fields.")
 
     elif st.session_state.auth_mode == "Forgot":
         st.markdown("<h4 style='color:#00ffcc;'>System Access Key Recovery Matrix</h4>", unsafe_allow_html=True)
@@ -230,7 +229,7 @@ if not st.session_state.logged_in:
                         
         elif st.session_state.reset_step == 2:
             st.info(f"🔒 Route lock targets: {st.session_state.reset_email}")
-            st.warning(f"Development Core Sync Code: {st.session_state.generated_code}")
+            st.warning(f"Core Sync Code: {st.session_state.generated_code}")
             input_code = st.text_input("Enter 6-Digit Verification Pin:")
             new_pass = st.text_input("Define Replacement Security Password Target:", type="password")
             
@@ -247,22 +246,25 @@ if not st.session_state.logged_in:
 
 # --- APPLICATION DESKTOP INTERFACE RENDER LAYER ---
 else:
-    # Sidebar Navigation Controls
-    with st.sidebar:
-        st.markdown("### 🌐 ENGINE NAVIGATION")
-        if st.session_state.is_admin:
-            if st.button("📥 Action Deposits Pipeline", use_container_width=True): st.session_state.selected_panel = "Pending Requests"
-            if st.button("🔗 Modify Task URL Targets", use_container_width=True): st.session_state.selected_panel = "Edit Task Redirects"
-            if st.button("🖼️ Re-align TNG Scanner Asset", use_container_width=True): st.session_state.selected_panel = "Edit QR Source"
-        else:
-            if st.button("📊 System Metrics Overview", use_container_width=True): st.session_state.selected_panel = "Overview"
-            if st.button("💰 Add Dompet System Funds", use_container_width=True): st.session_state.selected_panel = "Deposit"
-            if st.button("🏛️ Cashout Settlement Protocol", use_container_width=True): st.session_state.selected_panel = "Cashout"
-            
-        if st.button("🚪 Terminate Global Core Session", use_container_width=True):
-            st.session_state.logged_in = False
-            st.session_state.is_admin = False
-            st.rerun()
+    # Persistent Dashboard Menu Control Bar (Never vanishes on screen updates)
+    st.markdown("### 🌐 SYSTEM NAVIGATION CONTROLS")
+    
+    if st.session_state.is_admin:
+        menu_selection = st.radio("CHOOSE HUB DISPATCH MATRIX:", ["Pending Requests", "Edit Task Redirects", "Edit QR Source"], horizontal=True)
+        st.session_state.selected_panel = menu_selection
+    else:
+        # User dynamic selector bar that stays solid at all times
+        menu_selection = st.radio("CHOOSE OPERATIONS NODE:", ["Overview Panel", "Deposit Center (Add Funds)", "Withdraw Portal (Cashout)"], horizontal=True)
+        if menu_selection == "Overview Panel": st.session_state.selected_panel = "Overview"
+        elif menu_selection == "Deposit Center (Add Funds)": st.session_state.selected_panel = "Deposit"
+        elif menu_selection == "Withdraw Portal (Cashout)": st.session_state.selected_panel = "Cashout"
+
+    if st.button("🚪 DISCONNECT SYSTEM SESSION", key="global_logout"):
+        st.session_state.logged_in = False
+        st.session_state.is_admin = False
+        st.rerun()
+
+    st.markdown("---")
 
     if st.session_state.is_admin:
         st.markdown("<h3 style='color:#00ffcc; font-weight:900; text-align:center;'>🛡️ MASTER ENGINE ADMINISTRATION</h3>", unsafe_allow_html=True)
@@ -318,8 +320,10 @@ else:
         </div>
         """, unsafe_allow_html=True)
         
+        # Safe structural persistent frames
         if st.session_state.selected_panel == "Overview":
-            st.markdown("<h4 style='color:#00f2fe;'>Operational Allocation Metrics</h4>", unsafe_allow_html=True)
+            st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
+            st.markdown("<h4 style='color:#00f2fe; margin-top:0;'>Operational Allocation Metrics</h4>", unsafe_allow_html=True)
             st.write(f"Verification Matrix Rank Node: **{level_tag}**")
             st.write(f"Active Invitation Reference Hash: **{reference_hash}**")
             
@@ -327,15 +331,17 @@ else:
             target_video = ad_link_data[0] if ad_link_data else "#"
             
             st.markdown(f"""
-            <div style='background-color:#1a1730; padding:20px; border-radius:12px; border: 1px solid rgba(0, 242, 254, 0.3); margin-top:15px; width:100%;'>
+            <div style='background-color:#1a1730; padding:20px; border-radius:12px; border: 1px solid rgba(0, 242, 254, 0.3); margin-top:15px;'>
                 <h4 style='margin:0 0 5px 0; color:#ffffff;'>YOUTUBE & MEDIA REVENUE STREAM PIPELINE</h4>
                 <p style='font-size:13px; color:#a5a1c2; margin-bottom:15px;'>Interact with data tasking stream nodes to instantly trigger internal rewards system payouts.</p>
                 <a href='{target_video}' target='_blank' style='display:block; text-align:center; background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%); color:#ffffff; padding:14px; text-decoration:none; font-weight:800; border-radius:10px; box-shadow:0 4px 15px rgba(248,87,166,0.35);'>▶️ LAUNCH ACTIVE VIDEO TASK NODE</a>
             </div>
             """, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
             
         elif st.session_state.selected_panel == "Deposit":
-            st.markdown("<h4 style='color:#f6d365;'>Multi-Bank Payload Inflow Via Touch 'n Go</h4>", unsafe_allow_html=True)
+            st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
+            st.markdown("<h4 style='color:#f6d365; margin-top:0;'>Multi-Bank Payload Inflow Via Touch 'n Go</h4>", unsafe_allow_html=True)
             qr_link_data = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)
             target_qr = qr_link_data[0] if qr_link_data else ""
             
@@ -353,12 +359,15 @@ else:
                              (st.session_state.current_user, chosen_bank, remitter_name.strip(), trx_id_input.strip(), amount_input), commit=True)
                     st.success("Evidence logs stacked into system queue.")
                 else: st.error("Input validation values missing context indexes.")
+            st.markdown("</div>", unsafe_allow_html=True)
                     
         elif st.session_state.selected_panel == "Cashout":
-            st.markdown("<h4 style='color:#00b09b;'>Initialize Outbound Settlement Pipeline</h4>", unsafe_allow_html=True)
+            st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
+            st.markdown("<h4 style='color:#00b09b; margin-top:0;'>Initialize Outbound Settlement Pipeline</h4>", unsafe_allow_html=True)
             st.selectbox("Select Destination Network Clearance Bank Node:", MALAYSIAN_BANKS[1:])
             st.text_input("Receiver Account Wire Index Account Number Key:")
             st.number_input("Target Settlement Request Dimensions (RM):", min_value=10.0)
             
             if st.button("🏛️ REQUEST TERMINAL OUTBOUND EXPULSION", use_container_width=True):
                 st.error("Operation Halted: System map index balance registry allocation mismatch parameters.")
+            st.markdown("</div>", unsafe_allow_html=True)
