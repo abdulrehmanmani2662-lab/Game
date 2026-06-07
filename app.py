@@ -8,14 +8,12 @@ from email.mime.multipart import MIMEMultipart
 # --- CORE APPLICATION CONFIGURATION ---
 st.set_page_config(page_title="GLOBAL NETWORK MATRIX", page_icon="📈", layout="wide")
 
-# --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION ---
-# Bhai, yahan aapka bataya hua real email set kar diya hai:
-SENDER_EMAIL = "salmanveerm@gmail.com"
-# ⚠️ IMPORTANT: Is niche wale variable mein apna 16-digit Gmail App Password zaroori dalein!
-SENDER_APP_PASSWORD = "your-gmail-app-password-here"  
+# --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION (LIVE PARAMS INJECTED) ---
+SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
+SENDER_APP_PASSWORD = "lddf merstvil icby"  
 
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
-    """Sends a real security synchronization code via secure TLS SMTP gateway."""
+    """Sends a security token via secure TLS SMTP gateway with fallback handling."""
     try:
         msg = MIMEMultipart()
         msg['From'] = SENDER_EMAIL
@@ -33,21 +31,21 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
                 <div style="font-size: 32px; font-weight: bold; color: #00ffcc; letter-spacing: 2px; margin: 20px 0; padding: 10px; background: rgba(0,255,204,0.1); border-radius: 8px;">
                     {otp_code}
                 </div>
-                <p style="font-size: 11px; color: #74718a;">This verification parameter expires shortly. If you did not request this handshake, please ignore this transmission securely.</p>
             </div>
         </body>
         </html>
         """
         msg.attach(MIMEText(body, 'html'))
         
-        # Initializing SMTP server communication block
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        # Secured Connection block
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
         server.starttls()
         server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
         server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
         server.quit()
         return True
     except Exception as e:
+        print(f"SMTP Critical Error Core Setup: {str(e)}")
         return False
 
 MALAYSIAN_BANKS = [
@@ -110,7 +108,7 @@ if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "
 if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 
-# --- MASTER ENGINE UI STYLING ENGINE (SWAPPED ORDER & RUNNING MARQUEE) ---
+# --- MASTER ENGINE UI STYLING ENGINE ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
@@ -132,7 +130,6 @@ st.markdown("""
     }
     @keyframes rgb-strip-move { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
 
-    /* 24/7 Smooth Right-to-Left Running Heading */
     .running-header-container {
         width: 100%; overflow: hidden; background: rgba(255, 0, 127, 0.08);
         border-bottom: 1px solid rgba(0, 255, 204, 0.3); padding: 8px 0; margin-bottom: 15px;
@@ -154,14 +151,12 @@ st.markdown("""
         margin-top: 5px; margin-bottom: 15px; text-transform: uppercase;
     }
 
-    /* Absolute Max Mobile Boundary Structure */
     [data-testid="stVerticalBlock"] {
         max-width: 460px !important;
         margin: 0 auto !important;
         padding: 5px !important;
     }
 
-    /* Input Styling Node Fixes */
     div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stWidgetLabel"] p {
         color: #00ffcc !important; font-weight: 700 !important; font-size: 11px !important; 
         text-transform: uppercase !important; margin-bottom: 2px !important;
@@ -173,7 +168,6 @@ st.markdown("""
         padding: 6px 12px !important;
     }
 
-    /* Buttons Unified Design Parameters */
     div.stButton > button {
         background: linear-gradient(135deg, #ff007f 0%, #7928ca 100%) !important;
         color: #ffffff !important; font-size: 12px !important; font-weight: 700 !important;
@@ -203,15 +197,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="rgb-moving-strip"></div>', unsafe_allow_html=True)
-
-# --- 24/7 CONTINUOUS RUNNING NEON MARQUEE HEADING ---
 st.markdown('<div class="running-header-container"><div class="running-text">Online earnings Websites</div></div>', unsafe_allow_html=True)
 
-# --- AUTHENTICATION FLOW MATRIX ---
+# --- AUTHENTICATION FLOW ---
 if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">👑 GLOBAL MATRIX</div>', unsafe_allow_html=True)
     
-    # 1. INPUT FORM SEGMENT RENDERED FIRST
     if st.session_state.auth_mode == "Login":
         st.markdown("<h6 style='color:#00ffcc; text-align:center; margin-bottom:8px;'>SECURE GATEWAY SIGN-IN</h6>", unsafe_allow_html=True)
         username = st.text_input("Username / Email:", placeholder="e.g. user@gmail.com", key="login_user")
@@ -244,7 +235,7 @@ if not st.session_state.logged_in:
         if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True, key="execute_reg"):
             if reg_username.strip() and reg_password.strip():
                 if "@" not in reg_username.strip() or "." not in reg_username.strip():
-                    st.error("Please provide a valid structure email key.")
+                    st.error("Please provide a valid structured email key.")
                 else:
                     existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
                     if existing: 
@@ -259,24 +250,22 @@ if not st.session_state.logged_in:
                                 st.session_state.auth_mode = "VerifyNewAccount"
                                 st.rerun()
                             else:
-                                st.error("Email Gateway execution failed. Check server parameters setup.")
+                                st.error("Email Gateway execution failed. Secure parameters configuration handshake timeout.")
 
     elif st.session_state.auth_mode == "VerifyNewAccount":
         st.markdown("<h6 style='color:#ff007f; text-align:center;'>🔒 EMAIL CODE SYNC-VERIFICATION</h6>", unsafe_allow_html=True)
         st.info(f"Target Registered Link: {st.session_state.temp_reg_user}")
-        st.caption("A system verification parameter has been routed to your email vault.")
-        
         typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******", key="verify_code_input")
         
         if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True, key="execute_verify"):
             if typed_code.strip() == st.session_state.reg_verify_code:
                 query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
-                st.success("Registration compiled completely! Node online.")
+                st.success("Registration compiled completely!")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
             else:
-                st.error("Encryption code mismatch. Try again.")
+                st.error("Encryption code mismatch.")
 
     elif st.session_state.auth_mode == "Forgot":
         st.markdown("<h6 style='color:#00ffcc;'>ACCESS KEY RECOVERY PANEL</h6>", unsafe_allow_html=True)
@@ -294,7 +283,7 @@ if not st.session_state.logged_in:
                             st.session_state.reset_step = 2
                             st.rerun()
                         else:
-                            st.error("Failed to execute external routing transaction.")
+                            st.error("Failed to execute outbound routing. Network timeout.")
                 else: 
                     st.error("No context records found matching identity key.")
                         
@@ -311,12 +300,11 @@ if not st.session_state.logged_in:
                         st.session_state.auth_mode = "Login"
                         st.session_state.reset_step = 1
                         st.rerun()
-                    else: st.error("Length criteria validation violation.")
+                    else: st.error("Password too short.")
                 else: st.error("Verification parameters mismatch.")
 
     st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
-    # 2. NAVIGATION ROW SHIFTED TO THE BOTTOM
     nav_col1, nav_col2, nav_col3 = st.columns(3)
     with nav_col1:
         if st.button("🔑 LOGIN", key="set_login"):
@@ -332,7 +320,7 @@ if not st.session_state.logged_in:
             st.session_state.reset_step = 1
             st.rerun()
 
-# --- DASHBOARD DECK ENGINE (LOGGED IN SYSTEM ACCESS) ---
+# --- DASHBOARD (LOGGED IN SYSTEM ACCESS) ---
 else:
     if st.session_state.is_admin:
         st.markdown("<h5 style='color:#00ffcc; text-align:center; font-weight:800;'>🛡️ MASTER ENGINE ADMIN</h5>", unsafe_allow_html=True)
@@ -396,7 +384,6 @@ else:
                 st.rerun()
 
     else:
-        # --- USER ENGINE INTERFACE ---
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
         wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "SVIP LEVEL 9", "Y999")
         
