@@ -152,7 +152,7 @@ st.markdown("""
         width: 100% !important;
     }
     
-    /* --- CRITICAL FIX: UNIVERSAL FULL-WIDTH BUTTON STRATEGY WITH UNIQUE COLOR PATTERNS --- */
+    /* --- FIXED FULL-WIDTH STRATEGY WITH MULTI-COLOR THEMING --- */
     div[data-testid="stButton"] {
         width: 100% !important;
     }
@@ -171,40 +171,34 @@ st.markdown("""
         color: #ffffff !important;
     }
 
-    /* Individual Color Node Identities to break the boring repetitive look */
-    /* 1. Overview/Default Buttons - Neon Cyan Blue */
+    /* Individual Color Block Overrides */
     div.btn-cyan div[data-testid="stButton"] > button {
         background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
         box-shadow: 0px 4px 20px rgba(0, 242, 254, 0.3) !important;
         color: #000000 !important;
     }
     
-    /* 2. Deposit Buttons - Bright Luxury Gold */
     div.btn-gold div[data-testid="stButton"] > button {
         background: linear-gradient(135deg, #f6d365 0%, #fda085 100%) !important;
         box-shadow: 0px 4px 20px rgba(246, 211, 101, 0.35) !important;
         color: #000000 !important;
     }
     
-    /* 3. Tasks/Revenue Buttons - Electric Pink/Purple */
     div.btn-pink div[data-testid="stButton"] > button {
         background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%) !important;
         box-shadow: 0px 4px 20px rgba(248, 87, 166, 0.35) !important;
     }
     
-    /* 4. Cashout/Settlement Buttons - Clean Emerald Green */
     div.btn-green div[data-testid="stButton"] > button {
         background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
         box-shadow: 0px 4px 20px rgba(0, 176, 155, 0.3) !important;
     }
 
-    /* 5. Logs/System Configuration Buttons - Deep Royal Violet */
     div.btn-violet div[data-testid="stButton"] > button {
         background: linear-gradient(135deg, #7f00ff 0%, #e100ff 100%) !important;
         box-shadow: 0px 4px 20px rgba(127, 0, 255, 0.3) !important;
     }
     
-    /* 6. Disconnect/Danger Session Buttons - Hot Crimson Red */
     div.btn-red div[data-testid="stButton"] > button {
         background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%) !important;
         box-shadow: 0px 4px 20px rgba(255, 65, 108, 0.35) !important;
@@ -360,7 +354,6 @@ else:
     if st.session_state.is_admin:
         st.markdown("<h3 style='color:#00ffcc; font-weight:900; margin-top:15px; text-align:center;'>🛡️ MASTER ENGINE ADMINISTRATION</h3>", unsafe_allow_html=True)
         
-        # Admin Control Grid Modules - Multi-colored full width stack
         st.markdown('<div class="btn-cyan">', unsafe_allow_html=True)
         if st.button("📥 Action Deposits Pipeline Channels"): switch_panel("Pending Requests")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -382,7 +375,6 @@ else:
         
         st.write("---")
         
-        # PURE FULL SCREEN EXCLUSIVE ACTIVE MENUS
         if st.session_state.selected_panel == "Pending Requests":
             st.markdown("<h4 style='color:#00ffcc;'>Inflow Ledger Verification Channels</h4>", unsafe_allow_html=True)
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
@@ -453,7 +445,6 @@ else:
         </div>
         """, unsafe_allow_html=True)
         
-        # Mobile-Optimized Full Width Multi-Color Application Navigation Engine Blocks
         st.markdown("<p style='color:#ffffff; font-size:14px; margin-bottom:10px; letter-spacing:0.5px;'>🧭 INTERFACE CONTROL NODE INDEX:</p>", unsafe_allow_html=True)
         
         st.markdown('<div class="btn-cyan">', unsafe_allow_html=True)
@@ -476,7 +467,6 @@ else:
         
         st.write("---")
         
-        # DEDICATED INDEPENDENT INTERFACE SEGMENTS
         if st.session_state.selected_panel == "Overview":
             st.markdown("<h4 style='color:#00f2fe;'>Operational Allocation Metrics</h4>", unsafe_allow_html=True)
             st.write(f"Verification Infrastructure Matrix Rank: **{level_tag}**")
