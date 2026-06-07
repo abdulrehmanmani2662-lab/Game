@@ -1,9 +1,54 @@
 import streamlit as st
 import sqlite3
 import random
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # --- CORE APPLICATION CONFIGURATION ---
 st.set_page_config(page_title="GLOBAL NETWORK MATRIX", page_icon="📈", layout="wide")
+
+# --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION ---
+# Bhai, yahan aapka bataya hua real email set kar diya hai:
+SENDER_EMAIL = "salmanveerm@gmail.com"
+# ⚠️ IMPORTANT: Is niche wale variable mein apna 16-digit Gmail App Password zaroori dalein!
+SENDER_APP_PASSWORD = "your-gmail-app-password-here"  
+
+def send_verification_email(receiver_email, otp_code, purpose="Registration"):
+    """Sends a real security synchronization code via secure TLS SMTP gateway."""
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = SENDER_EMAIL
+        msg['To'] = receiver_email
+        msg['Subject'] = f"🛡️ MATRIX SECURITY CODE: {otp_code}"
+        
+        body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #0b091a; color: #ffffff; padding: 20px;">
+            <div style="max-width: 500px; margin: 0 auto; background-color: #131021; border: 2px solid #ff007f; border-radius: 12px; padding: 20px; text-align: center;">
+                <h2 style="color: #00ffcc;">GLOBAL MATRIX NETWORK</h2>
+                <p style="font-size: 14px; color: #a5a1c2;">Secure Authentication & Node Synchronization Verification Token.</p>
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <p style="font-size: 12px; text-transform: uppercase; color: #ff007f; font-weight: bold;">Action Required: {purpose}</p>
+                <div style="font-size: 32px; font-weight: bold; color: #00ffcc; letter-spacing: 2px; margin: 20px 0; padding: 10px; background: rgba(0,255,204,0.1); border-radius: 8px;">
+                    {otp_code}
+                </div>
+                <p style="font-size: 11px; color: #74718a;">This verification parameter expires shortly. If you did not request this handshake, please ignore this transmission securely.</p>
+            </div>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(body, 'html'))
+        
+        # Initializing SMTP server communication block
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
+        server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        return False
 
 MALAYSIAN_BANKS = [
     "Touch 'n Go eWallet",
@@ -166,7 +211,7 @@ st.markdown('<div class="running-header-container"><div class="running-text">Onl
 if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">👑 GLOBAL MATRIX</div>', unsafe_allow_html=True)
     
-    # 1. INPUT FORM SEGMENT RENDERED FIRST (ON TOP AS REQUESTED)
+    # 1. INPUT FORM SEGMENT RENDERED FIRST
     if st.session_state.auth_mode == "Login":
         st.markdown("<h6 style='color:#00ffcc; text-align:center; margin-bottom:8px;'>SECURE GATEWAY SIGN-IN</h6>", unsafe_allow_html=True)
         username = st.text_input("Username / Email:", placeholder="e.g. user@gmail.com", key="login_user")
@@ -193,72 +238,85 @@ if not st.session_state.logged_in:
 
     elif st.session_state.auth_mode == "Register":
         st.markdown("<h6 style='color:#00ffcc; text-align:center; margin-bottom:8px;'>INITIALIZE SYSTEM NODE</h6>", unsafe_allow_html=True)
-        reg_username = st.text_input("REGISTRATION EMAIL KEY:", placeholder="username or email", key="reg_user")
+        reg_username = st.text_input("REGISTRATION EMAIL KEY:", placeholder="e.g. mail@domain.com", key="reg_user")
         reg_password = st.text_input("SYSTEM SECURITY CODE:", type="password", placeholder="••••••••", key="reg_pass")
         
-        if st.button("💾 GENERATE VERIFICATION", use_container_width=True, key="execute_reg"):
+        if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True, key="execute_reg"):
             if reg_username.strip() and reg_password.strip():
-                existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
-                if existing: 
-                    st.error("Identity keys collision.")
+                if "@" not in reg_username.strip() or "." not in reg_username.strip():
+                    st.error("Please provide a valid structure email key.")
                 else:
-                    st.session_state.temp_reg_user = reg_username.strip()
-                    st.session_state.temp_reg_pass = reg_password.strip()
-                    st.session_state.reg_verify_code = str(random.randint(222333, 999888))
-                    st.session_state.auth_mode = "VerifyNewAccount"
-                    st.rerun()
+                    existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
+                    if existing: 
+                        st.error("Identity keys collision: Email already exists.")
+                    else:
+                        generated_otp = str(random.randint(102938, 984731))
+                        with st.spinner("Dispatching Real Security Node OTP Key..."):
+                            if send_verification_email(reg_username.strip(), generated_otp, purpose="Account Creation"):
+                                st.session_state.temp_reg_user = reg_username.strip()
+                                st.session_state.temp_reg_pass = reg_password.strip()
+                                st.session_state.reg_verify_code = generated_otp
+                                st.session_state.auth_mode = "VerifyNewAccount"
+                                st.rerun()
+                            else:
+                                st.error("Email Gateway execution failed. Check server parameters setup.")
 
     elif st.session_state.auth_mode == "VerifyNewAccount":
-        st.markdown("<h6 style='color:#ff007f; text-align:center;'>🔒 CODE VERIFICATION</h6>", unsafe_allow_html=True)
-        st.info(f"Target Account: {st.session_state.temp_reg_user}")
-        st.warning(f"🔧 Live Verification Code: {st.session_state.reg_verify_code}")
+        st.markdown("<h6 style='color:#ff007f; text-align:center;'>🔒 EMAIL CODE SYNC-VERIFICATION</h6>", unsafe_allow_html=True)
+        st.info(f"Target Registered Link: {st.session_state.temp_reg_user}")
+        st.caption("A system verification parameter has been routed to your email vault.")
         
-        typed_code = st.text_input("ENTER 6-DIGIT SYNC CODE:", placeholder="******", key="verify_code_input")
+        typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******", key="verify_code_input")
         
         if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True, key="execute_verify"):
             if typed_code.strip() == st.session_state.reg_verify_code:
                 query_db("INSERT INTO users VALUES (?, ?, 0.00, 0.00, 'SVIP LEVEL 9', 'Y999')", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
-                st.success("Registration compiled completely!")
+                st.success("Registration compiled completely! Node online.")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
             else:
-                st.error("Encryption code mismatch.")
+                st.error("Encryption code mismatch. Try again.")
 
     elif st.session_state.auth_mode == "Forgot":
-        st.markdown("<h6 style='color:#00ffcc;'>ACCESS KEY RECOVERY</h6>", unsafe_allow_html=True)
+        st.markdown("<h6 style='color:#00ffcc;'>ACCESS KEY RECOVERY PANEL</h6>", unsafe_allow_html=True)
         
         if st.session_state.reset_step == 1:
-            f_email = st.text_input("Enter Registered Email:", key="forgot_email")
-            if st.button("🔍 VERIFY NODE", use_container_width=True, key="execute_forgot_1"):
+            f_email = st.text_input("Enter Registered Account Email:", key="forgot_email")
+            if st.button("🔍 VERIFY & ROUTE RESET SYSTEM KEY", use_container_width=True, key="execute_forgot_1"):
                 user_match = query_db("SELECT username FROM users WHERE username=?", (f_email.strip(),), one=True)
                 if user_match:
-                    st.session_state.reset_email = f_email.strip()
-                    st.session_state.generated_code = str(random.randint(111111, 999999))
-                    st.session_state.reset_step = 2
-                    st.rerun()
-                else: st.error("No context records found.")
+                    generated_otp = str(random.randint(112233, 998877))
+                    with st.spinner("Routing outbound security vector..."):
+                        if send_verification_email(f_email.strip(), generated_otp, purpose="Password Reset Authorization"):
+                            st.session_state.reset_email = f_email.strip()
+                            st.session_state.generated_code = generated_otp
+                            st.session_state.reset_step = 2
+                            st.rerun()
+                        else:
+                            st.error("Failed to execute external routing transaction.")
+                else: 
+                    st.error("No context records found matching identity key.")
                         
         elif st.session_state.reset_step == 2:
-            st.info(f"🔒 Route Target: {st.session_state.reset_email}")
-            st.warning(f"Core Sync Code: {st.session_state.generated_code}")
-            input_code = st.text_input("Enter 6-Digit Pin:", key="forgot_code")
-            new_pass = st.text_input("New Password:", type="password", key="forgot_new_pass")
+            st.info(f"🔒 Route Handshake Target: {st.session_state.reset_email}")
+            input_code = st.text_input("Enter Real 6-Digit Email OTP:", key="forgot_code")
+            new_pass = st.text_input("Establish New Secure Password:", type="password", key="forgot_new_pass")
             
             if st.button("🛠️ RESET IDENTITY VAULT", use_container_width=True, key="execute_forgot_2"):
                 if input_code.strip() == st.session_state.generated_code:
                     if len(new_pass.strip()) >= 4:
                         query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.reset_email), commit=True)
-                        st.success("Recompiled clean.")
+                        st.success("Vault structure recompiled clear.")
                         st.session_state.auth_mode = "Login"
                         st.session_state.reset_step = 1
                         st.rerun()
-                    else: st.error("Length criteria violation.")
-                else: st.error("Verification failed.")
+                    else: st.error("Length criteria validation violation.")
+                else: st.error("Verification parameters mismatch.")
 
     st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
-    # 2. NAVIGATION ROW SHIFTED TO THE BOTTOM (BELOW THE INPUT FORMS)
+    # 2. NAVIGATION ROW SHIFTED TO THE BOTTOM
     nav_col1, nav_col2, nav_col3 = st.columns(3)
     with nav_col1:
         if st.button("🔑 LOGIN", key="set_login"):
@@ -279,7 +337,6 @@ else:
     if st.session_state.is_admin:
         st.markdown("<h5 style='color:#00ffcc; text-align:center; font-weight:800;'>🛡️ MASTER ENGINE ADMIN</h5>", unsafe_allow_html=True)
         
-        # Admin Operations Container Rendering Top Layer
         if st.session_state.selected_panel == "Pending Requests":
             st.markdown("<h6 style='color:#00ffcc; margin-bottom:6px;'>Inflow Verification Channels</h6>", unsafe_allow_html=True)
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
@@ -324,7 +381,6 @@ else:
 
         st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
-        # Admin Ribbon Buttons Shifted Neche
         adm_col1, adm_col2, adm_col3 = st.columns(3)
         with adm_col1:
             if st.button("📥 LEDGER", key="btn_adm_dep"):
@@ -352,7 +408,6 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # Section Content Blocks Loaded First
         if st.session_state.selected_panel == "Overview":
             st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
             st.markdown("<h6 style='color:#00ffcc; margin:0 0 4px 0;'>Allocation Info</h6>", unsafe_allow_html=True)
@@ -406,7 +461,6 @@ else:
 
         st.markdown("<hr style='margin:12px 0; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
-        # Navigation Options Row Rendered Downwards
         usr_col1, usr_col2, usr_col3 = st.columns(3)
         with usr_col1:
             if st.button("🎰 HOME", key="btn_usr_ov"):
@@ -421,7 +475,6 @@ else:
                 st.session_state.selected_panel = "Cashout"
                 st.rerun()
 
-    # Global Session Logout Daba at Bottom Boundary
     st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     if st.button("🚪 LOG OUT PORTAL", key="global_logout_action", use_container_width=True):
         st.session_state.logged_in = False
