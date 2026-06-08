@@ -291,7 +291,7 @@ if not st.session_state.logged_in:
                     else:
                         st.error("❌ System Gateway error transmitting OTP.")
                 else: st.error("No record matching identity key found.")
-        elif st.session_step == 2:
+        elif st.session_state.reset_step == 2:
             st.markdown(f"""
             <div class="recovery-box">
                 🔒 Routing Token To: <span style="color:#00ffcc;">{st.session_state.reset_email}</span><br>
@@ -299,7 +299,6 @@ if not st.session_state.logged_in:
             </div>
             """, unsafe_allow_html=True)
             
-            # 🔴 PREVIOUS DISPLAY BOX REMOVED FOR ABSOLUTE PRIVACY
             input_code = st.text_input("ENTER 6-DIGIT PIN FROM EMAIL:", placeholder="******")
             new_pass = st.text_input("NEW PASSWORD:", type="password", placeholder="••••••••")
             if st.button("🛠️ RESET IDENTITY VAULT", use_container_width=True):
@@ -445,7 +444,7 @@ else:
             if st.button("🎯 ENGAGE SYSTEM LUCKY SPIN", use_container_width=True):
                 spin_prize = random.choice([0.20, 0.50, 1.00, 0.00])
                 if spin_prize > 0:
-                    query_db("UPDATE users SET balance = balance + ? WHERE username=?", (spin_prize, st.session_state.current_user), commit=True)
+                    query_db("UPDATE users SET balance = balance + ? WHERE username=?", (st.session_state.current_user, spin_prize), commit=True)
                     st.success(f"System Node Settled! Yield Allocated: +RM {spin_prize:.2f}")
                 else:
                     st.info("Handshake Complete: Better luck in next cycle matrix spin!")
