@@ -261,8 +261,7 @@ if not st.session_state.logged_in:
         typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******")
         if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                # Default level set to 'VIP 1' upon account initialization
-                db_status = query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'VIP 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
+                db_status = query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
                 
                 if db_status:
@@ -389,8 +388,11 @@ else:
 
     else:
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-        wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "VIP 1", "Y999")
+        wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "SVIP LEVEL 1", "Y999")
         
+        # Format strings standard clean karne ke liye taake level checking me masla na aaye
+        clean_level = str(level_tag).upper().strip()
+
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
 
         st.markdown(f"""
@@ -425,31 +427,33 @@ else:
             st.markdown(f"""
             <div class="vip-lock-row-custom">
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span style="font-weight:700; color:#4a2711;">👑 VIP LEVEL 1</span>
+                    <span style="font-weight:700; color:#4a2711;">👑 SVIP LEVEL 1</span>
                     <span style="color:#f3552a; font-weight:700;">Daily: RM {v1_inc:.2f}</span>
                 </div>
                 <div style="font-size:11px; color:#7c543c; margin-bottom:8px;">Cost: Free / Welcome Rank</div>
             </div>
             """, unsafe_allow_html=True)
-            if level_tag == "VIP 1":
+            if "LEVEL 1" in clean_level:
                 st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:bold; margin-left:5px; margin-top:-5px;'>🟢 CURRENT ACTIVE RANK</p>", unsafe_allow_html=True)
 
             # Plan 2 Display & Activation Trigger
             st.markdown(f"""
             <div class="vip-lock-row-custom">
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span style="font-weight:700; color:#4a2711;">👑 VIP LEVEL 2</span>
+                    <span style="font-weight:700; color:#4a2711;">👑 SVIP LEVEL 2</span>
                     <span style="color:#f3552a; font-weight:700;">Daily: RM {v2_inc:.2f}</span>
                 </div>
                 <div style="font-size:11px; color:#7c543c; margin-bottom:8px;">Activation Requirement: RM {v2_req:.2f}</div>
             </div>
             """, unsafe_allow_html=True)
-            if level_tag == "VIP 2":
+            
+            if "LEVEL 2" in clean_level:
                 st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:bold; margin-left:5px; margin-top:-5px;'>🟢 CURRENT ACTIVE RANK</p>", unsafe_allow_html=True)
-            elif level_tag == "VIP 1" and wallet_bal >= v2_req:
-                if st.button("⚡ ACTIVATE VIP LEVEL 2 NOW", key="act_vip_2", use_container_width=True):
-                    query_db("UPDATE users SET balance = balance - ?, active_level='VIP 2' WHERE username=?", (v2_req, st.session_state.current_user), commit=True)
-                    st.success("Successfully Upgraded to VIP Level 2!")
+            elif wallet_bal >= v2_req and "LEVEL 3" not in clean_level:
+                # Agar balance kafi hai aur user already Level 3 par nahi hai, toh automatic active karne ka option milega
+                if st.button("⚡ ACTIVATE SVIP LEVEL 2 NOW", key="act_vip_2", use_container_width=True):
+                    query_db("UPDATE users SET balance = balance - ?, active_level='SVIP LEVEL 2' WHERE username=?", (v2_req, st.session_state.current_user), commit=True)
+                    st.success("Successfully Upgraded to SVIP Level 2!")
                     st.rerun()
             else:
                 st.markdown(f"<button style='width:100%; border:none; background:#ebd9cf; color:#a38574; font-size:12px; font-weight:bold; padding:8px; border-radius:10px;' disabled>🔒 LOCK (RECHARGE RM {v2_req:.2f} REQUIRED)</button>", unsafe_allow_html=True)
@@ -458,18 +462,19 @@ else:
             st.markdown(f"""
             <div class="vip-lock-row-custom">
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span style="font-weight:700; color:#4a2711;">👑 VIP LEVEL 3</span>
+                    <span style="font-weight:700; color:#4a2711;">👑 SVIP LEVEL 3</span>
                     <span style="color:#f3552a; font-weight:700;">Daily: RM {v3_inc:.2f}</span>
                 </div>
                 <div style="font-size:11px; color:#7c543c; margin-bottom:8px;">Activation Requirement: RM {v3_req:.2f}</div>
             </div>
             """, unsafe_allow_html=True)
-            if level_tag == "VIP 3":
+            
+            if "LEVEL 3" in clean_level:
                 st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:bold; margin-left:5px; margin-top:-5px;'>🟢 CURRENT ACTIVE RANK</p>", unsafe_allow_html=True)
-            elif (level_tag == "VIP 1" or level_tag == "VIP 2") and wallet_bal >= v3_req:
-                if st.button("⚡ ACTIVATE VIP LEVEL 3 NOW", key="act_vip_3", use_container_width=True):
-                    query_db("UPDATE users SET balance = balance - ?, active_level='VIP 3' WHERE username=?", (v3_req, st.session_state.current_user), commit=True)
-                    st.success("Successfully Upgraded to VIP Level 3!")
+            elif wallet_bal >= v3_req:
+                if st.button("⚡ ACTIVATE SVIP LEVEL 3 NOW", key="act_vip_3", use_container_width=True):
+                    query_db("UPDATE users SET balance = balance - ?, active_level='SVIP LEVEL 3' WHERE username=?", (v3_req, st.session_state.current_user), commit=True)
+                    st.success("Successfully Upgraded to SVIP Level 3!")
                     st.rerun()
             else:
                 st.markdown(f"<button style='width:100%; border:none; background:#ebd9cf; color:#a38574; font-size:12px; font-weight:bold; padding:8px; border-radius:10px;' disabled>🔒 LOCK (RECHARGE RM {v3_req:.2f} REQUIRED)</button>", unsafe_allow_html=True)
@@ -485,10 +490,10 @@ else:
                     time.sleep(0.01)
                     p_bar.progress(percent_complete + 1, text="Syncing Stream Vectors...")
                 
-                # Dynamic Earning Allocation logic based on Active VIP Plan
+                # Earning allocation logic mapping based on string chunks
                 payout = v1_inc
-                if level_tag == "VIP 2": payout = v2_inc
-                elif level_tag == "VIP 3": payout = v3_inc
+                if "LEVEL 2" in clean_level: payout = v2_inc
+                elif "LEVEL 3" in clean_level: payout = v3_inc
                 
                 query_db("UPDATE users SET balance = balance + ? WHERE username=?", (payout, st.session_state.current_user), commit=True)
                 st.session_state.trigger_redirect = True
