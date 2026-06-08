@@ -122,18 +122,16 @@ if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = N
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
 if 'generated_code' not in st.session_state: st.session_state.generated_code = ""
 
-# --- UI STYLING ENGINE (PREMIUM ORANGE-GOLD APP TASK UI) ---
+# --- UI STYLING ENGINE ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
         display: none !important; visibility: hidden !important;
     }
-    
     html, body, .stApp { 
         background-color: #fbf4ee !important;
         color: #4a2711 !important;
     }
-    
     .running-header-container { 
         width: 100%; overflow: hidden; background: linear-gradient(90deg, #f3552a, #ff8052); border-bottom: 2px solid #d84315; padding: 10px 0; margin-bottom: 20px; 
     }
@@ -168,7 +166,7 @@ st.markdown("""
     .announcement-box { background: #fff4ee; border: 1px solid #ffdcd0; border-radius: 14px; padding: 12px; font-size: 13px; color: #d84315 !important; font-weight: 700; margin-bottom: 15px; text-align: center; }
     .recovery-box { background: #ffffff; border: 1.5px solid #ff7342; border-radius: 14px; padding: 16px; font-size: 14px; color: #4a2711 !important; font-weight: 700; margin-bottom: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
     
-    .vip-lock-row { display: flex; justify-content: space-between; font-size: 13px; padding: 12px 16px; background: #fff9f6; margin: 8px 0; border-radius: 12px; border: 1px solid #ffece5; color: #4a2711; font-weight: 600; }
+    .vip-lock-row-custom { background: #ffffff; margin: 10px 0; border-radius: 14px; border: 1px solid #ffece5; padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.01); }
     .live-log-container { background: #ffffff; border: 1px solid #ebd9cf; border-radius: 16px; padding: 14px; margin-top: 15px; }
     .log-row { font-size: 11px; padding: 7px 0; border-bottom: 1px solid #f9f0ea; display: flex; justify-content: space-between; }
     </style>
@@ -219,7 +217,6 @@ if not st.session_state.logged_in:
                     st.session_state.selected_panel = "Pending Requests"
                     st.rerun()
                 else:
-                    # Robust lookup: check exact password match across users seamlessly
                     record = query_db("SELECT password, username FROM users WHERE username=?", (username.strip(),), one=True)
                     if record and record[0] == password.strip():
                         st.session_state.logged_in = True
@@ -227,10 +224,7 @@ if not st.session_state.logged_in:
                         st.session_state.is_admin = False
                         st.session_state.selected_panel = "Overview"
                         st.rerun()
-                    else:
-                        st.error("Invalid Credentials. Please check details or reset.")
-            else:
-                st.warning("Please fill up all details before requesting entry.")
+                    else: st.error("Invalid Credentials. Please check details or reset.")
 
     elif st.session_state.auth_mode == "Register":
         st.markdown("<h4 style='color:#d84315; text-align:center; font-size:16px; margin-bottom:10px;'>INITIALIZE SYSTEM NODE</h4>", unsafe_allow_html=True)
@@ -267,7 +261,8 @@ if not st.session_state.logged_in:
         typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******")
         if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                db_status = query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
+                # Default level set to 'VIP 1' upon account initialization
+                db_status = query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'VIP 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
                 
                 if db_status:
@@ -328,11 +323,11 @@ if not st.session_state.logged_in:
 else:
     announcement_text = query_db("SELECT value FROM system_config WHERE key='system_announcement'", one=True)[0]
     unclaimed_val = query_db("SELECT value FROM system_config WHERE key='unclaimed_rewards_val'", one=True)[0]
-    v1_inc = query_db("SELECT value FROM system_config WHERE key='vip1_income'", one=True)[0]
-    v2_inc = query_db("SELECT value FROM system_config WHERE key='vip2_income'", one=True)[0]
-    v3_inc = query_db("SELECT value FROM system_config WHERE key='vip3_income'", one=True)[0]
-    v2_req = query_db("SELECT value FROM system_config WHERE key='vip2_req'", one=True)[0]
-    v3_req = query_db("SELECT value FROM system_config WHERE key='vip3_req'", one=True)[0]
+    v1_inc = float(query_db("SELECT value FROM system_config WHERE key='vip1_income'", one=True)[0])
+    v2_inc = float(query_db("SELECT value FROM system_config WHERE key='vip2_income'", one=True)[0])
+    v3_inc = float(query_db("SELECT value FROM system_config WHERE key='vip3_income'", one=True)[0])
+    v2_req = float(query_db("SELECT value FROM system_config WHERE key='vip2_req'", one=True)[0])
+    v3_req = float(query_db("SELECT value FROM system_config WHERE key='vip3_req'", one=True)[0])
     live_ad_url = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)[0]
     tng_scanner_url = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)[0]
 
@@ -360,18 +355,17 @@ else:
         elif st.session_state.selected_panel == "System Settings Configuration":
             st.markdown("<h5 style='color:#4a2711; font-size:16px; margin-bottom:15px;'>Real-Time Feature Control Desk</h5>", unsafe_allow_html=True)
             
-            # FIXED: QR and Video URL parameters are restored to the configuration form panel
             new_ann = st.text_area("System Broad-Scale Announcement Text:", value=announcement_text)
             new_ad_url = st.text_input("🔴 Live Video Task Destination URL Link:", value=live_ad_url)
             new_qr_url = st.text_input("📸 Touch 'N Go QR Scanner Image Asset URL:", value=tng_scanner_url)
             new_unclaimed = st.text_input("Unclaimed Rewards Dummy Value (RM):", value=unclaimed_val)
             
             st.markdown("<p style='color:#f3552a; font-weight:bold; font-size:14px; margin-top:15px;'>VIP Tiers Calibration Parameters</p>", unsafe_allow_html=True)
-            nv1 = st.text_input("VIP 1 Daily Yield (RM):", value=v1_inc)
-            nv2 = st.text_input("VIP 2 Daily Yield (RM):", value=v2_inc)
-            nv2_r = st.text_input("VIP 2 Required Recharge Threshold (RM):", value=v2_req)
-            nv3 = st.text_input("VIP 3 Daily Yield (RM):", value=v3_inc)
-            nv3_r = st.text_input("VIP 3 Required Recharge Threshold (RM):", value=v3_req)
+            nv1 = st.text_input("VIP 1 Daily Yield (RM):", value=str(v1_inc))
+            nv2 = st.text_input("VIP 2 Daily Yield (RM):", value=str(v2_inc))
+            nv2_r = st.text_input("VIP 2 Required Recharge Threshold (RM):", value=str(v2_req))
+            nv3 = st.text_input("VIP 3 Daily Yield (RM):", value=str(v3_inc))
+            nv3_r = st.text_input("VIP 3 Required Recharge Threshold (RM):", value=str(v3_req))
             
             if st.button("💾 SAVE ENTIRE MATRIX CONFIGURATIONS", use_container_width=True):
                 query_db("UPDATE system_config SET value=? WHERE key='system_announcement'", (new_ann.strip(),), commit=True)
@@ -395,7 +389,7 @@ else:
 
     else:
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-        wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "SVIP LEVEL 1", "Y999")
+        wallet_bal, liquid_bal, level_tag, reference_hash = user_metrics if user_metrics else (0.00, 0.00, "VIP 1", "Y999")
         
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
 
@@ -403,7 +397,7 @@ else:
         <div class="metric-card-box">
             <p style="font-size:11px; color:#ffe6dc; margin:0; font-weight:800; letter-spacing:0.5px;">CURRENT WALLET BALANCE</p>
             <h3 style="font-size:30px; font-weight:900; color:#ffffff; margin:4px 0;">RM {wallet_bal:,.2f}</h3>
-            <p style="font-size:11px; color:#ffffff; margin:0; font-weight:600; opacity:0.95;">PENDING UNCLAIMED REWARDS: <span style='color:#fcd34d;'>RM {unclaimed_val}</span></p>
+            <p style="font-size:11px; color:#ffffff; margin:0; font-weight:600; opacity:0.95;">CURRENT RANK: <span style='color:#fcd34d; font-weight:900;'>{level_tag}</span></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -424,15 +418,65 @@ else:
 
             st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
             
-            st.markdown("<p style='color:#d84315; font-size:12px; font-weight:bold; margin-bottom:5px;'>📊 ACTIVE PLATFORM VIP TIERS</p>", unsafe_allow_html=True)
+            # --- DYNAMIC VIP LEVEL ACTIVATION DECK ---
+            st.markdown("<p style='color:#d84315; font-size:13px; font-weight:bold; margin-bottom:10px;'>📊 VIP INVESTMENT PORTFOLIO PLANS</p>", unsafe_allow_html=True)
+            
+            # Plan 1 Display
             st.markdown(f"""
-            <div class="vip-lock-row" style="border-left: 3px solid #f3552a; background: #fff5f1;">🟢 SVIP Level 1 (Active) <span style="color:#f3552a;">Daily: RM {v1_inc}</span></div>
-            <div class="vip-lock-row">🔒 SVIP Level 2 (Recharge RM {v2_req}) <span style="color:#4a2711;">Daily: RM {v2_inc}</span></div>
-            <div class="vip-lock-row">🔒 SVIP Level 3 (Recharge RM {v3_req}) <span style="color:#4a2711;">Daily: RM {v3_inc}</span></div>
+            <div class="vip-lock-row-custom">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-weight:700; color:#4a2711;">👑 VIP LEVEL 1</span>
+                    <span style="color:#f3552a; font-weight:700;">Daily: RM {v1_inc:.2f}</span>
+                </div>
+                <div style="font-size:11px; color:#7c543c; margin-bottom:8px;">Cost: Free / Welcome Rank</div>
+            </div>
             """, unsafe_allow_html=True)
+            if level_tag == "VIP 1":
+                st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:bold; margin-left:5px; margin-top:-5px;'>🟢 CURRENT ACTIVE RANK</p>", unsafe_allow_html=True)
+
+            # Plan 2 Display & Activation Trigger
+            st.markdown(f"""
+            <div class="vip-lock-row-custom">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-weight:700; color:#4a2711;">👑 VIP LEVEL 2</span>
+                    <span style="color:#f3552a; font-weight:700;">Daily: RM {v2_inc:.2f}</span>
+                </div>
+                <div style="font-size:11px; color:#7c543c; margin-bottom:8px;">Activation Requirement: RM {v2_req:.2f}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if level_tag == "VIP 2":
+                st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:bold; margin-left:5px; margin-top:-5px;'>🟢 CURRENT ACTIVE RANK</p>", unsafe_allow_html=True)
+            elif level_tag == "VIP 1" and wallet_bal >= v2_req:
+                if st.button("⚡ ACTIVATE VIP LEVEL 2 NOW", key="act_vip_2", use_container_width=True):
+                    query_db("UPDATE users SET balance = balance - ?, active_level='VIP 2' WHERE username=?", (v2_req, st.session_state.current_user), commit=True)
+                    st.success("Successfully Upgraded to VIP Level 2!")
+                    st.rerun()
+            else:
+                st.markdown(f"<button style='width:100%; border:none; background:#ebd9cf; color:#a38574; font-size:12px; font-weight:bold; padding:8px; border-radius:10px;' disabled>🔒 LOCK (RECHARGE RM {v2_req:.2f} REQUIRED)</button>", unsafe_allow_html=True)
+
+            # Plan 3 Display & Activation Trigger
+            st.markdown(f"""
+            <div class="vip-lock-row-custom">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-weight:700; color:#4a2711;">👑 VIP LEVEL 3</span>
+                    <span style="color:#f3552a; font-weight:700;">Daily: RM {v3_inc:.2f}</span>
+                </div>
+                <div style="font-size:11px; color:#7c543c; margin-bottom:8px;">Activation Requirement: RM {v3_req:.2f}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if level_tag == "VIP 3":
+                st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:bold; margin-left:5px; margin-top:-5px;'>🟢 CURRENT ACTIVE RANK</p>", unsafe_allow_html=True)
+            elif (level_tag == "VIP 1" or level_tag == "VIP 2") and wallet_bal >= v3_req:
+                if st.button("⚡ ACTIVATE VIP LEVEL 3 NOW", key="act_vip_3", use_container_width=True):
+                    query_db("UPDATE users SET balance = balance - ?, active_level='VIP 3' WHERE username=?", (v3_req, st.session_state.current_user), commit=True)
+                    st.success("Successfully Upgraded to VIP Level 3!")
+                    st.rerun()
+            else:
+                st.markdown(f"<button style='width:100%; border:none; background:#ebd9cf; color:#a38574; font-size:12px; font-weight:bold; padding:8px; border-radius:10px;' disabled>🔒 LOCK (RECHARGE RM {v3_req:.2f} REQUIRED)</button>", unsafe_allow_html=True)
             
             st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
             
+            # --- VIDEO DATA WORK TUNNEL EARNING SYSTEM ---
             if 'trigger_redirect' not in st.session_state: st.session_state.trigger_redirect = False
             
             if st.button("▶️ START SECURE DATA WORK TUNNEL", use_container_width=True):
@@ -440,6 +484,13 @@ else:
                 for percent_complete in range(100):
                     time.sleep(0.01)
                     p_bar.progress(percent_complete + 1, text="Syncing Stream Vectors...")
+                
+                # Dynamic Earning Allocation logic based on Active VIP Plan
+                payout = v1_inc
+                if level_tag == "VIP 2": payout = v2_inc
+                elif level_tag == "VIP 3": payout = v3_inc
+                
+                query_db("UPDATE users SET balance = balance + ? WHERE username=?", (payout, st.session_state.current_user), commit=True)
                 st.session_state.trigger_redirect = True
                 st.rerun()
                 
