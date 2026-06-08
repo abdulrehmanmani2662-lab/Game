@@ -268,7 +268,7 @@ def render_otp_countdown_engine():
 
 # --- SECURITY SYSTEM CONTROL GATE ---
 if not st.session_state.logged_in:
-    st.markdown('<div class="brand-title">❯❯❯❯🖥️ 𝗚𝗟𝗢𝗕𝗔𝗟 𝗠𝗔𝗧𝗥𝗜𝗫 ᯤ💵</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-title">𝗚𝗟𝗢𝗕𝗔𝗟 𝗠𝗔𝗧𝗥𝗜𝗫</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
         st.markdown('<div class="brand-subtitle">SECURE TERMINAL LOGIN</div>', unsafe_allow_html=True)
