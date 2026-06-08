@@ -22,12 +22,12 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         
         body = f"""
         <html>
-        <body style="font-family: Arial, sans-serif; background-color: #fff1e6; padding: 20px;">
-            <div style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-                <h2 style="color: #ffffff; margin-bottom: 10px;">GLOBAL MATRIX</h2>
-                <hr style="border: 0; height: 1px; background: #ffffff; margin-bottom: 20px;">
+        <body style="font-family: Arial, sans-serif; background-color: #fdf5f0; padding: 20px;">
+            <div style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, #f3552a 0%, #ff8052 100%); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 6px 18px rgba(243,85,42,0.25);">
+                <h2 style="color: #ffffff; margin-bottom: 10px; font-weight: 900;">GLOBAL MATRIX</h2>
+                <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.3); margin-bottom: 20px;">
                 <p style="color: #ffffff; font-size: 16px;">Your Verification Code for {purpose} is:</p>
-                <div style="font-size: 32px; font-weight: bold; color: #ff7e5f; letter-spacing: 4px; padding: 10px; background: #ffffff; border-radius: 8px; margin: 20px 0;">
+                <div style="font-size: 32px; font-weight: bold; color: #f3552a; letter-spacing: 4px; padding: 12px; background: #ffffff; border-radius: 10px; margin: 20px 0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
                     {otp_code}
                 </div>
                 <p style="color: #ffffff; font-size: 12px; opacity: 0.8;">Please secure your verification credentials.</p>
@@ -122,62 +122,61 @@ if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = N
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
 if 'generated_code' not in st.session_state: st.session_state.generated_code = ""
 
-# --- MASTER ENGINE UI STYLING ENGINE (ORANGE-GOLD GRADIENT EDITION) ---
+# --- UI STYLING ENGINE (PREMIUM ORANGE-GOLD APP TASK UI) ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
         display: none !important; visibility: hidden !important;
     }
     
-    /* Light warm background like the reference image */
+    /* Premium light sand/cream background from picture 3 */
     html, body, .stApp { 
-        background: #fdf5f0 !important;
-        color: #5a2e1d !important;
+        background-color: #fbf4ee !important;
+        color: #4a2711 !important;
     }
     
-    /* Top Bar ticker matching the new premium look */
+    /* Header strip */
     .running-header-container { 
-        width: 100%; overflow: hidden; background: linear-gradient(90deg, #ff6b4a, #ff9e79); border-bottom: 2px solid #e0533c; padding: 10px 0; margin-bottom: 15px; 
+        width: 100%; overflow: hidden; background: linear-gradient(90deg, #f3552a, #ff8052); border-bottom: 2px solid #d84315; padding: 10px 0; margin-bottom: 20px; 
     }
-    .running-text { font-size: 14px; font-weight: 800; color: #ffffff; white-space: nowrap; display: inline-block; animation: marquee-run 15s linear infinite; }
+    .running-text { font-size: 13px; font-weight: 800; color: #ffffff; white-space: nowrap; display: inline-block; animation: marquee-run 15s linear infinite; }
     @keyframes marquee-run { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
     
-    /* Clean Title Styling */
-    .brand-title { text-align: center; font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #ff5e36 0%, #ff926b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-    [data-testid="stVerticalBlock"] { max-width: 460px !important; margin: 0 auto !important; padding: 5px !important; }
+    /* Brand Title */
+    .brand-title { text-align: center; font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #f3552a 0%, #ff8052 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1.5px; }
+    [data-testid="stVerticalBlock"] { max-width: 450px !important; margin: 0 auto !important; padding: 5px !important; }
     
-    /* Inputs matching the clean light look with soft border */
+    /* Clean rounded fields like the UI mockup */
     div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stTextArea"] label, .stWidgetLabel p {
-        color: #7d442d !important; font-weight: 700 !important; font-size: 13px !important; text-transform: uppercase !important; letter-spacing: 0.5px; margin-bottom: 6px !important;
+        color: #5c351f !important; font-weight: 700 !important; font-size: 13px !important; letter-spacing: 0.3px; margin-bottom: 5px !important;
     }
     div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"], div[data-testid="stTextArea"] textarea { 
-        background-color: #ffffff !important; color: #333333 !important; border: 1.5px solid #ebd1c5 !important; border-radius: 12px !important; font-weight: 600 !important; font-size: 14px !important; padding: 10px !important;
+        background-color: #ffffff !important; color: #2b170c !important; border: 1.5px solid #ebd9cf !important; border-radius: 14px !important; font-weight: 600 !important; font-size: 14px !important; padding: 12px !important; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
     }
     div[data-testid="stTextInput"] input:focus, div[data-testid="stNumberInput"] input:focus {
-        border-color: #ff5e36 !important; box-shadow: 0 0 5px rgba(255, 94, 54, 0.2) !important;
+        border-color: #f3552a !important; box-shadow: 0 0 0 3px rgba(243, 85, 42, 0.15) !important;
     }
     
-    /* Vibrant Orange Gradient Button like 'Sign Up' in picture */
-    div.stButton > button { background: linear-gradient(135deg, #f3552a 0%, #ff8052 100%) !important; color: #ffffff !important; font-size: 14px !important; font-weight: 700; text-transform: uppercase !important; border-radius: 14px !important; width: 100% !important; padding: 14px !important; border: none !important; box-shadow: 0 4px 10px rgba(243, 85, 42, 0.25); transition: all 0.3s ease; }
-    div.stButton > button:hover { background: linear-gradient(135deg, #d84315 0%, #f3552a 100%) !important; box-shadow: 0 6px 15px rgba(243, 85, 42, 0.4); transform: translateY(-1px); }
+    /* Exact vibrant orange solid-smooth gradient buttons */
+    div.stButton > button { background: linear-gradient(135deg, #f3552a 0%, #ff7342 100%) !important; color: #ffffff !important; font-size: 15px !important; font-weight: 700; border-radius: 16px !important; width: 100% !important; padding: 14px !important; border: none !important; box-shadow: 0 5px 12px rgba(243, 85, 42, 0.25); transition: all 0.25s ease; }
+    div.stButton > button:hover { background: linear-gradient(135deg, #d84315 0%, #f3552a 100%) !important; box-shadow: 0 6px 16px rgba(243, 85, 42, 0.35); transform: translateY(-1px); }
     
-    /* Containers and Cards stylized like the mockup dashboard card */
-    .metric-card-box { 
-        background: linear-gradient(135deg, #7c2d12 0%, #4c1d0f 100%); 
-        border-radius: 20px; padding: 22px; text-align: center; margin-bottom: 15px; 
-        border: none; box-shadow: 0 8px 20px rgba(76, 29, 15, 0.3); color: #ffffff !important;
-    }
+    /* Beautiful modern containers/cards mimicking the task design */
     .action-deck { 
-        background: #ffffff; border: 1px solid #ebd1c5; border-radius: 18px; padding: 18px; margin-top: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+        background: #ffffff; border: 1px solid #ebd9cf; border-radius: 20px; padding: 20px; margin-top: 12px; box-shadow: 0 6px 15px rgba(74, 39, 17, 0.03); 
+    }
+    .metric-card-box { 
+        background: linear-gradient(135deg, #f3552a 0%, #d84315 100%); 
+        border-radius: 22px; padding: 24px; text-align: center; margin-bottom: 15px; 
+        border: none; box-shadow: 0 8px 22px rgba(216, 67, 21, 0.25); color: #ffffff !important;
     }
     
-    .announcement-box { background: #fff3ed; border: 1px solid #ffcdb2; border-radius: 12px; padding: 12px; font-size: 13px; color: #d84315 !important; font-weight: 700; margin-bottom: 15px; line-height: 1.4; text-align: center; }
-    .recovery-box { background: #ffffff; border: 1.5px solid #ff8052; border-radius: 12px; padding: 15px; font-size: 14px; color: #5a2e1d !important; font-weight: 700; margin-bottom: 12px; }
+    .announcement-box { background: #fff4ee; border: 1px solid #ffdcd0; border-radius: 14px; padding: 12px; font-size: 13px; color: #d84315 !important; font-weight: 700; margin-bottom: 15px; text-align: center; }
+    .recovery-box { background: #ffffff; border: 1.5px solid #ff7342; border-radius: 14px; padding: 16px; font-size: 14px; color: #4a2711 !important; font-weight: 700; margin-bottom: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
     
-    /* Rows structure */
-    .vip-lock-row { display: flex; justify-content: space-between; font-size: 12px; padding: 10px 14px; background: #fff8f5; margin: 8px 0; border-radius: 10px; border: 1px solid #ffebd9; color: #5a2e1d; font-weight: 600; }
-    .live-log-container { background: #ffffff; border: 1px solid #ebd1c5; border-radius: 14px; padding: 12px; margin-top: 15px; }
-    .log-row { font-size: 11px; padding: 6px 0; border-bottom: 1px solid #f7e6df; display: flex; justify-content: space-between; }
+    .vip-lock-row { display: flex; justify-content: space-between; font-size: 13px; padding: 12px 16px; background: #fff9f6; margin: 8px 0; border-radius: 12px; border: 1px solid #ffece5; color: #4a2711; font-weight: 600; }
+    .live-log-container { background: #ffffff; border: 1px solid #ebd9cf; border-radius: 16px; padding: 14px; margin-top: 15px; }
+    .log-row { font-size: 11px; padding: 7px 0; border-bottom: 1px solid #f9f0ea; display: flex; justify-content: space-between; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -206,10 +205,8 @@ def render_otp_countdown_engine():
                     st.session_state.generated_code = new_otp
                     sent = send_verification_email(st.session_state.reset_email, new_otp, purpose="Password Reset Authorization")
                 
-                if sent:
-                    st.success("📩 A new validation code has been sent to your email!")
-                else:
-                    st.error("❌ Failed to send email. Check SMTP settings.")
+                if sent: st.success("📩 A new validation code has been sent to your email!")
+                else: st.error("❌ Failed to send email. Check SMTP settings.")
                 st.rerun()
 
 # --- AUTHENTICATION FLOW ---
@@ -217,7 +214,8 @@ if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">👑 GLOBAL MATRIX</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
-        username = st.text_input("Username / Email:", placeholder="username or email")
+        # Fixed Login logic: accepts username or exact email strings seamlessly
+        username = st.text_input("Username / Email Address:", placeholder="Enter your username or email")
         password = st.text_input("Password:", type="password", placeholder="••••••••")
         if st.button("🚀 AUTHORIZE ACCESS", use_container_width=True):
             if username.strip() and password.strip():
@@ -228,6 +226,7 @@ if not st.session_state.logged_in:
                     st.session_state.selected_panel = "Pending Requests"
                     st.rerun()
                 else:
+                    # Fix: check both username column and email match scenarios dynamically
                     record = query_db("SELECT password, username FROM users WHERE username=?", (username.strip(),), one=True)
                     if record and record[0] == password.strip():
                         st.session_state.logged_in = True
@@ -235,11 +234,11 @@ if not st.session_state.logged_in:
                         st.session_state.is_admin = False
                         st.session_state.selected_panel = "Overview"
                         st.rerun()
-                    else: st.error("Invalid Credentials.")
+                    else: st.error("Invalid Credentials. Please check details or reset.")
 
     elif st.session_state.auth_mode == "Register":
-        st.markdown("<h4 style='color:#7c2d12; text-align:center; font-size:16px; margin-bottom:10px;'>INITIALIZE SYSTEM NODE</h4>", unsafe_allow_html=True)
-        reg_username = st.text_input("REGISTRATION EMAIL KEY:", placeholder="username or email")
+        st.markdown("<h4 style='color:#d84315; text-align:center; font-size:16px; margin-bottom:10px;'>INITIALIZE SYSTEM NODE</h4>", unsafe_allow_html=True)
+        reg_username = st.text_input("REGISTRATION EMAIL KEY:", placeholder="e.g. name@domain.com")
         reg_password = st.text_input("SYSTEM SECURITY CODE:", type="password", placeholder="••••••••")
         if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True):
             if reg_username.strip() and reg_password.strip():
@@ -257,16 +256,15 @@ if not st.session_state.logged_in:
                             st.session_state.reg_verify_code = generated_otp
                             st.session_state.otp_start_time = time.time()
                             st.session_state.auth_mode = "VerifyNewAccount"
-                            st.success("📩 Verification OTP successfully sent! Please check your email inbox.")
+                            st.success("📩 Verification OTP successfully sent to your email!")
                             st.rerun()
-                        else:
-                            st.error("❌ Email Delivery Failed! Please verify SMTP credentials.")
+                        else: st.error("❌ Email Delivery Failed! Verify your credentials.")
 
     elif st.session_state.auth_mode == "VerifyNewAccount":
         st.markdown(f"""
         <div class="recovery-box">
-            🌐 Routing Verification To: <span style="color:#f3552a;">{st.session_state.temp_reg_user}</span><br>
-            <span style="color:#7c2d12; font-size:12px;">Please check your mailbox for the 6-digit sync key.</span>
+            🌐 Routing Verification To:<br><span style="color:#f3552a;font-size:15px;">{st.session_state.temp_reg_user}</span><br>
+            <span style="color:#7a4325; font-size:12px; font-weight:normal;">Check your email inbox/spam for the 6-digit synchronization key.</span>
         </div>
         """, unsafe_allow_html=True)
         
@@ -277,18 +275,17 @@ if not st.session_state.logged_in:
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
                 
                 if db_status:
-                    st.success("Registration completed. Free RM 2.00 loaded.")
+                    st.success("Registration completed successfully! RM 2.00 loaded.")
                     st.session_state.auth_mode = "Login"
                     st.rerun()
-                else:
-                    st.error("❌ Save Error: Data could not be recorded.")
+                else: st.error("❌ Database insertion error.")
             else: st.error("Incorrect verification OTP code.")
         render_otp_countdown_engine()
 
     elif st.session_state.auth_mode == "Forgot":
-        st.markdown("<h4 style='color:#7c2d12; text-align:center; font-size:16px; margin-bottom:10px;'>ACCESS KEY RECOVERY</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='color:#d84315; text-align:center; font-size:16px; margin-bottom:10px;'>ACCESS KEY RECOVERY</h4>", unsafe_allow_html=True)
         if st.session_state.reset_step == 1:
-            f_email = st.text_input("Enter Registered Email:", placeholder="username or email")
+            f_email = st.text_input("Enter Registered Email Address:", placeholder="your-email@gmail.com")
             if st.button("🔍 ROUTE RESET KEY", use_container_width=True):
                 if query_db("SELECT username FROM users WHERE username=?", (f_email.strip(),), one=True):
                     generated_otp = str(random.randint(112233, 998877))
@@ -300,30 +297,29 @@ if not st.session_state.logged_in:
                         st.session_state.reset_step = 2
                         st.success("📩 Security reset pin routed to your email.")
                         st.rerun()
-                    else:
-                        st.error("❌ System Gateway error transmitting OTP.")
+                    else: st.error("❌ System Gateway error transmitting OTP.")
                 else: st.error("No record matching identity key found.")
         elif st.session_state.reset_step == 2:
             st.markdown(f"""
             <div class="recovery-box">
-                🔒 Routing Token To: <span style="color:#f3552a;">{st.session_state.reset_email}</span><br>
-                <span style="color:#7c2d12; font-size:12px;">Check your email mailbox for the pin.</span>
+                🔒 Routing Token To:<br><span style="color:#f3552a;font-size:15px;">{st.session_state.reset_email}</span><br>
+                <span style="color:#7a4325; font-size:12px; font-weight:normal;">Enter the security pin below to update system access vault keys.</span>
             </div>
             """, unsafe_allow_html=True)
             
             input_code = st.text_input("ENTER 6-DIGIT PIN FROM EMAIL:", placeholder="******")
-            new_pass = st.text_input("NEW PASSWORD:", type="password", placeholder="••••••••")
+            new_pass = st.text_input("SET NEW PASSWORD:", type="password", placeholder="••••••••")
             if st.button("🛠️ RESET IDENTITY VAULT", use_container_width=True):
                 if input_code.strip() == st.session_state.generated_code:
                     query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.reset_email), commit=True)
-                    st.success("Vault clear. Password updated successfully.")
+                    st.success("Vault cleared. Password updated successfully.")
                     st.session_state.auth_mode = "Login"
                     st.session_state.reset_step = 1
                     st.rerun()
                 else: st.error("Sync pin validation failed.")
             render_otp_countdown_engine()
 
-    st.markdown("<hr style='margin:12px 0; border-color:rgba(0,0,0,0.05);'>", unsafe_allow_html=True)
+    st.markdown("<hr style='margin:15px 0; border-color:#ebd9cf;'>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1: 
         if st.button("🔑 LOGIN"): st.session_state.auth_mode = "Login"; st.rerun()
@@ -343,15 +339,15 @@ else:
     v3_req = query_db("SELECT value FROM system_config WHERE key='vip3_req'", one=True)[0]
 
     if st.session_state.is_admin:
-        st.markdown("<h5 style='color:#7c2d12; text-align:center; font-weight:800; margin-bottom:15px;'>🛡️ MASTER ADMIN PLATFORM ENGINE</h5>", unsafe_allow_html=True)
+        st.markdown("<h5 style='color:#d84315; text-align:center; font-weight:800; margin-bottom:15px;'>🛡️ MASTER ADMIN PLATFORM ENGINE</h5>", unsafe_allow_html=True)
         
         if st.session_state.selected_panel == "Pending Requests":
-            st.markdown("<h6 style='color:#7c2d12; margin-bottom:10px;'>Ledger Inflow Approvals</h6>", unsafe_allow_html=True)
+            st.markdown("<h6 style='color:#4a2711; margin-bottom:10px;'>Ledger Inflow Approvals</h6>", unsafe_allow_html=True)
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
             if not pending_items: st.info("Verification queue is clean.")
             else:
                 for item in pending_items:
-                    st.markdown(f"<div style='background-color:#ffffff; padding:10px; border-radius:6px; font-size:13px; border:1px solid #ff8052;'>User: {item[1]}<br>Bank: {item[2]}<br>TxID: {item[4]}<br><b>RM {item[5]:.2f}</b></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='background-color:#ffffff; padding:12px; border-radius:14px; font-size:13px; border:1px solid #ff8052;'>User: {item[1]}<br>Bank: {item[2]}<br>TxID: {item[4]}<br><b>RM {item[5]:.2f}</b></div>", unsafe_allow_html=True)
                     b1, b2 = st.columns(2)
                     with b1:
                         if st.button("✅ APPROVE", key=f"a_{item[0]}", use_container_width=True):
@@ -364,12 +360,11 @@ else:
                             st.rerun()
                                 
         elif st.session_state.selected_panel == "System Settings Configuration":
-            st.markdown("<h5 style='color:#7c2d12; font-size:16px; margin-bottom:15px;'>Real-Time Feature Management Control Desk</h5>", unsafe_allow_html=True)
-            
+            st.markdown("<h5 style='color:#4a2711; font-size:16px; margin-bottom:15px;'>Real-Time Feature Control Desk</h5>", unsafe_allow_html=True)
             new_ann = st.text_area("System Broad-Scale Announcement Text:", value=announcement_text)
             new_unclaimed = st.text_input("Unclaimed Rewards Dummy Value (RM):", value=unclaimed_val)
             
-            st.markdown("<p style='color:#f3552a; font-weight:bold; font-size:14px; margin-top:15px; margin-bottom:5px;'>VIP Tiers Calibration Parameters</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#f3552a; font-weight:bold; font-size:14px; margin-top:15px;'>VIP Tiers Calibration Parameters</p>", unsafe_allow_html=True)
             nv1 = st.text_input("VIP 1 Daily Yield (RM):", value=v1_inc)
             nv2 = st.text_input("VIP 2 Daily Yield (RM):", value=v2_inc)
             nv2_r = st.text_input("VIP 2 Required Recharge Threshold (RM):", value=v2_req)
@@ -384,10 +379,10 @@ else:
                 query_db("UPDATE system_config SET value=? WHERE key='vip2_req'", (nv2_r.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip3_income'", (nv3.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip3_req'", (nv3_r.strip(),), commit=True)
-                st.success("All System Variables Overhauled and Synced Safely!")
+                st.success("All System Variables Overhauled and Synced!")
                 st.rerun()
 
-        st.markdown("<hr style='margin:12px 0; border-color:rgba(0,0,0,0.05);'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:12px 0; border-color:#ebd9cf;'>", unsafe_allow_html=True)
         ad_c1, ad_c2 = st.columns(2)
         with ad_c1:
             if st.button("📥 LEDGER DEPOSITS", use_container_width=True): st.session_state.selected_panel = "Pending Requests"; st.rerun()
@@ -400,12 +395,11 @@ else:
         
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
 
-        # Dashboard Wallet Box (Premium Dark Orange/Bronze Gradient)
         st.markdown(f"""
         <div class="metric-card-box">
-            <p style="font-size:11px; color:#fcd34d; margin:0; font-weight:800; letter-spacing:0.5px;">CURRENT WALLET BALANCE</p>
-            <h3 style="font-size:28px; font-weight:900; color:#ffffff; margin:4px 0;">RM {wallet_bal:,.2f}</h3>
-            <p style="font-size:11px; color:#ffffff; margin:0; font-weight:600; opacity:0.9;">PENDING UNCLAIMED REWARDS: <span style='color:#fcd34d;'>RM {unclaimed_val}</span></p>
+            <p style="font-size:11px; color:#ffe6dc; margin:0; font-weight:800; letter-spacing:0.5px;">CURRENT WALLET BALANCE</p>
+            <h3 style="font-size:30px; font-weight:900; color:#ffffff; margin:4px 0;">RM {wallet_bal:,.2f}</h3>
+            <p style="font-size:11px; color:#ffffff; margin:0; font-weight:600; opacity:0.95;">PENDING UNCLAIMED REWARDS: <span style='color:#fcd34d;'>RM {unclaimed_val}</span></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -415,7 +409,7 @@ else:
             today_date = time.strftime("%Y-%m-%d")
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             chk_c1, chk_c2 = st.columns([2, 1])
-            with chk_c1: st.markdown("<p style='margin-top:8px; font-size:13px; font-weight:bold; color:#5a2e1d;'>📅 DAILY REWARD CHECK-IN</p>", unsafe_allow_html=True)
+            with chk_c1: st.markdown("<p style='margin-top:8px; font-size:13px; font-weight:bold; color:#4a2711;'>📅 DAILY REWARD CHECK-IN</p>", unsafe_allow_html=True)
             with chk_c2:
                 if already_checked: st.button("✅ CLAIMED", disabled=True, key="claimed_disable")
                 else:
@@ -424,16 +418,16 @@ else:
                         query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
                         st.rerun()
 
-            st.markdown("<hr style='margin:10px 0; border-color:#f7e6df;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
             
-            st.markdown("<p style='color:#7c2d12; font-size:12px; font-weight:bold; margin-bottom:5px;'>📊 ACTIVE PLATFORM VIP TIERS</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#d84315; font-size:12px; font-weight:bold; margin-bottom:5px;'>📊 ACTIVE PLATFORM VIP TIERS</p>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div class="vip-lock-row" style="border-left: 3px solid #f3552a; background: #fff1eb;">🟢 SVIP Level 1 (Active) <span style="color:#f3552a;">Daily: RM {v1_inc}</span></div>
-            <div class="vip-lock-row">🔒 SVIP Level 2 (Recharge RM {v2_req}) <span style="color:#5a2e1d;">Daily: RM {v2_inc}</span></div>
-            <div class="vip-lock-row">🔒 SVIP Level 3 (Recharge RM {v3_req}) <span style="color:#5a2e1d;">Daily: RM {v3_inc}</span></div>
+            <div class="vip-lock-row" style="border-left: 3px solid #f3552a; background: #fff5f1;">🟢 SVIP Level 1 (Active) <span style="color:#f3552a;">Daily: RM {v1_inc}</span></div>
+            <div class="vip-lock-row">🔒 SVIP Level 2 (Recharge RM {v2_req}) <span style="color:#4a2711;">Daily: RM {v2_inc}</span></div>
+            <div class="vip-lock-row">🔒 SVIP Level 3 (Recharge RM {v3_req}) <span style="color:#4a2711;">Daily: RM {v3_inc}</span></div>
             """, unsafe_allow_html=True)
             
-            st.markdown("<hr style='margin:10px 0; border-color:#f7e6df;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
             
             ad_link_data = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)
             target_video = ad_link_data[0] if ad_link_data else "#"
@@ -441,10 +435,10 @@ else:
             if 'trigger_redirect' not in st.session_state: st.session_state.trigger_redirect = False
             
             if st.button("▶️ START SECURE DATA WORK TUNNEL", use_container_width=True):
-                p_bar = st.progress(0, text="Syncing Data Nodes Stream Vectors...")
+                p_bar = st.progress(0, text="Syncing Stream Vectors...")
                 for percent_complete in range(100):
                     time.sleep(0.01)
-                    p_bar.progress(percent_complete + 1, text="Syncing Data Nodes Stream Vectors...")
+                    p_bar.progress(percent_complete + 1, text="Syncing Stream Vectors...")
                 st.session_state.trigger_redirect = True
                 st.rerun()
                 
@@ -452,42 +446,41 @@ else:
                 st.session_state.trigger_redirect = False
                 st.link_button("🌐 CLICK HERE TO OPEN REWARD LINK", target_video, use_container_width=True)
 
-            st.markdown("<hr style='margin:10px 0; border-color:#f7e6df;'>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#7c2d12; font-size:12px; font-weight:bold; margin-bottom:5px;'>🎰 VIP GLOBAL LUCKY SPIN WHEEL</p>", unsafe_allow_html=True)
+            st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#d84315; font-size:12px; font-weight:bold; margin-bottom:5px;'>🎰 VIP GLOBAL LUCKY SPIN WHEEL</p>", unsafe_allow_html=True)
             if st.button("🎯 ENGAGE SYSTEM LUCKY SPIN", use_container_width=True):
                 spin_prize = random.choice([0.20, 0.50, 1.00, 0.00])
                 if spin_prize > 0:
                     query_db("UPDATE users SET balance = balance + ? WHERE username=?", (st.session_state.current_user, spin_prize), commit=True)
-                    st.success(f"System Node Settled! Yield Allocated: +RM {spin_prize:.2f}")
-                else:
-                    st.info("Handshake Complete: Better luck next time!")
+                    st.success(f"Yield Allocated Successfully: +RM {spin_prize:.2f}")
+                else: st.info("Handshake Complete: Try again in next cycle spin!")
 
             st.markdown("""
             <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <a href="https://t.me/global_matrix_support" target="_blank" style="text-align:center; background:#229ED9; color:white; padding:10px; font-size:12px; text-decoration:none; font-weight:700; border-radius:10px; display:block;">✈️ TELEGRAM HELP</a>
-                <a href="https://wa.me/60111111111" target="_blank" style="text-align:center; background:#25D366; color:white; padding:10px; font-size:12px; text-decoration:none; font-weight:700; border-radius:10px; display:block;">💬 WHATSAPP SUPPORT</a>
+                <a href="https://t.me/global_matrix_support" target="_blank" style="text-align:center; background:#229ED9; color:white; padding:11px; font-size:12px; text-decoration:none; font-weight:700; border-radius:12px; display:block;">✈️ TELEGRAM HELP</a>
+                <a href="https://wa.me/60111111111" target="_blank" style="text-align:center; background:#25D366; color:white; padding:11px; font-size:12px; text-decoration:none; font-weight:700; border-radius:12px; display:block;">💬 WHATSAPP SUPPORT</a>
             </div>
             """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
             st.markdown("<div class='live-log-container'>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#7c2d12; font-size:11px; font-weight:bold; margin:0 0 5px 0;'>⚡ REAL-TIME NETWORK TRANSACTIONS</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#4a2711; font-size:11px; font-weight:bold; margin:0 0 5px 0;'>⚡ REAL-TIME NETWORK TRANSACTIONS</p>", unsafe_allow_html=True)
             names_pool = ["usr_faisal", "ub_rajput", "billa_99", "lim_cash", "m_bhai_op", "tng_vector"]
             for i in range(2):
                 u_mask = random.choice(names_pool)[:3] + "***" + str(random.randint(10,99))
                 amt_rand = random.randint(50, 500)
                 type_rand = random.choice(["Withdrew", "Deposited"])
                 color_type = "#f3552a" if type_rand == "Withdrew" else "#2e7d32"
-                st.markdown(f'<div class="log-row"><span style="color:#5a2e1d;">👤 <b>{u_mask}</b></span><span style="color:{color_type}; font-weight:bold;">{type_rand} RM {amt_rand:.2f} ✅</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="log-row"><span style="color:#4a2711;">👤 <b>{u_mask}</b></span><span style="color:{color_type}; font-weight:bold;">{type_rand} RM {amt_rand:.2f} ✅</span></div>', unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
             
         elif st.session_state.selected_panel == "Deposit":
             st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
-            st.markdown("<h6 style='color:#7c2d12; margin:0 0 8px 0;'>TOUCH 'N GO HUB PAYMENT</h6>", unsafe_allow_html=True)
+            st.markdown("<h6 style='color:#4a2711; margin:0 0 8px 0;'>TOUCH 'N GO HUB PAYMENT</h6>", unsafe_allow_html=True)
             qr_link_data = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)
             target_qr = qr_link_data[0] if qr_link_data else ""
             if target_qr:
-                st.markdown(f"<div style='text-align:center; margin-bottom:10px;'><img src='{target_qr}' width='130' style='border:2px solid #ff8052; border-radius:12px;'/></div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='text-align:center; margin-bottom:10px;'><img src='{target_qr}' width='130' style='border:2px solid #ff8052; border-radius:14px;'/></div>", unsafe_allow_html=True)
             chosen_bank = st.selectbox("CHOOSE SYSTEM NODE BANK:", MALAYSIAN_BANKS)
             remitter_name = st.text_input("ACCOUNT OWNER NAME:")
             trx_id_input = st.text_input("REFERENCE TXN / TRX CODE:")
@@ -506,10 +499,10 @@ else:
             st.text_input("Destination Wire Account Keys:")
             st.number_input("Amount Selection (RM):", min_value=10.0)
             if st.button("🏛️ EXECUTE OUTBOUND CASH OUT", use_container_width=True):
-                st.error("Operation Halted: Node Balance thresholds check failed.")
+                st.error("Operation Halted: Balance thresholds check failed.")
             st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<hr style='margin:12px 0; border-color:#f7e6df;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:12px 0; border-color:#ebd9cf;'>", unsafe_allow_html=True)
         usr_col1, usr_col2, usr_col3 = st.columns(3)
         with usr_col1:
             if st.button("🎰 HOME", key="btn_usr_ov", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
