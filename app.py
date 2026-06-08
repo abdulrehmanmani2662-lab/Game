@@ -87,7 +87,6 @@ def init_db():
         )
     """)
     
-    # Structural updates for 3-tier tracking
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
     except sqlite3.OperationalError:
@@ -152,6 +151,35 @@ def credit_multi_tier_commissions(user, base_reward):
     if not tier_3_parent or not tier_3_parent[0]: return
     p3 = tier_3_parent[0]
     query_db("UPDATE users SET balance = balance + ? WHERE username=?", (base_reward * 0.02, p3), commit=True)
+
+# --- ADVANCED DYNAMIC 1,000+ USER FOMO TICKER GENERATOR ---
+def generate_unlimited_fomo_pool(count=15):
+    first_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','r','s','t','u','v','w','x','y','z','k','m','n']
+    mid_chars = ['x','z','y','v','w','9','8','7','5','3','2','a','b','s','p']
+    last_chars = ['1','2','3','4','5','6','7','8','9','0','k','m','x','s']
+    domains = ['@gmail.com', '@yahoo.com', '@hotmail.com', '@icloud.com']
+    
+    methods = ["Touch 'n Go eWallet", "Maybank", "CIMB Bank", "USDT (TRC-20)", "Public Bank", "RHB Bank"]
+    
+    pool = []
+    for _ in range(count):
+        # Generate random unique-looking username mask (e.g. s***8@gmail.com)
+        mask_user = f"{random.choice(first_chars)}***{random.choice(mid_chars)}{random.choice(last_chars)}{random.choice(domains)}"
+        event_type = random.choice(["withdraw", "deposit", "vip", "bonus"])
+        
+        if event_type == "withdraw":
+            amount = random.choice([50, 80, 120, 250, 320, 450, 600, 750, 900, 1200, 1500])
+            pool.append(f"🔥 User {mask_user} just withdrew RM {amount:.2f} via {random.choice(methods)}!")
+        elif event_type == "deposit":
+            amount = random.choice([100, 200, 300, 500, 1000, 1500, 2000, 2500, 3000])
+            pool.append(f"⚡ System Node: User {mask_user} loaded RM {amount:.2f} deposit via {random.choice(methods)}!")
+        elif event_type == "vip":
+            lvl = random.choice([2, 3])
+            pool.append(f"🎉 VIP Rank Matrix: User {mask_user} successfully unlocked SVIP LEVEL {lvl}!")
+        else:
+            pool.append(f"🎁 Network Reward: User {mask_user} received RM 40.00 Referral Joining Bonus!")
+            
+    return pool
 
 # --- REFRESH LOGOUT AUTO FIX ---
 if 'logged_in' not in st.session_state:
@@ -237,14 +265,8 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# LIVE PAYOUT FOMO DISPLAY ENGINE
-fomo_pool = [
-    "🔥 User m***9@gmail.com just withdrew RM 450.00 via Touch 'n Go!",
-    "🎉 New VIP Level 2 unlocked by user r***x@gmail.com!",
-    "🔥 User a***1@gmail.com instantly claimed RM 50.00 Ad bounty!",
-    "⚡ Crypto Route: User t***9 credited RM 1,200.00 via USDT TRC-20!",
-    "🎉 Welcome Bonus Loaded: User p***a received RM 40.00 referral bounty!"
-]
+# CALLING THE 1,000+ HIGHLY DYNAMIC FOMO LIVE FEED BAR
+fomo_pool = generate_unlimited_fomo_pool(count=15)
 st.markdown(f"""
     <div class="fomo-ticker-container">
         <marquee class="fomo-text" scrollamount="4">{ ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '.join(fomo_pool) }</marquee>
@@ -329,7 +351,7 @@ if not st.session_state.logged_in:
                 if st.session_state.temp_reg_ref:
                     valid_ref = query_db("SELECT username FROM users WHERE ref_code=?", (st.session_state.temp_reg_ref,), one=True)
                     if valid_ref:
-                        starting_bonus += 40.00  # Grant RM 40 Referral Reward System
+                        starting_bonus += 40.00  
                         parent_user = valid_ref[0]
                 
                 query_db("INSERT INTO users VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT), ?)", 
@@ -407,7 +429,6 @@ else:
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
             if not pending_items: st.info("Verification queue empty.")
             else:
-                # COMPREHENSIVE FULL-DETAIL ADMIN VERIFICATION PANEL
                 for item in pending_items:
                     st.markdown(f"""
                     <div style='background-color:#12131a; color:#ffffff; padding:18px; border-radius:14px; border:2px solid #ff0055; margin-bottom:12px; box-shadow: 0 0 10px rgba(255,0,85,0.3);'>
@@ -507,7 +528,6 @@ else:
             if already_spun:
                 st.markdown("<div style='color:#00f0ff; font-weight:bold; text-align:center; font-family:\"Rajdhani\"; font-size:14px; margin-bottom:15px;'>✅ TODAY'S LUCKY SPIN COMPLETED</div>", unsafe_allow_html=True)
             else:
-                # Dynamic Wheel Canvas injection engine
                 wheel_prizes = [0.50, 2.00, 0.10, 5.00, 0.20, 10.00, 1.50, 0.00]
                 if 'wheel_triggered' not in st.session_state: st.session_state.wheel_triggered = False
                 
@@ -548,7 +568,7 @@ else:
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
-            st.markdown("<p style='font-family:\"Orbitron\"; font-weight:900; font-size:13px; color:#ff0055;'>🎁 𝗙𝗿𝗲𝗲 𝗿𝗲𝘄𝗮𝗿𝗱𝘀 CHECK-IN</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-family:\"Orbitron\"; font-weight:900; font-size:13px; color:#ff0055;'>🎁 👑 𝗙𝗿𝗲𝗲 𝗿𝗲𝘄𝗮𝗿𝗱𝘀 CHECK-IN</p>", unsafe_allow_html=True)
             if not has_approved_deposit:
                 st.markdown("<div style='color:#ff0055; font-weight:bold; font-size:14px; margin-left:5px; border:1px solid #ff0055; padding:8px; border-radius:8px; text-align:center;'>🔒 LOCKED: First deposit must be approved by admin to activate check-in.</div>", unsafe_allow_html=True)
             else:
@@ -592,7 +612,7 @@ else:
                             if st.button(f"💰 CLAIM AD {i} REWARD", key=f"clk_ad{i}", use_container_width=True):
                                 query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
                                 query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
-                                credit_multi_tier_commissions(st.session_state.current_user, ad_rew) # Run 3-Tier Commission
+                                credit_multi_tier_commissions(st.session_state.current_user, ad_rew) 
                                 st.session_state[watch_state_key] = False
                                 st.success(f"Bounty Linked: +RM {ad_rew:.2f}")
                                 st.rerun()
