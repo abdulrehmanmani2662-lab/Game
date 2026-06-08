@@ -46,7 +46,6 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         print(f"SMTP Critical Error: {e}")
         return False
 
-# Touch 'n Go added directly to banks list as requested
 MALAYSIAN_BANKS = [
     "Touch 'n Go eWallet", "Maybank (Malayan Banking Berhad)", "CIMB Bank Berhad", 
     "Public Bank Berhad", "RHB Bank Berhad", "Hong Leong Bank Berhad"
@@ -131,7 +130,7 @@ if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = None
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
 
-# --- BRIGHTSCOUT GREEN THEME DESIGN ENGINE (MIXED RE-DESIGN) ---
+# --- DESIGN ENGINE ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
@@ -143,7 +142,7 @@ st.markdown("""
     }
     
     .running-header-container { 
-        width: 100%; overflow: hidden; background: linear-gradient(90deg, #02353C, #2EAF7D); padding: 12px 0; margin-bottom: 20px; text-align: center; border-radius: 4px;
+        width: 100%; background: linear-gradient(90deg, #02353C, #2EAF7D); padding: 12px 0; margin-bottom: 20px; border-radius: 4px;
     }
     .running-text { font-size: 14px; font-weight: 800; color: #ffffff; letter-spacing: 1px; }
     
@@ -158,14 +157,12 @@ st.markdown("""
     
     .announcement-box { background: #ffffff; border: 1.5px dashed #2EAF7D; border-radius: 18px; padding: 15px; font-size: 13px; color: #02353C !important; font-weight: 700; margin-bottom: 15px; text-align: center; line-height: 1.4; }
     
-    /* NEW MIXED GREEN WALLET BOX */
     .metric-card-box { 
         background: linear-gradient(135deg, #02353C 0%, #2EAF7D 100%); 
         border-radius: 28px; padding: 30px 20px; text-align: center; margin-bottom: 15px; 
         box-shadow: 0 8px 20px rgba(2, 53, 60, 0.25); color: #ffffff !important;
     }
     
-    /* THE WHITE BOX UNDER THE BALANCE BLOCK */
     .international-banner {
         background-color: #ffffff !important;
         color: #02353C !important;
@@ -179,7 +176,6 @@ st.markdown("""
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     
-    /* GREEN VIP CARD BLOCKS */
     .vip-card-thick {
         background-color: #ffffff;
         border: 3px solid #449342; 
@@ -188,7 +184,6 @@ st.markdown("""
         margin: 15px 0;
     }
     
-    /* GREEN MULTI-AD BLOCKS STYLE */
     .ad-segment-block {
         background: #ffffff;
         border: 3.5px solid #2EAF7D; 
@@ -202,8 +197,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# FIXED: Added scrolling marquee effect to make the line run across the screen dynamically
 random_online = random.randint(1650, 1800)
-st.markdown(f'<div class="running-header-container"><div class="running-text">OPERATORS ONLINE: {random_online} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 👑 GLOBAL MATRIX</div></div>', unsafe_allow_html=True)
+st.markdown(f"""
+    <div class="running-header-container">
+        <marquee class="running-text" scrollamount="6">
+            OPERATORS ONLINE: {random_online} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 👑 GLOBAL MATRIX DIRECT PORTAL ACTIVE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CURRENT TRADING MODE ONLINE
+        </marquee>
+    </div>
+""", unsafe_allow_html=True)
 
 # --- OTP FRAGMENT ENGINE ---
 @st.fragment
@@ -271,7 +273,6 @@ if not st.session_state.logged_in:
                 st.rerun()
         render_otp_countdown_engine()
         
-    # --- FIXED: RESET PASSWORD OPTION ADDED HERE ---
     elif st.session_state.auth_mode == "ResetPassword":
         st.markdown("<h5 style='text-align:center;'>🔑 RECOVER ACCESS KEY</h5>", unsafe_allow_html=True)
         reset_email = st.text_input("Target Email Address:")
@@ -392,7 +393,7 @@ else:
 
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
 
-        # 1. BALANCE CONTAINER (GREEN GRADIENT FROM THEME)
+        # Balance block
         st.markdown(f"""
         <div class="metric-card-box">
             <p style="font-size:12px; color:#C1F6ED; margin:0; font-weight:700; letter-spacing:0.5px;">CURRENT WALLET BALANCE</p>
@@ -401,7 +402,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-        # 2. WHITE BANNER
+        # White banner
         st.markdown('<div class="international-banner">International Earning website</div>', unsafe_allow_html=True)
 
         if st.session_state.selected_panel == "Overview":
@@ -530,7 +531,6 @@ else:
                     
         elif st.session_state.selected_panel == "Cashout":
             st.markdown("<h5 style='color:#02353C;'>EXECUTE VAULT DISPATCHED WITHDRAWALS</h5>", unsafe_allow_html=True)
-            # FIXED: Touch 'n Go is included here as requested by using full list
             st.selectbox("Receiving Target Bank:", MALAYSIAN_BANKS)
             st.text_input("Account/Wallet Number:")
             st.number_input("Payout Settle Value (RM):", min_value=10.0)
