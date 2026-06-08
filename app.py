@@ -22,12 +22,12 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         
         body = f"""
         <html>
-        <body style="font-family: Arial, sans-serif; background-color: #fbf4ee; padding: 20px;">
-            <div style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 6px 18px rgba(183,28,28,0.25);">
+        <body style="font-family: Arial, sans-serif; background-color: #C1F6ED; padding: 20px;">
+            <div style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, #02353C 0%, #449342 100%); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 6px 18px rgba(2,53,60,0.25);">
                 <h2 style="color: #ffffff; margin-bottom: 10px; font-weight: 900;">GLOBAL MATRIX</h2>
                 <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.3); margin-bottom: 20px;">
                 <p style="color: #ffffff; font-size: 16px;">Your Verification Code for {purpose} is:</p>
-                <div style="font-size: 32px; font-weight: bold; color: #b71c1c; letter-spacing: 4px; padding: 12px; background: #ffffff; border-radius: 10px; margin: 20px 0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size: 32px; font-weight: bold; color: #02353C; letter-spacing: 4px; padding: 12px; background: #ffffff; border-radius: 10px; margin: 20px 0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
                     {otp_code}
                 </div>
                 <p style="color: #ffffff; font-size: 12px; opacity: 0.8;">Please secure your verification credentials.</p>
@@ -46,6 +46,7 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         print(f"SMTP Critical Error: {e}")
         return False
 
+# Touch 'n Go added directly to banks list as requested
 MALAYSIAN_BANKS = [
     "Touch 'n Go eWallet", "Maybank (Malayan Banking Berhad)", "CIMB Bank Berhad", 
     "Public Bank Berhad", "RHB Bank Berhad", "Hong Leong Bank Berhad"
@@ -130,45 +131,45 @@ if 'reset_step' not in st.session_state: st.session_state.reset_step = 1
 if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = None
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
 
-# --- EXACT MATCH DESIGN ENGINE (CREAMY & DARK RED THEME) ---
+# --- BRIGHTSCOUT GREEN THEME DESIGN ENGINE (MIXED RE-DESIGN) ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
         display: none !important; visibility: hidden !important;
     }
     html, body, .stApp { 
-        background-color: #faf0e6 !important;
-        color: #3e2723 !important;
+        background-color: #C1F6ED !important;
+        color: #02353C !important;
     }
     
     .running-header-container { 
-        width: 100%; overflow: hidden; background: linear-gradient(90deg, #b71c1c, #d32f2f); padding: 12px 0; margin-bottom: 20px; text-align: center; border-radius: 4px;
+        width: 100%; overflow: hidden; background: linear-gradient(90deg, #02353C, #2EAF7D); padding: 12px 0; margin-bottom: 20px; text-align: center; border-radius: 4px;
     }
     .running-text { font-size: 14px; font-weight: 800; color: #ffffff; letter-spacing: 1px; }
     
-    .brand-title { text-align: center; font-size: 32px; font-weight: 900; color: #b71c1c; margin-bottom: 20px; letter-spacing: 1px; }
+    .brand-title { text-align: center; font-size: 32px; font-weight: 900; color: #02353C; margin-bottom: 20px; letter-spacing: 1px; }
     [data-testid="stVerticalBlock"] { max-width: 450px !important; margin: 0 auto !important; padding: 0px !important; }
     
     div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] { 
-        background-color: #ffffff !important; color: #1a0c02 !important; border: 1.5px solid #d7ccc8 !important; border-radius: 12px !important; font-weight: 700 !important; padding: 10px !important;
+        background-color: #ffffff !important; color: #02353C !important; border: 1.5px solid #2EAF7D !important; border-radius: 12px !important; font-weight: 700 !important; padding: 10px !important;
     }
     
-    div.stButton > button { background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%) !important; color: #ffffff !important; font-size: 15px !important; font-weight: 800; border-radius: 25px !important; width: 100% !important; padding: 12px !important; border: none !important; box-shadow: 0 4px 12px rgba(183, 28, 28, 0.2); }
+    div.stButton > button { background: linear-gradient(135deg, #02353C 0%, #449342 100%) !important; color: #ffffff !important; font-size: 15px !important; font-weight: 800; border-radius: 25px !important; width: 100% !important; padding: 12px !important; border: none !important; box-shadow: 0 4px 12px rgba(2, 53, 60, 0.2); }
     
-    .announcement-box { background: #ffebee; border: 1.5px dashed #ef5350; border-radius: 18px; padding: 15px; font-size: 13px; color: #b71c1c !important; font-weight: 700; margin-bottom: 15px; text-align: center; line-height: 1.4; }
+    .announcement-box { background: #ffffff; border: 1.5px dashed #2EAF7D; border-radius: 18px; padding: 15px; font-size: 13px; color: #02353C !important; font-weight: 700; margin-bottom: 15px; text-align: center; line-height: 1.4; }
     
-    /* MAIN WALLET BOX - SAME AS SCREENSHOT */
+    /* NEW MIXED GREEN WALLET BOX */
     .metric-card-box { 
-        background: linear-gradient(135deg, #7f0000 0%, #b71c1c 100%); 
+        background: linear-gradient(135deg, #02353C 0%, #2EAF7D 100%); 
         border-radius: 28px; padding: 30px 20px; text-align: center; margin-bottom: 15px; 
-        box-shadow: 0 8px 20px rgba(127, 0, 0, 0.25); color: #ffffff !important;
+        box-shadow: 0 8px 20px rgba(2, 53, 60, 0.25); color: #ffffff !important;
     }
     
     /* THE WHITE BOX UNDER THE BALANCE BLOCK */
     .international-banner {
         background-color: #ffffff !important;
-        color: #2b170c !important;
-        border: 2px solid #b71c1c !important;
+        color: #02353C !important;
+        border: 2px solid #2EAF7D !important;
         border-radius: 25px !important;
         padding: 12px 10px !important;
         text-align: center !important;
@@ -178,26 +179,26 @@ st.markdown("""
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     
-    /* BOLD THICK RANG-BRANG VIP PORFOLIOS */
+    /* GREEN VIP CARD BLOCKS */
     .vip-card-thick {
         background-color: #ffffff;
-        border: 3px solid #b71c1c; 
+        border: 3px solid #449342; 
         border-radius: 20px; 
         padding: 18px; 
         margin: 15px 0;
     }
     
-    /* MULTI-AD BLOCKS STYLE */
+    /* GREEN MULTI-AD BLOCKS STYLE */
     .ad-segment-block {
         background: #ffffff;
-        border: 3.5px solid #b71c1c; 
+        border: 3.5px solid #2EAF7D; 
         border-radius: 24px; 
         padding: 15px; 
         margin: 12px 0; 
         text-align: center;
     }
-    .ad-title-text { font-size: 16px; font-weight: 800; color: #b71c1c; }
-    .ad-reward-text { font-size: 13px; font-weight: 700; color: #4e342e; }
+    .ad-title-text { font-size: 16px; font-weight: 800; color: #02353C; }
+    .ad-reward-text { font-size: 13px; font-weight: 700; color: #449342; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -212,7 +213,7 @@ def render_otp_countdown_engine():
         remaining = max(0, 120 - int(elapsed))
         if remaining > 0:
             mins, secs = divmod(remaining, 60)
-            st.markdown(f"<div style='text-align:center; color:#b71c1c; padding:5px; font-weight:bold;'>⏳ Resend Code in: {mins:02d}:{secs:02d}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align:center; color:#02353C; padding:5px; font-weight:bold;'>⏳ Resend Code in: {mins:02d}:{secs:02d}</div>", unsafe_allow_html=True)
             time.sleep(1)
             st.rerun()
 
@@ -269,13 +270,48 @@ if not st.session_state.logged_in:
                 st.session_state.auth_mode = "Login"
                 st.rerun()
         render_otp_countdown_engine()
+        
+    # --- FIXED: RESET PASSWORD OPTION ADDED HERE ---
+    elif st.session_state.auth_mode == "ResetPassword":
+        st.markdown("<h5 style='text-align:center;'>🔑 RECOVER ACCESS KEY</h5>", unsafe_allow_html=True)
+        reset_email = st.text_input("Target Email Address:")
+        
+        if st.session_state.reset_step == 1:
+            if st.button("SEND CORE SYNC CODE", use_container_width=True):
+                if reset_email.strip():
+                    user_exist = query_db("SELECT username FROM users WHERE username=?", (reset_email.strip(),), one=True)
+                    if user_exist:
+                        generated_otp = str(random.randint(102938, 984731))
+                        if send_verification_email(reset_email.strip(), generated_otp, purpose="Password Recovery"):
+                            st.session_state.recovery_target_user = reset_email.strip()
+                            st.session_state.recovery_otp = generated_otp
+                            st.session_state.reset_step = 2
+                            st.success("📩 OTP code sent to your email!")
+                            st.rerun()
+                    else:
+                        st.error("This email is not registered.")
+                        
+        elif st.session_state.reset_step == 2:
+            typed_otp = st.text_input("Enter 6-Digit Code:")
+            new_pass = st.text_input("New System Password:", type="password")
+            if st.button("RESET IDENTITY VAULT", use_container_width=True):
+                if typed_otp.strip() == st.session_state.recovery_otp:
+                    query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.recovery_target_user), commit=True)
+                    st.success("Password changed successfully! Please login.")
+                    st.session_state.auth_mode = "Login"
+                    st.session_state.reset_step = 1
+                    st.rerun()
+                else:
+                    st.error("Incorrect Sync Code.")
 
-    st.markdown("<hr style='border-color:#d7ccc8;'>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
+    st.markdown("<hr style='border-color:#2EAF7D;'>", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
     with c1: 
         if st.button("🔑 LOGIN"): st.session_state.auth_mode = "Login"; st.rerun()
     with c2: 
         if st.button("📝 JOIN"): st.session_state.auth_mode = "Register"; st.rerun()
+    with c3:
+        if st.button("🔄 RESET"): st.session_state.auth_mode = "ResetPassword"; st.session_state.reset_step = 1; st.rerun()
 
 # --- LOGGED IN ROUTINE PORTAL ---
 else:
@@ -296,14 +332,14 @@ else:
     tng_scanner_url = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)[0]
 
     if st.session_state.is_admin:
-        st.markdown("<h4 style='color:#b71c1c; text-align:center; font-weight:900;'>🛡️ SYSTEM CONTROL CENTRE</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='color:#02353C; text-align:center; font-weight:900;'>🛡️ SYSTEM CONTROL CENTRE</h4>", unsafe_allow_html=True)
         
         if st.session_state.selected_panel == "Pending Requests":
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount FROM deposits WHERE status='Pending'")
             if not pending_items: st.info("Verification operational queue empty.")
             else:
                 for item in pending_items:
-                    st.markdown(f"<div style='background-color:#ffffff; padding:15px; border-radius:14px; border:2px solid #b71c1c; margin-bottom:10px;'>User: {item[1]}<br>Bank: {item[2]}<br><b>RM {item[5]:.2f}</b></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='background-color:#ffffff; padding:15px; border-radius:14px; border:2px solid #02353C; margin-bottom:10px;'>User: {item[1]}<br>Bank: {item[2]}<br><b>RM {item[5]:.2f}</b></div>", unsafe_allow_html=True)
                     b1, b2 = st.columns(2)
                     with b1:
                         if st.button("✅ APPROVE", key=f"a_{item[0]}"):
@@ -320,7 +356,7 @@ else:
             new_ann = st.text_area("System Alert Notification Line:", value=announcement_text)
             new_qr_url = st.text_input("Touch 'N Go Scan Code Image Link URL:", value=tng_scanner_url)
             
-            st.markdown("<p style='color:#b71c1c; font-weight:900; margin-top:15px;'>🎬 MULTI-AD TRAFFIC REDIRECTION SETTINGS</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#02353C; font-weight:900; margin-top:15px;'>🎬 MULTI-AD TRAFFIC REDIRECTION SETTINGS</p>", unsafe_allow_html=True)
             nad1_url = st.text_input("Ad Segment 1 Web Video Link:", value=ad1_url)
             nad1_rew = st.text_input("Ad Segment 1 Payout Pay (RM):", value=str(ad1_reward))
             
@@ -330,7 +366,7 @@ else:
             nad3_url = st.text_input("Ad Segment 3 Web Video Link:", value=ad3_url)
             nad3_rew = st.text_input("Ad Segment 3 Payout Pay (RM):", value=str(ad3_reward))
             
-            if st.button("GSAVE LINK CONFIGURATIONS NOW", use_container_width=True):
+            if st.button("SAVE LINK CONFIGURATIONS NOW", use_container_width=True):
                 query_db("UPDATE system_config SET value=? WHERE key='system_announcement'", (new_ann.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='tng_scanner_url'", (new_qr_url.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='ad1_url'", (nad1_url.strip(),), commit=True)
@@ -356,16 +392,16 @@ else:
 
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
 
-        # 1. BALANCE CONTAINER (RED GRADIENT)
+        # 1. BALANCE CONTAINER (GREEN GRADIENT FROM THEME)
         st.markdown(f"""
         <div class="metric-card-box">
-            <p style="font-size:12px; color:#ffcdd2; margin:0; font-weight:700; letter-spacing:0.5px;">CURRENT WALLET BALANCE</p>
+            <p style="font-size:12px; color:#C1F6ED; margin:0; font-weight:700; letter-spacing:0.5px;">CURRENT WALLET BALANCE</p>
             <h1 style="font-size:36px; font-weight:900; color:#ffffff; margin:5px 0;">RM {wallet_bal:,.2f}</h1>
-            <p style="font-size:12px; color:#ffd700; margin:0; font-weight:800;">CURRENT RANK: {level_tag}</p>
+            <p style="font-size:12px; color:#3FD0C9; margin:0; font-weight:800;">CURRENT RANK: {level_tag}</p>
         </div>
         """, unsafe_allow_html=True)
 
-        # 2. THE CHOSEN WHITE BANNER LABELED IN PROMPT
+        # 2. WHITE BANNER
         st.markdown('<div class="international-banner">International Earning website</div>', unsafe_allow_html=True)
 
         if st.session_state.selected_panel == "Overview":
@@ -375,51 +411,51 @@ else:
             
             st.markdown("<p style='font-weight:800; font-size:14px; margin-bottom:2px;'>🎁 DAILY IDENTITY BOUNTY CHECK-IN</p>", unsafe_allow_html=True)
             if already_checked: 
-                st.markdown("<p style='color:#2e7d32; font-weight:bold; font-size:13px; margin-left:5px;'>✅ CLAIMED SUCCESSFUL</p>", unsafe_allow_html=True)
+                st.markdown("<p style='color:#449342; font-weight:bold; font-size:13px; margin-left:5px;'>✅ CLAIMED SUCCESSFUL</p>", unsafe_allow_html=True)
             else:
                 if st.button("CLAIM TODAY'S REWARD", key="claim_bonus"):
                     query_db("INSERT INTO checkins VALUES (?, ?)", (st.session_state.current_user, today_date), commit=True)
                     query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
                     st.rerun()
 
-            st.markdown("<hr style='border-color:#d7ccc8; margin:15px 0;'>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#b71c1c; font-size:15px; font-weight:900; margin-bottom:5px;'>📊 DESIGN MATRIX LEVEL INVESTMENT PORTFOLIOS</p>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#2EAF7D; margin:15px 0;'>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#02353C; font-size:15px; font-weight:900; margin-bottom:5px;'>📊 DESIGN MATRIX LEVEL INVESTMENT PORTFOLIOS</p>", unsafe_allow_html=True)
             
             # SVIP LEVEL 1 CONTAINER
             st.markdown(f"""
             <div class="vip-card-thick">
                 <div style="display:flex; justify-content:space-between;">
-                    <span style="font-weight:900; color:#b71c1c; font-size:16px;">👑 {level_tag if 'LEVEL 1' in clean_level else 'SVIP LEVEL 1'}</span>
-                    <span style="color:#b71c1c; font-weight:800; font-size:15px;">Daily Base: RM {v1_inc:.2f}</span>
+                    <span style="font-weight:900; color:#02353C; font-size:16px;">👑 {level_tag if 'LEVEL 1' in clean_level else 'SVIP LEVEL 1'}</span>
+                    <span style="color:#449342; font-weight:800; font-size:15px;">Daily Base: RM {v1_inc:.2f}</span>
                 </div>
-                <div style="font-size:12px; color:#5d4037; font-weight:700; margin-top:4px;">Cost: Free Account Welcome Package</div>
+                <div style="font-size:12px; color:#02353C; font-weight:700; margin-top:4px;">Cost: Free Account Welcome Package</div>
             </div>
             """, unsafe_allow_html=True)
             
             # SVIP LEVEL 2 CONTAINER
             st.markdown(f"""
-            <div class="vip-card-thick" style="border-color: #1e88e5;">
+            <div class="vip-card-thick" style="border-color: #2EAF7D;">
                 <div style="display:flex; justify-content:space-between;">
-                    <span style="font-weight:900; color:#1e88e5; font-size:16px;">👑 SVIP LEVEL 2</span>
-                    <span style="color:#1e88e5; font-weight:800; font-size:15px;">Daily Base: RM {v2_inc:.2f}</span>
+                    <span style="font-weight:900; color:#02353C; font-size:16px;">👑 SVIP LEVEL 2</span>
+                    <span style="color:#2EAF7D; font-weight:800; font-size:15px;">Daily Base: RM {v2_inc:.2f}</span>
                 </div>
-                <div style="font-size:12px; color:#5d4037; font-weight:700; margin-top:4px;">Activation Target: RM {v2_req:.2f}</div>
+                <div style="font-size:12px; color:#02353C; font-weight:700; margin-top:4px;">Activation Target: RM {v2_req:.2f}</div>
             </div>
             """, unsafe_allow_html=True)
             
             # SVIP LEVEL 3 CONTAINER
             st.markdown(f"""
-            <div class="vip-card-thick" style="border-color: #2e7d32;">
+            <div class="vip-card-thick" style="border-color: #3FD0C9;">
                 <div style="display:flex; justify-content:space-between;">
-                    <span style="font-weight:900; color:#2e7d32; font-size:16px;">👑 SVIP LEVEL 3</span>
-                    <span style="color:#2e7d32; font-weight:800; font-size:15px;">Daily Base: RM {v3_inc:.2f}</span>
+                    <span style="font-weight:900; color:#02353C; font-size:16px;">👑 SVIP LEVEL 3</span>
+                    <span style="color:#3FD0C9; font-weight:800; font-size:15px;">Daily Base: RM {v3_inc:.2f}</span>
                 </div>
-                <div style="font-size:12px; color:#5d4037; font-weight:700; margin-top:4px;">Activation Target: RM {v3_req:.2f}</div>
+                <div style="font-size:12px; color:#02353C; font-weight:700; margin-top:4px;">Activation Target: RM {v3_req:.2f}</div>
             </div>
             """, unsafe_allow_html=True)
 
-            st.markdown("<hr style='border-color:#d7ccc8; margin:20px 0;'>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#b71c1c; font-size:16px; font-weight:900; text-align:center;'>🎬 DAILY SECURE MULTI-AD SEGMENTS</p>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#2EAF7D; margin:20px 0;'>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#02353C; font-size:16px; font-weight:900; text-align:center;'>🎬 DAILY SECURE MULTI-AD SEGMENTS</p>", unsafe_allow_html=True)
 
             # --- DYNAMIC AD BLOCK 1 ---
             st.markdown(f"""
@@ -429,7 +465,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
             ad1_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id='ad1' AND date=?", (st.session_state.current_user, today_date), one=True)
-            if ad1_watched: st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:800; text-align:center; margin-top:-5px;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
+            if ad1_watched: st.markdown("<p style='color:#449342; font-size:12px; font-weight:800; text-align:center; margin-top:-5px;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
             else:
                 if st.button("WATCH & CLAIM AD 1", key="clk_ad1", use_container_width=True):
                     query_db("INSERT INTO ad_logs VALUES (?, 'ad1', ?)", (st.session_state.current_user, today_date), commit=True)
@@ -441,13 +477,13 @@ else:
 
             # --- DYNAMIC AD BLOCK 2 ---
             st.markdown(f"""
-            <div class="ad-segment-block" style="border-color: #7b1fa2;">
-                <div class="ad-title-text" style="color: #7b1fa2;">📺 Ad Segment 2</div>
+            <div class="ad-segment-block" style="border-color: #2EAF7D;">
+                <div class="ad-title-text">📺 Ad Segment 2</div>
                 <div class="ad-reward-text">Watch Reward Earnings: <b>RM {ad2_reward:.2f}</b></div>
             </div>
             """, unsafe_allow_html=True)
             ad2_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id='ad2' AND date=?", (st.session_state.current_user, today_date), one=True)
-            if ad2_watched: st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:800; text-align:center; margin-top:-5px;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
+            if ad2_watched: st.markdown("<p style='color:#449342; font-size:12px; font-weight:800; text-align:center; margin-top:-5px;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
             else:
                 if st.button("WATCH & CLAIM AD 2", key="clk_ad2", use_container_width=True):
                     query_db("INSERT INTO ad_logs VALUES (?, 'ad2', ?)", (st.session_state.current_user, today_date), commit=True)
@@ -459,13 +495,13 @@ else:
 
             # --- DYNAMIC AD BLOCK 3 ---
             st.markdown(f"""
-            <div class="ad-segment-block" style="border-color: #ff6f00;">
-                <div class="ad-title-text" style="color: #ff6f00;">📺 Ad Segment 3</div>
+            <div class="ad-segment-block" style="border-color: #3FD0C9;">
+                <div class="ad-title-text">📺 Ad Segment 3</div>
                 <div class="ad-reward-text">Watch Reward Earnings: <b>RM {ad3_reward:.2f}</b></div>
             </div>
             """, unsafe_allow_html=True)
             ad3_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id='ad3' AND date=?", (st.session_state.current_user, today_date), one=True)
-            if ad3_watched: st.markdown("<p style='color:#2e7d32; font-size:12px; font-weight:800; text-align:center; margin-top:-5px;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
+            if ad3_watched: st.markdown("<p style='color:#449342; font-size:12px; font-weight:800; text-align:center; margin-top:-5px;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
             else:
                 if st.button("WATCH & CLAIM AD 3", key="clk_ad3", use_container_width=True):
                     query_db("INSERT INTO ad_logs VALUES (?, 'ad3', ?)", (st.session_state.current_user, today_date), commit=True)
@@ -481,7 +517,7 @@ else:
         elif st.session_state.selected_panel == "Deposit":
             st.markdown("<h5>TOUCH 'N GO SECURE DISPATCH</h5>", unsafe_allow_html=True)
             if tng_scanner_url:
-                st.markdown(f"<div style='text-align:center; margin-bottom:15px;'><img src='{tng_scanner_url}' width='140' style='border:3px solid #b71c1c; border-radius:16px;'/></div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='text-align:center; margin-bottom:15px;'><img src='{tng_scanner_url}' width='140' style='border:3px solid #02353C; border-radius:16px;'/></div>", unsafe_allow_html=True)
             chosen_bank = st.selectbox("SELECT BANK ROUTE:", MALAYSIAN_BANKS)
             remitter_name = st.text_input("SENDER HOLDER NAME:")
             trx_id_input = st.text_input("TRX CODE ID REFERENCE:")
@@ -493,14 +529,15 @@ else:
                     st.success("Verification parameters queued.")
                     
         elif st.session_state.selected_panel == "Cashout":
-            st.markdown("<h5 style='color:#b71c1c;'>EXECUTE VAULT DISPATCHED WITHDRAWALS</h5>", unsafe_allow_html=True)
-            st.selectbox("Receiving Target Bank:", MALAYSIAN_BANKS[1:])
-            st.text_input("Account Number:")
+            st.markdown("<h5 style='color:#02353C;'>EXECUTE VAULT DISPATCHED WITHDRAWALS</h5>", unsafe_allow_html=True)
+            # FIXED: Touch 'n Go is included here as requested by using full list
+            st.selectbox("Receiving Target Bank:", MALAYSIAN_BANKS)
+            st.text_input("Account/Wallet Number:")
             st.number_input("Payout Settle Value (RM):", min_value=10.0)
             if st.button("INITIATE SETTLEMENT TRANSFERS", use_container_width=True):
                 st.error("Operation Halted: Compliance clearance failed.")
 
-        st.markdown("<hr style='border-color:#d7ccc8; margin:15px 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:#2EAF7D; margin:15px 0;'>", unsafe_allow_html=True)
         usr_col1, usr_col2, usr_col3 = st.columns(3)
         with usr_col1:
             if st.button("🎰 HOME", key="nav_home", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
