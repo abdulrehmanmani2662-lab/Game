@@ -119,8 +119,27 @@ def query_db(query, args=(), one=False, commit=False):
         st.error(f"🛡️ Database Operational Error: {e}")
         return None if one else []
 
-# --- SESSION STATES ---
-if 'logged_in' not in st.session_state: st.session_state.logged_in = False
+# --- SESSION STATES & REFRESH LOGOUT FIX ---
+if 'logged_in' not in st.session_state:
+    if 'persisted_user' in st.query_params:
+        p_user = st.query_params['persisted_user']
+        if p_user == "Mani":
+            st.session_state.logged_in = True
+            st.session_state.current_user = "Mani"
+            st.session_state.is_admin = True
+            st.session_state.selected_panel = "Pending Requests"
+        else:
+            record = query_db("SELECT username FROM users WHERE username=?", (p_user,), one=True)
+            if record:
+                st.session_state.logged_in = True
+                st.session_state.current_user = record[0]
+                st.session_state.is_admin = False
+                st.session_state.selected_panel = "Overview"
+            else:
+                st.session_state.logged_in = False
+    else:
+        st.session_state.logged_in = False
+
 if 'current_user' not in st.session_state: st.session_state.current_user = ""
 if 'is_admin' not in st.session_state: st.session_state.is_admin = False
 if 'selected_panel' not in st.session_state: st.session_state.selected_panel = "Overview"
@@ -128,6 +147,7 @@ if 'auth_mode' not in st.session_state: st.session_state.auth_mode = "Login"
 if 'reset_step' not in st.session_state: st.session_state.reset_step = 1  
 if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = None
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
+if 'temp_reg_ref' not in st.session_state: st.session_state.temp_reg_ref = ""
 
 # --- DEVILXD PREMIUM DARK & NEON GLOW ENGINE ---
 st.markdown("""
@@ -268,7 +288,7 @@ def render_otp_countdown_engine():
 
 # --- SECURITY SYSTEM CONTROL GATE ---
 if not st.session_state.logged_in:
-    st.markdown('<div class="brand-title">𝗚𝗟𝗢𝗕𝗔𝗟 𝗠𝗔𝗧𝗥𝗜𝗫</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-title">𝗚𝗟𝗢𝗕𝗔𝗟 <b>𝗠𝗔𝗧𝗥𝗜𝗫</b></div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
         st.markdown('<div class="brand-subtitle">SECURE TERMINAL LOGIN</div>', unsafe_allow_html=True)
@@ -282,6 +302,7 @@ if not st.session_state.logged_in:
                     st.session_state.current_user = "Mani"
                     st.session_state.is_admin = True
                     st.session_state.selected_panel = "Pending Requests"
+                    st.query_params['persisted_user'] = "Mani"
                     st.rerun()
                 else:
                     record = query_db("SELECT password, username FROM users WHERE username=?", (username.strip(),), one=True)
@@ -290,6 +311,7 @@ if not st.session_state.logged_in:
                         st.session_state.current_user = record[1]
                         st.session_state.is_admin = False
                         st.session_state.selected_panel = "Overview"
+                        st.query_params['persisted_user'] = record[1]
                         st.rerun()
                     else: st.error("Verification Failed. Invalid Identity Credentials.")
 
@@ -297,6 +319,7 @@ if not st.session_state.logged_in:
         st.markdown('<div class="brand-subtitle">CREATE NEW ACCOUNT</div>', unsafe_allow_html=True)
         reg_username = st.text_input("REGISTRATION EMAIL KEY:")
         reg_password = st.text_input("SYSTEM SECURITY CODE:", type="password")
+        reg_ref_code = st.text_input("INVITE / REFERRAL CODE (OPTIONAL):", placeholder="Enter code to get RM 40.00 bonus")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True):
             if reg_username.strip() and reg_password.strip():
@@ -307,6 +330,7 @@ if not st.session_state.logged_in:
                     if send_verification_email(reg_username.strip(), generated_otp):
                         st.session_state.temp_reg_user = reg_username.strip()
                         st.session_state.temp_reg_pass = reg_password.strip()
+                        st.session_state.temp_reg_ref = reg_ref_code.strip()
                         st.session_state.reg_verify_code = generated_otp
                         st.session_state.otp_start_time = time.time()
                         st.session_state.auth_mode = "VerifyNewAccount"
@@ -319,9 +343,16 @@ if not st.session_state.logged_in:
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
-                         (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
-                st.success("Registration Complete! Welcome bonus loaded.")
+                # RM 40 Invite Bonus Calculation Rule
+                starting_bonus = 2.00
+                if st.session_state.temp_reg_ref:
+                    valid_ref = query_db("SELECT username FROM users WHERE ref_code=?", (st.session_state.temp_reg_ref,), one=True)
+                    if valid_ref:
+                        starting_bonus += 40.00  # Give RM 40 bonus if registered via valid link
+                
+                query_db("INSERT INTO users VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
+                         (st.session_state.temp_reg_user, st.session_state.temp_reg_pass, starting_bonus), commit=True)
+                st.success(f"Registration Complete! RM {starting_bonus:.2f} balance loaded.")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
         render_otp_countdown_engine()
@@ -415,7 +446,6 @@ else:
             
             st.markdown("<p style='color:#00f0ff; font-weight:900; margin-top:15px;'>🎬 VIDEO LINK PLATFORM PARAMETERS (1 TO 5)</p>", unsafe_allow_html=True)
             
-            # Form 5 ad configurations dynamically
             ad_configs = {}
             for i in range(1, 6):
                 st.markdown(f"**⚙️ AD BLOCK SEGMENT {i}**")
@@ -433,7 +463,6 @@ else:
                 st.success("Layout configuration synced successfully!")
                 st.rerun()
 
-        # --- NEW OPTION: EDIT USER BALANCE ---
         elif st.session_state.selected_panel == "User Management":
             st.markdown("##### 👤 PLATFORM IDENTITY VAULT")
             target_user = st.text_input("ENTER TARGET USER EMAIL / USERNAME:")
@@ -467,29 +496,36 @@ else:
         # MAIN WALLET NEON MATRIX DISPLAY
         st.markdown(f"""
         <div class="metric-card-box">
-            <p style="font-family:'Orbitron', sans-serif; font-size:12px; color:#ff0055; margin:0; font-weight:900; letter-spacing:1px;">𝘾𝙐𝙍𝙍𝙀𝙉𝙏 𝙒𝘼𝙇𝙇𝙀𝙏 𝘽𝘼𝙇𝘼𝙉𝘾𝙀</p>
+            <p style="font-family:'Orbitron', sans-serif; font-size:12px; color:#ff0055; margin:0; font-weight:900; letter-spacing:1px;">𝘾𝙐𝙍𝙍𝙀𝙉🇹 𝙒𝘼𝙇𝙇𝙀🇹 𝘽𝘼𝙇𝘼𝙉𝘾𝙀</p>
             <h1 style="font-family:'Orbitron', sans-serif; font-size:38px; font-weight:900; color:#ffffff; margin:8px 0; letter-spacing:1px;">RM {wallet_bal:,.2f}</h1>
-            <p style="font-family:'Rajdhani', sans-serif; font-size:14px; color:#00f0ff; margin:0; font-weight:800; letter-spacing:0.5px;">Cᵤᵣᵣₑₙₜ ᵣₐₙₖ: {level_tag}</p>
+            <p style="font-family:'Rajdhani', sans-serif; font-size:14px; color:#00f0ff; margin:0; font-weight:800; letter-spacing:0.5px;">Cᵤᵣᵣₑₙₜ ᵣₐₙₖ: {level_tag} &nbsp;|&nbsp; Ref Code: {reference_hash}</p>
         </div>
         """, unsafe_allow_html=True)
+
+        # DEPOSIT GUARD SECURITY CHECK
+        has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
 
         if st.session_state.selected_panel == "Overview":
             today_date = time.strftime("%Y-%m-%d")
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
             st.markdown("<p style='font-family:\"Orbitron\"; font-weight:900; font-size:13px; color:#ff0055;'>🎁 𝗙𝗿𝗲𝗲 𝗿𝗲𝘄𝗮𝗿𝗱𝘀 CHECK-IN</p>", unsafe_allow_html=True)
-            if already_checked: 
-                st.markdown("<p style='color:#00f0ff; font-weight:bold; font-size:14px; margin-left:5px;'>✅ REWARD CLAIMED</p>", unsafe_allow_html=True)
+            
+            # Guard lock logic for checkin
+            if not has_approved_deposit:
+                st.markdown("<div style='color:#ff0055; font-weight:bold; font-size:14px; margin-left:5px; border:1px solid #ff0055; padding:8px; border-radius:8px; text-align:center;'>🔒 LOCKED: First deposit must be approved by admin to activate check-in.</div>", unsafe_allow_html=True)
             else:
-                if st.button("CLAIM TODAY'S REWARD", key="claim_bonus"):
-                    query_db("INSERT INTO checkins VALUES (?, ?)", (st.session_state.current_user, today_date), commit=True)
-                    query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
-                    st.rerun()
+                if already_checked: 
+                    st.markdown("<p style='color:#00f0ff; font-weight:bold; font-size:14px; margin-left:5px;'>✅ REWARD CLAIMED</p>", unsafe_allow_html=True)
+                else:
+                    if st.button("CLAIM TODAY'S REWARD", key="claim_bonus"):
+                        query_db("INSERT INTO checkins VALUES (?, ?)", (st.session_state.current_user, today_date), commit=True)
+                        query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
+                        st.rerun()
 
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
             st.markdown("<p style='color:#ffffff; font-family:\"Orbitron\"; font-size:14px; font-weight:900; margin-bottom:10px;'>📊 𝐎𝐧𝐥𝐢𝐧𝐞 𝐞𝐚𝐫𝐧𝐢𝐧𝐠</p>", unsafe_allow_html=True)
             
-            # --- CUSTOM BOARDS WITH PREMIUM NEON BORDERS ---
             st.markdown(f"""
             <div class="custom-matrix-box-cyan">
                 <div style="display:flex; justify-content:between; align-items:center;">
@@ -523,31 +559,46 @@ else:
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:20px 0;'>", unsafe_allow_html=True)
             st.markdown("<p style='color:#ffffff; font-family:\"Orbitron\"; font-size:14px; font-weight:900; text-align:center;'>🎬 SECURE TRAFFIC MULTI-AD SEGMENTS</p>", unsafe_allow_html=True)
 
-            # --- DYNAMIC 5 AD SLOTS RENDERER ---
-            for i in range(1, 6):
-                ad_url = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_url'", one=True)[0]
-                ad_rew = float(query_db(f"SELECT value FROM system_config WHERE key='ad{i}_reward'", one=True)[0])
-                
-                # Alternate coloring mechanics for professional theme layout
-                box_style = "custom-matrix-box-cyan" if i % 2 != 0 else "custom-matrix-box-pink"
-                val_color = "#00f0ff" if i % 2 != 0 else "#ff0055"
-                
-                st.markdown(f"""
-                <div class="{box_style}" style="text-align:center;">
-                    <div class="font-premium-title">𝗔𝗱 𝗦𝗲𝗴𝗺𝗲𝗻𝘁 𝗕𝗹𝗼𝗰𝗸 {i}</div>
-                    <div class="font-premium-value" style="margin-top:4px; color:{val_color};">Watch Reward: <b>RM {ad_rew:.2f}</b></div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                ad_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id=? AND date=?", (st.session_state.current_user, f'ad{i}', today_date), one=True)
-                if ad_watched: 
-                    st.markdown(f"<p style='color:{val_color}; font-family:\"Orbitron\"; font-size:12px; font-weight:900; text-align:center;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
-                else:
-                    if st.button(f"WATCH & CLAIM AD {i}", key=f"clk_ad{i}"):
-                        query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
-                        query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
-                        st.success(f"Bounty Linked: +RM {ad_rew:.2f}")
-                        st.link_button(f"VIEW VIDEO AD LINK SOURCE {i}", ad_url, use_container_width=True)
+            # Guard lock logic for all Ad blocks
+            if not has_approved_deposit:
+                st.markdown("<div style='text-align:center; color:#ff0055; font-family:\"Orbitron\"; font-weight:900; font-size:14px; padding:15px; border:2px solid #ff0055; border-radius:12px;'>🔒 ALL ADS LOCKED: Please make a deposit and wait for admin approval to activate traffic ads work.</div>", unsafe_allow_html=True)
+            else:
+                # --- DYNAMIC 5 AD SLOTS RENDERER (WATCH FIRST REWORK) ---
+                for i in range(1, 6):
+                    ad_url = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_url'", one=True)[0]
+                    ad_rew = float(query_db(f"SELECT value FROM system_config WHERE key='ad{i}_reward'", one=True)[0])
+                    
+                    box_style = "custom-matrix-box-cyan" if i % 2 != 0 else "custom-matrix-box-pink"
+                    val_color = "#00f0ff" if i % 2 != 0 else "#ff0055"
+                    
+                    st.markdown(f"""
+                    <div class="{box_style}" style="text-align:center;">
+                        <div class="font-premium-title">𝗔𝗱 𝗦𝗲𝗴𝗺𝗲𝗻𝘁 𝗕𝗹𝗼𝗰𝗸 {i}</div>
+                        <div class="font-premium-value" style="margin-top:4px; color:{val_color};">Watch Reward: <b>RM {ad_rew:.2f}</b></div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    ad_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id=? AND date=?", (st.session_state.current_user, f'ad{i}', today_date), one=True)
+                    if ad_watched: 
+                        st.markdown(f"<p style='color:{val_color}; font-family:\"Orbitron\"; font-size:12px; font-weight:900; text-align:center;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
+                    else:
+                        watch_state_key = f"unlocked_ad_{i}"
+                        
+                        # Sequential 2-Button Action Loop Engine
+                        if not st.session_state.get(watch_state_key, False):
+                            if st.button(f"📺 WATCH VIDEO AD {i}", key=f"btn_watch_{i}", use_container_width=True):
+                                st.session_state[watch_state_key] = True
+                                # Open link natively using Streamlit anchor flow helper trigger
+                                st.markdown(f'<a href="{ad_url}" target="_blank" style="text-decoration:none;"><button style="background-color:#00f0ff; color:black; width:100%; border:none; padding:10px; border-radius:8px; font-weight:bold; margin-bottom:10px;">👉 CLICK TO OPEN AD VIDEO STREAM</button></a>', unsafe_allow_html=True)
+                                st.rerun()
+                        else:
+                            st.link_button(f"🔗 RE-OPEN VIDEO AD {i} LINK", ad_url, use_container_width=True)
+                            if st.button(f"💰 CLAIM AD {i} REWARD (RM {ad_rew:.2f})", key=f"clk_ad{i}", use_container_width=True):
+                                query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
+                                query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
+                                st.session_state[watch_state_key] = False # reset ad lock tracker state
+                                st.success(f"Bounty Linked: +RM {ad_rew:.2f}")
+                                st.rerun()
 
             st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
             st.button("START SECURE DATA WORK TUNNEL", use_container_width=True)
@@ -588,4 +639,5 @@ else:
     if st.button("LOG OUT PORTAL", key="global_logout_btn", use_container_width=True):
         st.session_state.logged_in = False
         st.session_state.is_admin = False
+        st.query_params.clear()  # Clear local browser persistent routing sync params
         st.rerun()
