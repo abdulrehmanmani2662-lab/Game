@@ -268,7 +268,7 @@ def render_otp_countdown_engine():
 
 # --- SECURITY SYSTEM CONTROL GATE ---
 if not st.session_state.logged_in:
-    st.markdown('<div class="brand-title">👑 ░G░L░O░B░A░L░ ░M░A░T░R░I░X░</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-title">❯❯❯❯🖥️ 𝗚𝗟𝗢𝗕𝗔𝗟 𝗠𝗔𝗧𝗥𝗜𝗫 ᯤ💵</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
         st.markdown('<div class="brand-subtitle">SECURE TERMINAL LOGIN</div>', unsafe_allow_html=True)
@@ -277,9 +277,9 @@ if not st.session_state.logged_in:
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         if st.button("LOGIN", use_container_width=True):
             if username.strip() and password.strip():
-                if username.strip() == "admin" and password.strip() == "admin123":
+                if username.strip() == "admin" and password.strip() == "MANI2662":
                     st.session_state.logged_in = True
-                    st.session_state.current_user = "admin"
+                    st.session_state.current_user = "Mani"
                     st.session_state.is_admin = True
                     st.session_state.selected_panel = "Pending Requests"
                     st.rerun()
@@ -467,9 +467,9 @@ else:
         # MAIN WALLET NEON MATRIX DISPLAY
         st.markdown(f"""
         <div class="metric-card-box">
-            <p style="font-family:'Orbitron', sans-serif; font-size:12px; color:#ff0055; margin:0; font-weight:900; letter-spacing:1px;">CURRENT WALLET BALANCE</p>
+            <p style="font-family:'Orbitron', sans-serif; font-size:12px; color:#ff0055; margin:0; font-weight:900; letter-spacing:1px;">𝘾𝙐𝙍𝙍𝙀𝙉𝙏 𝙒𝘼𝙇𝙇𝙀𝙏 𝘽𝘼𝙇𝘼𝙉𝘾𝙀</p>
             <h1 style="font-family:'Orbitron', sans-serif; font-size:38px; font-weight:900; color:#ffffff; margin:8px 0; letter-spacing:1px;">RM {wallet_bal:,.2f}</h1>
-            <p style="font-family:'Rajdhani', sans-serif; font-size:14px; color:#00f0ff; margin:0; font-weight:800; letter-spacing:0.5px;">CURRENT RANK: {level_tag}</p>
+            <p style="font-family:'Rajdhani', sans-serif; font-size:14px; color:#00f0ff; margin:0; font-weight:800; letter-spacing:0.5px;">Cᵤᵣᵣₑₙₜ ᵣₐₙₖ: {level_tag}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -487,7 +487,7 @@ else:
                     st.rerun()
 
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#ffffff; font-family:\"Orbitron\"; font-size:14px; font-weight:900; margin-bottom:10px;'>📊 DESIGN MATRIX PLANS</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#ffffff; font-family:\"Orbitron\"; font-size:14px; font-weight:900; margin-bottom:10px;'>📊 𝐎𝐧𝐥𝐢𝐧𝐞 𝐞𝐚𝐫𝐧𝐢𝐧𝐠</p>", unsafe_allow_html=True)
             
             # --- CUSTOM BOARDS WITH PREMIUM NEON BORDERS ---
             st.markdown(f"""
@@ -534,7 +534,7 @@ else:
                 
                 st.markdown(f"""
                 <div class="{box_style}" style="text-align:center;">
-                    <div class="font-premium-title">Ad Segment Block {i}</div>
+                    <div class="font-premium-title">𝗔𝗱 𝗦𝗲𝗴𝗺𝗲𝗻𝘁 𝗕𝗹𝗼𝗰𝗸 {i}</div>
                     <div class="font-premium-value" style="margin-top:4px; color:{val_color};">Watch Reward: <b>RM {ad_rew:.2f}</b></div>
                 </div>
                 """, unsafe_allow_html=True)
