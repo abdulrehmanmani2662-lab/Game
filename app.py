@@ -11,7 +11,8 @@ st.set_page_config(page_title="GLOBAL NETWORK MATRIX", page_icon="👑", layout=
 
 # --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION ---
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
-SENDER_APP_PASSWORD = "lddf merstvil icby"  
+# 🔴 NOTE: Apna 16-digit Google App Password bina spaces ke yahan dalein
+SENDER_APP_PASSWORD = "lddfmerstvilicby"  
 
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     try:
@@ -36,13 +37,15 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         </html>
         """
         msg.attach(MIMEText(body, 'html'))
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
-        server.starttls()
+        
+        # Secure SSL Protocol (Port 465)
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
         server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
         server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
         server.quit()
         return True
-    except Exception:
+    except Exception as e:
+        print(f"SMTP Critical Error: {e}")
         return False
 
 MALAYSIAN_BANKS = [
@@ -121,7 +124,7 @@ if 'otp_start_time' not in st.session_state: st.session_state.otp_start_time = N
 if 'reg_verify_code' not in st.session_state: st.session_state.reg_verify_code = ""
 if 'generated_code' not in st.session_state: st.session_state.generated_code = ""
 
-# --- MASTER ENGINE UI STYLING ENGINE (FIXED VISIBILITY) ---
+# --- MASTER ENGINE UI STYLING ENGINE ---
 st.markdown("""
     <style>
     footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] { 
@@ -144,7 +147,6 @@ st.markdown("""
     .brand-title { text-align: center; font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #ffffff 30%, #00ffcc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
     [data-testid="stVerticalBlock"] { max-width: 460px !important; margin: 0 auto !important; padding: 5px !important; }
     
-    /* Input Form Label Visibility Customization */
     div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stTextArea"] label, .stWidgetLabel p {
         color: #00ffcc !important; font-weight: 800 !important; font-size: 13px !important; text-transform: uppercase !important; letter-spacing: 0.5px; margin-bottom: 6px !important;
     }
@@ -157,10 +159,8 @@ st.markdown("""
     .action-deck { background: rgba(20, 16, 36, 0.95); border: 2px solid #ff007f; border-radius: 12px; padding: 15px; margin-top: 10px; }
     .metric-card-box { background: linear-gradient(135deg, rgba(28, 23, 51, 0.95) 0%, rgba(15, 12, 31, 0.95) 100%); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 12px; border: 2px solid #00ffcc; }
     
-    /* Fixed Visibility Boxes */
     .announcement-box { background: #ff0055; border: 2px solid #ffffff; border-radius: 10px; padding: 12px; font-size: 13px; color: #ffffff !important; font-weight: 700; margin-bottom: 15px; line-height: 1.4; text-align: center; box-shadow: 0 0 10px rgba(255,0,85,0.5); }
-    .recovery-box { background: #131021; border: 2px solid #00ffcc; border-radius: 10px; padding: 12px; font-size: 14px; color: #ffffff !important; font-weight: 700; margin-bottom: 12px; }
-    .recovery-code-display { background: #262142; border: 1px dashed #ff007f; border-radius: 8px; padding: 10px; text-align: center; font-size: 16px; color: #00ffcc !important; font-weight: 800; margin: 10px 0; }
+    .recovery-box { background: #131021; border: 2px solid #00ffcc; border-radius: 10px; padding: 15px; font-size: 14px; color: #ffffff !important; font-weight: 700; margin-bottom: 12px; }
     
     .vip-lock-row { display: flex; justify-content: space-between; font-size: 12px; padding: 8px; background: rgba(255,255,255,0.04); margin: 6px 0; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); color: #ffffff; font-weight: 600; }
     .live-log-container { background: #110d22; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px; margin-top: 15px; }
@@ -189,11 +189,15 @@ def render_otp_countdown_engine():
                 st.session_state.otp_start_time = time.time()
                 if st.session_state.auth_mode == "VerifyNewAccount":
                     st.session_state.reg_verify_code = new_otp
-                    send_verification_email(st.session_state.temp_reg_user, new_otp, purpose="Account Creation")
+                    sent = send_verification_email(st.session_state.temp_reg_user, new_otp, purpose="Account Creation")
                 elif st.session_state.auth_mode == "Forgot":
                     st.session_state.generated_code = new_otp
-                    send_verification_email(st.session_state.reset_email, new_otp, purpose="Password Reset Authorization")
-                st.success("New verification token dispatched successfully!")
+                    sent = send_verification_email(st.session_state.reset_email, new_otp, purpose="Password Reset Authorization")
+                
+                if sent:
+                    st.success("📩 A new validation code has been sent to your email!")
+                else:
+                    st.error("❌ Failed to send email. Check SMTP settings.")
                 st.rerun()
 
 # --- AUTHENTICATION FLOW ---
@@ -233,36 +237,40 @@ if not st.session_state.logged_in:
                     if existing: st.error("Email configuration already active.")
                     else:
                         generated_otp = str(random.randint(102938, 984731))
-                        if send_verification_email(reg_username.strip(), generated_otp):
+                        email_sent = send_verification_email(reg_username.strip(), generated_otp)
+                        
+                        if email_sent:
                             st.session_state.temp_reg_user = reg_username.strip()
                             st.session_state.temp_reg_pass = reg_password.strip()
                             st.session_state.reg_verify_code = generated_otp
                             st.session_state.otp_start_time = time.time()
                             st.session_state.auth_mode = "VerifyNewAccount"
+                            st.success("📩 Verification OTP successfully sent! Please check your email inbox or spam folder.")
                             st.rerun()
                         else:
-                            st.error("Email Gateway execution failed. Check server parameters setup.")
+                            st.error("❌ Email Delivery Failed! Please verify that your SMTP credentials or email address are correct.")
 
     elif st.session_state.auth_mode == "VerifyNewAccount":
         st.markdown(f"""
         <div class="recovery-box">
-            🌐 Route Target: <span style="color:#00ffcc;">{st.session_state.temp_reg_user}</span>
+            🌐 Routing Verification To: <span style="color:#00ffcc;">{st.session_state.temp_reg_user}</span><br>
+            <span style="color:#ff007f; font-size:12px;">Please check your mailbox for the 6-digit sync key.</span>
         </div>
         """, unsafe_allow_html=True)
+        
         typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:", placeholder="******")
         if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                # FIXED: String Concatenation logic fixed here using SQLite format (||)
                 db_status = query_db("INSERT INTO users VALUES (?, ?, 2.00, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT))", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass), commit=True)
                 
                 if db_status:
-                    st.success("Registration clean. Free RM 2.00 added.")
+                    st.success("Registration completed. Free RM 2.00 loaded.")
                     st.session_state.auth_mode = "Login"
                     st.rerun()
                 else:
-                    st.error("❌ Save Error: Data could not be recorded in database.")
-            else: st.error("Verification key mismatch.")
+                    st.error("❌ Save Error: Data could not be recorded.")
+            else: st.error("Incorrect verification OTP code.")
         render_otp_countdown_engine()
 
     elif st.session_state.auth_mode == "Forgot":
@@ -272,22 +280,27 @@ if not st.session_state.logged_in:
             if st.button("🔍 ROUTE RESET KEY", use_container_width=True):
                 if query_db("SELECT username FROM users WHERE username=?", (f_email.strip(),), one=True):
                     generated_otp = str(random.randint(112233, 998877))
-                    if send_verification_email(f_email.strip(), generated_otp):
+                    email_sent = send_verification_email(f_email.strip(), generated_otp)
+                    if email_sent:
                         st.session_state.reset_email = f_email.strip()
                         st.session_state.generated_code = generated_otp
                         st.session_state.otp_start_time = time.time()
                         st.session_state.reset_step = 2
+                        st.success("📩 Security reset pin routed to your email.")
                         st.rerun()
-                    else: st.error("Outbound gateway routing failed.")
+                    else:
+                        st.error("❌ System Gateway error transmitting OTP.")
                 else: st.error("No record matching identity key found.")
-        elif st.session_state.reset_step == 2:
+        elif st.session_step == 2:
             st.markdown(f"""
             <div class="recovery-box">
-                🔒 Route Target: <span style="color:#00ffcc;">{st.session_state.reset_email}</span>
-                <div class="recovery-code-display">Core Sync Code: {st.session_state.generated_code}</div>
+                🔒 Routing Token To: <span style="color:#00ffcc;">{st.session_state.reset_email}</span><br>
+                <span style="color:#ff007f; font-size:12px;">Check your email mailbox for the core sync authorization pin.</span>
             </div>
             """, unsafe_allow_html=True)
-            input_code = st.text_input("ENTER 6-DIGIT PIN:", placeholder="******")
+            
+            # 🔴 PREVIOUS DISPLAY BOX REMOVED FOR ABSOLUTE PRIVACY
+            input_code = st.text_input("ENTER 6-DIGIT PIN FROM EMAIL:", placeholder="******")
             new_pass = st.text_input("NEW PASSWORD:", type="password", placeholder="••••••••")
             if st.button("🛠️ RESET IDENTITY VAULT", use_container_width=True):
                 if input_code.strip() == st.session_state.generated_code:
