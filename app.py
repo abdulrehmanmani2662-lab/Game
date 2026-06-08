@@ -246,7 +246,7 @@ random_online = random.randint(1650, 1800)
 st.markdown(f"""
     <div class="running-header-container">
         <marquee class="running-text" scrollamount="6">
-            ONLINE OPERATORS: {random_online} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⚡ GLOBAL MATRIX PROTOCOL COMPLIANT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SYSTEM ONLINE
+            ONLINE OPERATORS: {random_online} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⚡ 𝐆𝐋𝐎𝐁𝐀𝐋 𝐌𝐀𝐓𝐑𝐈𝐗 𝐏𝐑𝐎𝐓𝐎𝐂𝐎𝐋 𝐂𝐎𝐌𝐏𝐋𝐈𝐀𝐍𝐓 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SYSTEM ONLINE
         </marquee>
     </div>
 """, unsafe_allow_html=True)
@@ -268,14 +268,14 @@ def render_otp_countdown_engine():
 
 # --- SECURITY SYSTEM CONTROL GATE ---
 if not st.session_state.logged_in:
-    st.markdown('<div class="brand-title">👑 GLOBAL MATRIX</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-title">👑 ░G░L░O░B░A░L░ ░M░A░T░R░I░X░</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
         st.markdown('<div class="brand-subtitle">SECURE TERMINAL LOGIN</div>', unsafe_allow_html=True)
         username = st.text_input("USERNAME / EMAIL:", placeholder="Enter your registered email")
         password = st.text_input("PASSWORD:", type="password", placeholder="••••••••")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-        if st.button("🚀 AUTHORIZE ACCESS", use_container_width=True):
+        if st.button("LOGIN", use_container_width=True):
             if username.strip() and password.strip():
                 if username.strip() == "admin" and password.strip() == "admin123":
                     st.session_state.logged_in = True
@@ -371,11 +371,11 @@ if not st.session_state.logged_in:
     st.markdown("<hr style='border-color:#ff0055; opacity:0.3;'>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1: 
-        if st.button("🔑 LOGIN"): st.session_state.auth_mode = "Login"; st.rerun()
+        if st.button("LOGIN ID"): st.session_state.auth_mode = "Login"; st.rerun()
     with c2: 
-        if st.button("📝 JOIN"): st.session_state.auth_mode = "Register"; st.rerun()
+        if st.button("CREATE ACCOUNT"): st.session_state.auth_mode = "Register"; st.rerun()
     with c3:
-        if st.button("🔄 RECOVER"): st.session_state.auth_mode = "ResetPassword"; st.session_state.reset_step = 1; st.rerun()
+        if st.button("FORGET PASSWORD"): st.session_state.auth_mode = "ResetPassword"; st.session_state.reset_step = 1; st.rerun()
 
 # --- LOGGED IN ROUTINE PORTAL ---
 else:
@@ -452,7 +452,7 @@ else:
         st.markdown("<hr style='border-color:#ff0055; opacity:0.3;'>", unsafe_allow_html=True)
         ad_c1, ad_c2, ad_c3 = st.columns(3)
         with ad_c1:
-            if st.button("📥 LEDGER"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
+            if st.button("📥 Approvel"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
         with ad_c2:
             if st.button("⚙️ MASTER"): st.session_state.selected_panel = "System Settings Configuration"; st.rerun()
         with ad_c3:
@@ -477,7 +477,7 @@ else:
             today_date = time.strftime("%Y-%m-%d")
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
-            st.markdown("<p style='font-family:\"Orbitron\"; font-weight:900; font-size:13px; color:#ff0055;'>🎁 DAILY IDENTITY BOUNTY CHECK-IN</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-family:\"Orbitron\"; font-weight:900; font-size:13px; color:#ff0055;'>🎁 𝗙𝗿𝗲𝗲 𝗿𝗲𝘄𝗮𝗿𝗱𝘀 CHECK-IN</p>", unsafe_allow_html=True)
             if already_checked: 
                 st.markdown("<p style='color:#00f0ff; font-weight:bold; font-size:14px; margin-left:5px;'>✅ REWARD CLAIMED</p>", unsafe_allow_html=True)
             else:
@@ -493,7 +493,7 @@ else:
             st.markdown(f"""
             <div class="custom-matrix-box-cyan">
                 <div style="display:flex; justify-content:between; align-items:center;">
-                    <span class="font-premium-title">👑 SVIP LEVEL 1</span>
+                    <span class="font-premium-title">👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟏</span>
                     <span class="font-premium-value" style="margin-left:auto;">Daily: RM {v1_inc:.2f}</span>
                 </div>
                 <div style="font-family:'Rajdhani'; font-size:13px; color:#a0a0a5; margin-top:5px;">Cost: Welcome Portal Package</div>
@@ -503,7 +503,7 @@ else:
             st.markdown(f"""
             <div class="custom-matrix-box-pink">
                 <div style="display:flex; justify-content:between; align-items:center;">
-                    <span class="font-premium-title">👑 SVIP LEVEL 2</span>
+                    <span class="font-premium-title">👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟐</span>
                     <span class="font-premium-value" style="margin-left:auto; color:#ff0055;">Daily: RM {v2_inc:.2f}</span>
                 </div>
                 <div style="font-family:'Rajdhani'; font-size:13px; color:#a0a0a5; margin-top:5px;">Activation Target: RM {v2_req:.2f}</div>
@@ -513,7 +513,7 @@ else:
             st.markdown(f"""
             <div class="custom-matrix-box-purple">
                 <div style="display:flex; justify-content:between; align-items:center;">
-                    <span class="font-premium-title">👑 SVIP LEVEL 3</span>
+                    <span class="font-premium-title">👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟑</span>
                     <span class="font-premium-value" style="margin-left:auto; color:#a100ff;">Daily: RM {v3_inc:.2f}</span>
                 </div>
                 <div style="font-family:'Rajdhani'; font-size:13px; color:#a0a0a5; margin-top:5px;">Activation Target: RM {v3_req:.2f}</div>
@@ -534,7 +534,7 @@ else:
                 
                 st.markdown(f"""
                 <div class="{box_style}" style="text-align:center;">
-                    <div class="font-premium-title">📺 Ad Segment Block {i}</div>
+                    <div class="font-premium-title">Ad Segment Block {i}</div>
                     <div class="font-premium-value" style="margin-top:4px; color:{val_color};">Watch Reward: <b>RM {ad_rew:.2f}</b></div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -547,10 +547,10 @@ else:
                         query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
                         query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
                         st.success(f"Bounty Linked: +RM {ad_rew:.2f}")
-                        st.link_button(f"🌐 VIEW VIDEO AD LINK SOURCE {i}", ad_url, use_container_width=True)
+                        st.link_button(f"VIEW VIDEO AD LINK SOURCE {i}", ad_url, use_container_width=True)
 
             st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-            st.button("▶️ START SECURE DATA WORK TUNNEL", use_container_width=True)
+            st.button("START SECURE DATA WORK TUNNEL", use_container_width=True)
             
         elif st.session_state.selected_panel == "Deposit":
             st.markdown("<h5 style='font-family:\"Orbitron\"; color:#00f0ff;'>TOUCH 'N GO DISPATCH</h5>", unsafe_allow_html=True)
@@ -579,13 +579,13 @@ else:
         st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
         usr_col1, usr_col2, usr_col3 = st.columns(3)
         with usr_col1:
-            if st.button("🎰 HOME", key="nav_home", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
+            if st.button("HOME", key="nav_home", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
         with usr_col2:
-            if st.button("💰 DEPOSIT", key="nav_dep", use_container_width=True): st.session_state.selected_panel = "Deposit"; st.rerun()
+            if st.button("DEPOSIT", key="nav_dep", use_container_width=True): st.session_state.selected_panel = "Deposit"; st.rerun()
         with usr_col3:
             if st.button("🏛️ CASH OUT", key="nav_cash", use_container_width=True): st.session_state.selected_panel = "Cashout"; st.rerun()
 
-    if st.button("🚪 LOG OUT PORTAL", key="global_logout_btn", use_container_width=True):
+    if st.button("LOG OUT PORTAL", key="global_logout_btn", use_container_width=True):
         st.session_state.logged_in = False
         st.session_state.is_admin = False
         st.rerun()
