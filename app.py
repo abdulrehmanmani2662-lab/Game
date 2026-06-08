@@ -22,7 +22,7 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         
         body = f"""
         <html>
-        <body style="font-family: Arial, sans-serif; background-color: #fdf5f0; padding: 20px;">
+        <body style="font-family: Arial, sans-serif; background-color: #fbf4ee; padding: 20px;">
             <div style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, #f3552a 0%, #ff8052 100%); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 6px 18px rgba(243,85,42,0.25);">
                 <h2 style="color: #ffffff; margin-bottom: 10px; font-weight: 900;">GLOBAL MATRIX</h2>
                 <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.3); margin-bottom: 20px;">
@@ -129,24 +129,20 @@ st.markdown("""
         display: none !important; visibility: hidden !important;
     }
     
-    /* Premium light sand/cream background from picture 3 */
     html, body, .stApp { 
         background-color: #fbf4ee !important;
         color: #4a2711 !important;
     }
     
-    /* Header strip */
     .running-header-container { 
         width: 100%; overflow: hidden; background: linear-gradient(90deg, #f3552a, #ff8052); border-bottom: 2px solid #d84315; padding: 10px 0; margin-bottom: 20px; 
     }
     .running-text { font-size: 13px; font-weight: 800; color: #ffffff; white-space: nowrap; display: inline-block; animation: marquee-run 15s linear infinite; }
     @keyframes marquee-run { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
     
-    /* Brand Title */
     .brand-title { text-align: center; font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #f3552a 0%, #ff8052 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1.5px; }
     [data-testid="stVerticalBlock"] { max-width: 450px !important; margin: 0 auto !important; padding: 5px !important; }
     
-    /* Clean rounded fields like the UI mockup */
     div[data-testid="stTextInput"] label, div[data-testid="stNumberInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stTextArea"] label, .stWidgetLabel p {
         color: #5c351f !important; font-weight: 700 !important; font-size: 13px !important; letter-spacing: 0.3px; margin-bottom: 5px !important;
     }
@@ -157,11 +153,9 @@ st.markdown("""
         border-color: #f3552a !important; box-shadow: 0 0 0 3px rgba(243, 85, 42, 0.15) !important;
     }
     
-    /* Exact vibrant orange solid-smooth gradient buttons */
     div.stButton > button { background: linear-gradient(135deg, #f3552a 0%, #ff7342 100%) !important; color: #ffffff !important; font-size: 15px !important; font-weight: 700; border-radius: 16px !important; width: 100% !important; padding: 14px !important; border: none !important; box-shadow: 0 5px 12px rgba(243, 85, 42, 0.25); transition: all 0.25s ease; }
     div.stButton > button:hover { background: linear-gradient(135deg, #d84315 0%, #f3552a 100%) !important; box-shadow: 0 6px 16px rgba(243, 85, 42, 0.35); transform: translateY(-1px); }
     
-    /* Beautiful modern containers/cards mimicking the task design */
     .action-deck { 
         background: #ffffff; border: 1px solid #ebd9cf; border-radius: 20px; padding: 20px; margin-top: 12px; box-shadow: 0 6px 15px rgba(74, 39, 17, 0.03); 
     }
@@ -214,8 +208,7 @@ if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">👑 GLOBAL MATRIX</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
-        # Fixed Login logic: accepts username or exact email strings seamlessly
-        username = st.text_input("Username / Email Address:", placeholder="Enter your username or email")
+        username = st.text_input("Username / Email Address:", placeholder="Enter username or email")
         password = st.text_input("Password:", type="password", placeholder="••••••••")
         if st.button("🚀 AUTHORIZE ACCESS", use_container_width=True):
             if username.strip() and password.strip():
@@ -226,7 +219,7 @@ if not st.session_state.logged_in:
                     st.session_state.selected_panel = "Pending Requests"
                     st.rerun()
                 else:
-                    # Fix: check both username column and email match scenarios dynamically
+                    # Robust lookup: check exact password match across users seamlessly
                     record = query_db("SELECT password, username FROM users WHERE username=?", (username.strip(),), one=True)
                     if record and record[0] == password.strip():
                         st.session_state.logged_in = True
@@ -234,7 +227,10 @@ if not st.session_state.logged_in:
                         st.session_state.is_admin = False
                         st.session_state.selected_panel = "Overview"
                         st.rerun()
-                    else: st.error("Invalid Credentials. Please check details or reset.")
+                    else:
+                        st.error("Invalid Credentials. Please check details or reset.")
+            else:
+                st.warning("Please fill up all details before requesting entry.")
 
     elif st.session_state.auth_mode == "Register":
         st.markdown("<h4 style='color:#d84315; text-align:center; font-size:16px; margin-bottom:10px;'>INITIALIZE SYSTEM NODE</h4>", unsafe_allow_html=True)
@@ -337,6 +333,8 @@ else:
     v3_inc = query_db("SELECT value FROM system_config WHERE key='vip3_income'", one=True)[0]
     v2_req = query_db("SELECT value FROM system_config WHERE key='vip2_req'", one=True)[0]
     v3_req = query_db("SELECT value FROM system_config WHERE key='vip3_req'", one=True)[0]
+    live_ad_url = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)[0]
+    tng_scanner_url = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)[0]
 
     if st.session_state.is_admin:
         st.markdown("<h5 style='color:#d84315; text-align:center; font-weight:800; margin-bottom:15px;'>🛡️ MASTER ADMIN PLATFORM ENGINE</h5>", unsafe_allow_html=True)
@@ -361,7 +359,11 @@ else:
                                 
         elif st.session_state.selected_panel == "System Settings Configuration":
             st.markdown("<h5 style='color:#4a2711; font-size:16px; margin-bottom:15px;'>Real-Time Feature Control Desk</h5>", unsafe_allow_html=True)
+            
+            # FIXED: QR and Video URL parameters are restored to the configuration form panel
             new_ann = st.text_area("System Broad-Scale Announcement Text:", value=announcement_text)
+            new_ad_url = st.text_input("🔴 Live Video Task Destination URL Link:", value=live_ad_url)
+            new_qr_url = st.text_input("📸 Touch 'N Go QR Scanner Image Asset URL:", value=tng_scanner_url)
             new_unclaimed = st.text_input("Unclaimed Rewards Dummy Value (RM):", value=unclaimed_val)
             
             st.markdown("<p style='color:#f3552a; font-weight:bold; font-size:14px; margin-top:15px;'>VIP Tiers Calibration Parameters</p>", unsafe_allow_html=True)
@@ -373,13 +375,15 @@ else:
             
             if st.button("💾 SAVE ENTIRE MATRIX CONFIGURATIONS", use_container_width=True):
                 query_db("UPDATE system_config SET value=? WHERE key='system_announcement'", (new_ann.strip(),), commit=True)
+                query_db("UPDATE system_config SET value=? WHERE key='live_ad_url'", (new_ad_url.strip(),), commit=True)
+                query_db("UPDATE system_config SET value=? WHERE key='tng_scanner_url'", (new_qr_url.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='unclaimed_rewards_val'", (new_unclaimed.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip1_income'", (nv1.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip2_income'", (nv2.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip2_req'", (nv2_r.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip3_income'", (nv3.strip(),), commit=True)
                 query_db("UPDATE system_config SET value=? WHERE key='vip3_req'", (nv3_r.strip(),), commit=True)
-                st.success("All System Variables Overhauled and Synced!")
+                st.success("All System Variables Overhauled and Synced Successfully!")
                 st.rerun()
 
         st.markdown("<hr style='margin:12px 0; border-color:#ebd9cf;'>", unsafe_allow_html=True)
@@ -429,9 +433,6 @@ else:
             
             st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
             
-            ad_link_data = query_db("SELECT value FROM system_config WHERE key='live_ad_url'", one=True)
-            target_video = ad_link_data[0] if ad_link_data else "#"
-            
             if 'trigger_redirect' not in st.session_state: st.session_state.trigger_redirect = False
             
             if st.button("▶️ START SECURE DATA WORK TUNNEL", use_container_width=True):
@@ -444,7 +445,7 @@ else:
                 
             if st.session_state.trigger_redirect:
                 st.session_state.trigger_redirect = False
-                st.link_button("🌐 CLICK HERE TO OPEN REWARD LINK", target_video, use_container_width=True)
+                st.link_button("🌐 CLICK HERE TO OPEN REWARD LINK", live_ad_url, use_container_width=True)
 
             st.markdown("<hr style='margin:12px 0; border-color:#f9f0ea;'>", unsafe_allow_html=True)
             st.markdown("<p style='color:#d84315; font-size:12px; font-weight:bold; margin-bottom:5px;'>🎰 VIP GLOBAL LUCKY SPIN WHEEL</p>", unsafe_allow_html=True)
@@ -477,10 +478,8 @@ else:
         elif st.session_state.selected_panel == "Deposit":
             st.markdown("<div class='action-deck'>", unsafe_allow_html=True)
             st.markdown("<h6 style='color:#4a2711; margin:0 0 8px 0;'>TOUCH 'N GO HUB PAYMENT</h6>", unsafe_allow_html=True)
-            qr_link_data = query_db("SELECT value FROM system_config WHERE key='tng_scanner_url'", one=True)
-            target_qr = qr_link_data[0] if qr_link_data else ""
-            if target_qr:
-                st.markdown(f"<div style='text-align:center; margin-bottom:10px;'><img src='{target_qr}' width='130' style='border:2px solid #ff8052; border-radius:14px;'/></div>", unsafe_allow_html=True)
+            if tng_scanner_url:
+                st.markdown(f"<div style='text-align:center; margin-bottom:10px;'><img src='{tng_scanner_url}' width='130' style='border:2px solid #ff8052; border-radius:14px;'/></div>", unsafe_allow_html=True)
             chosen_bank = st.selectbox("CHOOSE SYSTEM NODE BANK:", MALAYSIAN_BANKS)
             remitter_name = st.text_input("ACCOUNT OWNER NAME:")
             trx_id_input = st.text_input("REFERENCE TXN / TRX CODE:")
