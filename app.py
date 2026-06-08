@@ -277,7 +277,7 @@ if not st.session_state.logged_in:
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         if st.button("LOGIN", use_container_width=True):
             if username.strip() and password.strip():
-                if username.strip() == "admin" and password.strip() == "MANI2662":
+                if username.strip() == "Mani" and password.strip() == "MANI2662":
                     st.session_state.logged_in = True
                     st.session_state.current_user = "Mani"
                     st.session_state.is_admin = True
