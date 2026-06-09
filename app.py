@@ -48,8 +48,8 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
         return False
 
 MALAYSIAN_BANKS = [
-    "Touch 'n Go eWallet", "USDT (TRC-20) Crypto Network", "Maybank (Malayan Banking Berhad)", 
-    "CIMB Bank Berhad", "Public Bank Berhad", "RHB Bank Berhad", "Hong Leong Bank Berhad"
+    "Jazz Cash", "USDT (TRC-20) Crypto Network", "Maybank (Malayan Banking Berhad)", 
+    "EASY PAISA", "Public Bank Berhad", "RHB Bank Berhad", "Hong Leong Bank Berhad"
 ]
 
 # --- SECURE DATABASE INTERFACE ---
@@ -232,7 +232,7 @@ st.markdown("""
     div.stButton > button { 
         background: linear-gradient(135deg, #a100ff 0%, #ff0055 100%) !important; color: #ffffff !important; font-family: 'Orbitron', sans-serif; font-size: 15px !important; font-weight: 900; border-radius: 14px !important; width: 100% !important; padding: 14px !important; border: none !important; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4); transition: 0.3s; 
     }
-    div.stButton > button:hover { box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); transform: scale(1.02); }
+    div.stButton > button:hover { box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); transfoRS: scale(1.02); }
     
     .announcement-box { background: #1a090d; border: 2px solid #ff0055; border-radius: 14px; padding: 15px; font-family: 'Rajdhani', sans-serif; font-size: 14px; color: #ff3377 !important; font-weight: 800; margin-bottom: 20px; text-align: center; }
     .metric-card-box { background: linear-gradient(135deg, #12131a 0%, #1f2026 100%); border: 2px solid #00f0ff; border-radius: 20px; padding: 25px 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0,240,255,0.2); }
@@ -284,7 +284,7 @@ if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">𝗚𝗟𝗢𝗕𝗔𝗟 <b>𝗠𝗔𝗧𝗥𝗜𝗫</b></div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
-        st.markdown('<div class="brand-subtitle">SECURE TERMINAL LOGIN</div>', unsafe_allow_html=True)
+        st.markdown('<div class="brand-subtitle">SECURE TERSINAL LOGIN</div>', unsafe_allow_html=True)
         username = st.text_input("USERNAME / EMAIL:", placeholder="Enter your registered email")
         password = st.text_input("PASSWORD:", type="password", placeholder="••••••••")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
@@ -312,7 +312,7 @@ if not st.session_state.logged_in:
         st.markdown('<div class="brand-subtitle">CREATE NEW ACCOUNT</div>', unsafe_allow_html=True)
         reg_username = st.text_input("REGISTRATION EMAIL KEY:")
         reg_password = st.text_input("SYSTEM SECURITY CODE:", type="password")
-        reg_ref_code = st.text_input("INVITE / REFERRAL CODE (OPTIONAL):", placeholder="Enter parent code for RM 40.00 bonus")
+        reg_ref_code = st.text_input("INVITE / REFERRAL CODE (OPTIONAL):", placeholder="Enter parent code for RS 40.00 bonus")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         if st.button("💾 GENERATE VERIFICATION VIA EMAIL", use_container_width=True):
             if reg_username.strip() and reg_password.strip():
@@ -334,7 +334,7 @@ if not st.session_state.logged_in:
         st.markdown('<div class="brand-subtitle">SYNC ACCOUNT SECURE CODE</div>', unsafe_allow_html=True)
         typed_code = st.text_input("ENTER 6-DIGIT SYNC OTP CODE:")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-        if st.button("✔️ CONFIRM USER REGISTRATION", use_container_width=True):
+        if st.button("✔️ CONFIRS USER REGISTRATION", use_container_width=True):
             if typed_code.strip() == st.session_state.reg_verify_code:
                 starting_bonus = 2.00
                 parent_user = ""
@@ -347,7 +347,7 @@ if not st.session_state.logged_in:
                 
                 query_db("INSERT INTO users VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT), ?)", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass, starting_bonus, parent_user), commit=True)
-                st.success(f"Registration Complete! RM {starting_bonus:.2f} bonus loaded.")
+                st.success(f"Registration Complete! RS {starting_bonus:.2f} bonus loaded.")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
         render_otp_countdown_engine()
@@ -369,7 +369,7 @@ if not st.session_state.logged_in:
                             st.session_state.reset_step = 2
                             st.success("📩 OTP code sent to your email!")
                             st.rerun()
-                    else: st.error("This email is not registered inside platform.")
+                    else: st.error("This email is not registered inside platfoRS.")
                         
         elif st.session_state.reset_step == 2:
             st.markdown(f"""
@@ -385,7 +385,7 @@ if not st.session_state.logged_in:
             if st.button("🔧 RESET IDENTITY VAULT", use_container_width=True):
                 if typed_otp.strip() == st.session_state.recovery_otp:
                     query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.recovery_target_user), commit=True)
-                    st.success("Password changed successfully! Opening terminal login...")
+                    st.success("Password changed successfully! Opening teRSinal login...")
                     st.session_state.auth_mode = "Login"
                     st.session_state.reset_step = 1
                     st.rerun()
@@ -429,7 +429,7 @@ else:
                         <span style='color:#a0a0a5;'>👉 Sender Account Name:</span> <span style='color:#ffffff; font-weight:900;'>{item[3]}</span><br>
                         <span style='color:#a0a0a5;'>👉 Reference Trx Code ID:</span> <span style='color:#00f0ff; font-family:"Courier New"; font-weight:bold;'>{item[4]}</span><br>
                         <hr style='margin:8px 0; border-color:rgba(255,255,255,0.05);'>
-                        <span style='color:#a0a0a5;'>EXACT VALUE SENT:</span> <b style='color:#ff0055; font-size:18px;'>RM {item[5]:.2f}</b>
+                        <span style='color:#a0a0a5;'>EXACT VALUE SENT:</span> <b style='color:#ff0055; font-size:18px;'>RS {item[5]:.2f}</b>
                     </div>
                     """, unsafe_allow_html=True)
                     b1, b2 = st.columns(2)
@@ -451,13 +451,13 @@ else:
             new_qr_url = st.text_input("Touch 'N Go QR Scan Link:", value=tng_scanner_url)
             new_usdt = st.text_input("System USDT Address Configuration:", value=usdt_address)
             
-            st.markdown("<p style='color:#00f0ff; font-weight:900; margin-top:15px;'>🎬 VIDEO LINK PLATFORM PARAMETERS</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#00f0ff; font-weight:900; margin-top:15px;'>🎬 VIDEO LINK PLATFORS PARAMETERS</p>", unsafe_allow_html=True)
             ad_configs = {}
             for i in range(1, 6):
                 old_url = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_url'", one=True)[0]
                 old_rew = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_reward'", one=True)[0]
                 ad_configs[f'ad{i}_url'] = st.text_input(f"Ad {i} Video Source Link:", value=old_url, key=f"adm_ad{i}_url")
-                ad_configs[f'ad{i}_rew'] = st.text_input(f"Ad {i} Reward Pay (RM):", value=str(old_rew), key=f"adm_ad{i}_rew")
+                ad_configs[f'ad{i}_rew'] = st.text_input(f"Ad {i} Reward Pay (RS):", value=str(old_rew), key=f"adm_ad{i}_rew")
             
             if st.button("SAVE CONFIGURATIONS NOW", use_container_width=True):
                 query_db("UPDATE system_config SET value=? WHERE key='system_announcement'", (new_ann.strip(),), commit=True)
@@ -470,16 +470,16 @@ else:
                 st.rerun()
 
         elif st.session_state.selected_panel == "User Management":
-            st.markdown("##### 👤 PLATFORM IDENTITY VAULT")
+            st.markdown("##### 👤 PLATFORS IDENTITY VAULT")
             target_user = st.text_input("ENTER TARGET USER EMAIL:")
             if target_user.strip():
                 user_res = query_db("SELECT balance FROM users WHERE username=?", (target_user.strip(),), one=True)
                 if user_res:
-                    st.markdown(f"<div class='custom-matrix-box-cyan'>Current System Balance: <b style='color:#00f0ff;'>RM {user_res[0]:.2f}</b></div>", unsafe_allow_html=True)
-                    new_balance = st.number_input("SET NEW ACCOUNT BALANCE (RM):", min_value=0.0, value=float(user_res[0]))
+                    st.markdown(f"<div class='custom-matrix-box-cyan'>Current System Balance: <b style='color:#00f0ff;'>RS {user_res[0]:.2f}</b></div>", unsafe_allow_html=True)
+                    new_balance = st.number_input("SET NEW ACCOUNT BALANCE (RS):", min_value=0.0, value=float(user_res[0]))
                     if st.button("🔥 COMMIT DIRECT BALANCE CHANGE", use_container_width=True):
                         query_db("UPDATE users SET balance=? WHERE username=?", (new_balance, target_user.strip()), commit=True)
-                        st.success(f"Bounty Updated! New Balance is RM {new_balance:.2f}")
+                        st.success(f"Bounty Updated! New Balance is RS {new_balance:.2f}")
                         st.rerun()
                 else: st.error("Target identity not found in database.")
 
@@ -493,7 +493,7 @@ else:
                     <div style='background-color:#12131a; color:#ffffff; padding:15px; border-radius:12px; border:2px solid #a100ff; margin-bottom:10px;'>
                         <b>User Key:</b> {w_item[1]}<br>
                         <b>Bank Routing:</b> {w_item[2]} | <b>Account/Wallet:</b> {w_item[3]}<br>
-                        <span style='color:#ff0055; font-size:16px;'><b>Requested Out: RM {w_item[4]:.2f}</b></span>
+                        <span style='color:#ff0055; font-size:16px;'><b>Requested Out: RS {w_item[4]:.2f}</b></span>
                     </div>
                     """, unsafe_allow_html=True)
                     wb1, wb2 = st.columns(2)
@@ -558,7 +558,7 @@ else:
         st.markdown(f"""
         <div class="metric-card-box">
             <p style="font-family:'Orbitron', sans-serif; font-size:12px; color:#ff0055; margin:0; font-weight:900; letter-spacing:1px;">𝘾𝙐𝙍𝙍𝙀🇳🇹 𝙒𝘼𝙇𝙇🇪🇹 𝘽𝘼𝙇𝘼🇳𝘾𝙀</p>
-            <h1 style="font-family:'Orbitron', sans-serif; font-size:38px; font-weight:900; color:#ffffff; margin:8px 0; letter-spacing:1px;">RM {wallet_bal:,.2f}</h1>
+            <h1 style="font-family:'Orbitron', sans-serif; font-size:38px; font-weight:900; color:#ffffff; margin:8px 0; letter-spacing:1px;">RS {wallet_bal:,.2f}</h1>
             <p style="font-family:'Rajdhani', sans-serif; font-size:14px; color:#00f0ff; margin:0; font-weight:800; letter-spacing:0.5px;">Cᵤᵣᵣₑₙₜ ᵣₐₙₖ: {level_tag} &nbsp;|&nbsp; Ref Code: {reference_hash}</p>
         </div>
         """, unsafe_allow_html=True)
@@ -589,10 +589,10 @@ else:
                     
                     wheel_html = f"""
                     <div style="text-align:center; background:#12131a; padding:15px; border-radius:14px; border:2px solid #a100ff;">
-                        <canvas id="wheelCanvas" width="260" height="260" style="border:4px solid #00f0ff; border-radius:50%; background:#0b0c10; transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);"></canvas>
+                        <canvas id="wheelCanvas" width="260" height="260" style="border:4px solid #00f0ff; border-radius:50%; background:#0b0c10; transition: transfoRS 4s cubic-bezier(0.1, 0.8, 0.3, 1);"></canvas>
                         <script>
                             const ctx = document.getElementById('wheelCanvas').getContext('2d');
-                            const labels = ["RM0.50", "RM2.00", "RM0.10", "RM5.00", "RM0.20", "RM10.00", "RM1.50", "LOSE"];
+                            const labels = ["RS0.50", "RS2.00", "RS0.10", "RS5.00", "RS0.20", "RS10.00", "RS1.50", "LOSE"];
                             const colors = ["#ff0055", "#0b0c10", "#00f0ff", "#0b0c10", "#a100ff", "#0b0c10", "#ffaa00", "#0b0c10"];
                             for (let i = 0; i < 8; i++) {{
                                 ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(130, 130);
@@ -600,7 +600,7 @@ else:
                                 ctx.save(); ctx.translate(130, 130); ctx.rotate((i*45+22.5)*Math.PI/180);
                                 ctx.fillStyle = "#ffffff"; ctx.font = "bold 12px Orbitron"; ctx.fillText(labels[i], 45, 5); ctx.restore();
                             }}
-                            setTimeout(() => {{ document.getElementById('wheelCanvas').style.transform = 'rotate({target_rotation}deg)'; }}, 300);
+                            setTimeout(() => {{ document.getElementById('wheelCanvas').style.transfoRS = 'rotate({target_rotation}deg)'; }}, 300);
                         </script>
                     </div>
                     """
@@ -609,7 +609,7 @@ else:
                         query_db("INSERT INTO lucky_spins VALUES (?, ?, ?)", (st.session_state.current_user, today_date, win_amt), commit=True)
                         query_db("UPDATE users SET balance = balance + ? WHERE username=?", (win_amt, st.session_state.current_user), commit=True)
                         st.session_state.wheel_triggered = False
-                        st.success(f"Bounty Loaded successfully: +RM {win_amt:.2f}")
+                        st.success(f"Bounty Loaded successfully: +RS {win_amt:.2f}")
                         st.rerun()
 
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
@@ -629,8 +629,8 @@ else:
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
             st.markdown("<p style='color:#ffffff; font-family:\"Orbitron\"; font-size:14px; font-weight:900; margin-bottom:10px;'>📊 𝐎𝐧𝐥𝐢𝐧𝐞 𝐞𝐚𝐫𝐧𝐢𝐧𝐠</p>", unsafe_allow_html=True)
             
-            st.markdown(f"<div class='custom-matrix-box-cyan'><div style='display:flex; justify-content:between; align-items:center;'><span class='font-premium-title'>👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟏</span><span class='font-premium-value' style='margin-left:auto;'>Daily: RM {v1_inc:.2f}</span></div></div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='custom-matrix-box-pink'><div style='display:flex; justify-content:between; align-items:center;'><span class='font-premium-title'>👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟐</span><span class='font-premium-value' style='margin-left:auto; color:#ff0055;'>Daily: RM {v2_inc:.2f}</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='custom-matrix-box-cyan'><div style='display:flex; justify-content:between; align-items:center;'><span class='font-premium-title'>👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟏</span><span class='font-premium-value' style='margin-left:auto;'>Daily: RS {v1_inc:.2f}</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='custom-matrix-box-pink'><div style='display:flex; justify-content:between; align-items:center;'><span class='font-premium-title'>👑 𝐕𝐈𝐏 𝐋𝐄𝐕𝐄𝐋 𝟐</span><span class='font-premium-value' style='margin-left:auto; color:#ff0055;'>Daily: RS {v2_inc:.2f}</span></div></div>", unsafe_allow_html=True)
             
             st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:20px 0;'>", unsafe_allow_html=True)
             st.markdown("<p style='color:#ffffff; font-family:\"Orbitron\"; font-size:14px; font-weight:900; text-align:center;'>🎬 SECURE TRAFFIC MULTI-AD SEGMENTS</p>", unsafe_allow_html=True)
@@ -643,7 +643,7 @@ else:
                     ad_rew = float(query_db(f"SELECT value FROM system_config WHERE key='ad{i}_reward'", one=True)[0])
                     box_style = "custom-matrix-box-cyan" if i % 2 != 0 else "custom-matrix-box-pink"
                     
-                    st.markdown(f"<div class='{box_style}' style='text-align:center;'><div class='font-premium-title'>𝗔𝗱 𝗦𝗲𝗴𝗺𝗲𝗻𝘁 𝗕𝗹𝗼𝗰𝗸 {i}</div><div class='font-premium-value' style='margin-top:4px;'>Watch Reward: <b>RM {ad_rew:.2f}</b></div></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='{box_style}' style='text-align:center;'><div class='font-premium-title'>𝗔𝗱 𝗦𝗲𝗴𝗺𝗲𝗻𝘁 𝗕𝗹𝗼𝗰𝗸 {i}</div><div class='font-premium-value' style='margin-top:4px;'>Watch Reward: <b>RS {ad_rew:.2f}</b></div></div>", unsafe_allow_html=True)
                     
                     ad_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id=? AND date=?", (st.session_state.current_user, f'ad{i}', today_date), one=True)
                     if ad_watched: st.markdown("<p style='color:#00f0ff; font-family:\"Orbitron\"; font-size:12px; font-weight:900; text-align:center;'>✅ COMPLETED TODAY</p>", unsafe_allow_html=True)
@@ -661,7 +661,7 @@ else:
                                 query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
                                 credit_multi_tier_commissions(st.session_state.current_user, ad_rew) 
                                 st.session_state[watch_state_key] = False
-                                st.success(f"Bounty Linked: +RM {ad_rew:.2f}")
+                                st.success(f"Bounty Linked: +RS {ad_rew:.2f}")
                                 st.rerun()
 
         elif st.session_state.selected_panel == "Deposit":
@@ -681,7 +681,7 @@ else:
                     
             remitter_name = st.text_input("YOUR ACCOUNT HOLDER NAME / ACC NAME:")
             trx_id_input = st.text_input("TRANSACTION REFERENCE CODE / TXID HASH:")
-            amount_input = st.number_input("RECHARGE QUANTITY AMOUNT (RM):", min_value=1.0, value=100.0)
+            amount_input = st.number_input("RECHARGE QUANTITY AMOUNT (RS):", min_value=1.0, value=100.0)
             
             st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
             if st.button("TRANSMIT INTERFACE PROOF", use_container_width=True):
@@ -695,7 +695,7 @@ else:
             st.markdown("<h5 style='font-family:\"Orbitron\"; color:#00f0ff;'>EXECUTE SECURE WITHDRAWALS</h5>", unsafe_allow_html=True)
             target_bank = st.selectbox("Target Bank Gateway:", MALAYSIAN_BANKS)
             account_route = st.text_input("Account Number Route / Wallet Route:")
-            amount_input = st.number_input("Settle Amount Out (RM):", min_value=10.0)
+            amount_input = st.number_input("Settle Amount Out (RS):", min_value=10.0)
             st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
             if st.button("INITIATE SETTLEMENT TRANSFERS", use_container_width=True):
                 if wallet_bal >= amount_input:
@@ -716,7 +716,7 @@ else:
             views_req = st.number_input("Target Views Wanted:", min_value=100, step=100, value=100)
             
             total_cost = views_req * 0.10
-            st.info(f"💰 Total Campaign Cost: **RM {total_cost:.2f}**")
+            st.info(f"💰 Total Campaign Cost: **RS {total_cost:.2f}**")
             st.markdown("⚠️ Send the exact amount to our network and enter the transaction code below.")
             payment_trx = st.text_input("Transaction reference ID / TXID Hash:")
             
