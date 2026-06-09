@@ -86,6 +86,17 @@ def init_db():
             username TEXT, date TEXT, prize REAL, PRIMARY KEY (username, date)
         )
     """)
+    # New tables for withdrawals and advertiser self-service portal
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS withdrawals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, bank TEXT, account TEXT, amount REAL, status TEXT
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ad_campaigns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, advertiser_email TEXT, video_url TEXT, target_views INTEGER, trx_id TEXT, status TEXT
+        )
+    """)
     
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
@@ -152,34 +163,14 @@ def credit_multi_tier_commissions(user, base_reward):
     p3 = tier_3_parent[0]
     query_db("UPDATE users SET balance = balance + ? WHERE username=?", (base_reward * 0.02, p3), commit=True)
 
-# --- ADVANCED DYNAMIC 1,000+ USER FOMO TICKER GENERATOR ---
+# --- SECURE COMPLIANT LIVE NODE LOGS ---
 def generate_unlimited_fomo_pool(count=15):
-    first_chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','r','s','t','u','v','w','x','y','z','k','m','n']
-    mid_chars = ['x','z','y','v','w','9','8','7','5','3','2','a','b','s','p']
-    last_chars = ['1','2','3','4','5','6','7','8','9','0','k','m','x','s']
-    domains = ['@gmail.com', '@yahoo.com', '@hotmail.com', '@icloud.com']
-    
-    methods = ["Touch 'n Go eWallet", "Maybank", "CIMB Bank", "USDT (TRC-20)", "Public Bank", "RHB Bank"]
-    
-    pool = []
-    for _ in range(count):
-        # Generate random unique-looking username mask (e.g. s***8@gmail.com)
-        mask_user = f"{random.choice(first_chars)}***{random.choice(mid_chars)}{random.choice(last_chars)}{random.choice(domains)}"
-        event_type = random.choice(["withdraw", "deposit", "vip", "bonus"])
-        
-        if event_type == "withdraw":
-            amount = random.choice([50, 80, 120, 250, 320, 450, 600, 750, 900, 1200, 1500])
-            pool.append(f"🔥 User {mask_user} just withdrew RM {amount:.2f} via {random.choice(methods)}!")
-        elif event_type == "deposit":
-            amount = random.choice([100, 200, 300, 500, 1000, 1500, 2000, 2500, 3000])
-            pool.append(f"⚡ System Node: User {mask_user} loaded RM {amount:.2f} deposit via {random.choice(methods)}!")
-        elif event_type == "vip":
-            lvl = random.choice([2, 3])
-            pool.append(f"🎉 VIP Rank Matrix: User {mask_user} successfully unlocked SVIP LEVEL {lvl}!")
-        else:
-            pool.append(f"🎁 Network Reward: User {mask_user} received RM 40.00 Referral Joining Bonus!")
-            
-    return pool
+    return [
+        "⚡ MATRIX SERVER IDENTITY VAULT SYNCHRONIZED SECURELY",
+        "📢 SYSTEM NOTICE: KEEP YOUR VERIFICATION CREDENTIALS CONFIDENTIAL",
+        "🚀 ADVERTISER SELF-SERVICE PORTAL IS NOW FULLY OPERATIONAL",
+        "📈 TOTAL PROMOTED CHANNELS ARE ACTIVELY RECEIVING TRAFFIC"
+    ]
 
 # --- REFRESH LOGOUT AUTO FIX ---
 if 'logged_in' not in st.session_state:
@@ -265,7 +256,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# CALLING THE 1,000+ HIGHLY DYNAMIC FOMO LIVE FEED BAR
+# CALLING THE TRACKER LIVE FEED BAR
 fomo_pool = generate_unlimited_fomo_pool(count=15)
 st.markdown(f"""
     <div class="fomo-ticker-container">
@@ -492,14 +483,70 @@ else:
                         st.rerun()
                 else: st.error("Target identity not found in database.")
 
+        elif st.session_state.selected_panel == "Admin Withdrawals":
+            st.markdown("##### 💰 PENDING USER CASH OUTS")
+            pending_with = query_db("SELECT id, username, bank, account, amount FROM withdrawals WHERE status='Pending'")
+            if not pending_with: st.info("No withdrawal requests in queue.")
+            else:
+                for w_item in pending_with:
+                    st.markdown(f"""
+                    <div style='background-color:#12131a; color:#ffffff; padding:15px; border-radius:12px; border:2px solid #a100ff; margin-bottom:10px;'>
+                        <b>User Key:</b> {w_item[1]}<br>
+                        <b>Bank Routing:</b> {w_item[2]} | <b>Account/Wallet:</b> {w_item[3]}<br>
+                        <span style='color:#ff0055; font-size:16px;'><b>Requested Out: RM {w_item[4]:.2f}</b></span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    wb1, wb2 = st.columns(2)
+                    with wb1:
+                        if st.button("✅ APPROVE WITHDRAWAL", key=f"w_app_{w_item[0]}"):
+                            query_db("UPDATE withdrawals SET status='Approved' WHERE id=?", (w_item[0],), commit=True)
+                            st.success("Cashout marked as Approved.")
+                            st.rerun()
+                    with wb2:
+                        if st.button("❌ REJECT & REFUND", key=f"w_rej_{w_item[0]}"):
+                            query_db("UPDATE users SET balance = balance + ? WHERE username=?", (w_item[4], w_item[1]), commit=True)
+                            query_db("UPDATE withdrawals SET status='Rejected' WHERE id=?", (w_item[0],), commit=True)
+                            st.warning("Request rejected and funds refunded back to user.")
+                            st.rerun()
+
+        elif st.session_state.selected_panel == "Admin Campaigns":
+            st.markdown("##### 📢 PENDING ADVERTISER CAMPAIGNS")
+            pending_camps = query_db("SELECT id, advertiser_email, video_url, target_views, trx_id FROM ad_campaigns WHERE status='Pending'")
+            if not pending_camps: st.info("No new video campaigns to review.")
+            else:
+                for camp in pending_camps:
+                    st.markdown(f"""
+                    <div style='background-color:#12131a; color:#ffffff; padding:15px; border-radius:12px; border:2px solid #00f0ff; margin-bottom:10px;'>
+                        <b>Advertiser:</b> {camp[1]}<br>
+                        <b>Target Views Wanted:</b> {camp[3]}<br>
+                        <b>Payment TXID Reference:</b> <code>{camp[4]}</code><br>
+                        <a href='{camp[2]}' target='_blank' style='color:#00f0ff; text-decoration:none;'>👉 Click to Verify Video Stream Link</a>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    cb1, cb2 = st.columns(2)
+                    with cb1:
+                        if st.button("✅ LAUNCH AD CAMPAIGN", key=f"c_app_{camp[0]}"):
+                            query_db("UPDATE ad_campaigns SET status='Approved' WHERE id=?", (camp[0],), commit=True)
+                            st.success("Campaign Approved and Launched!")
+                            st.rerun()
+                    with cb2:
+                        if st.button("❌ DROP CAMPAIGN", key=f"c_rej_{camp[0]}"):
+                            query_db("UPDATE ad_campaigns SET status='Rejected' WHERE id=?", (camp[0],), commit=True)
+                            st.warning("Campaign Request dropped.")
+                            st.rerun()
+
         st.markdown("<hr style='border-color:#ff0055; opacity:0.3;'>", unsafe_allow_html=True)
-        ad_c1, ad_c2, ad_c3 = st.columns(3)
+        ad_c1, ad_c2, ad_c3, ad_c4, ad_c5 = st.columns(5)
         with ad_c1:
-            if st.button("📥 Approvel"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
+            if st.button("📥 DEPOSITS"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
         with ad_c2:
             if st.button("⚙️ MASTER"): st.session_state.selected_panel = "System Settings Configuration"; st.rerun()
         with ad_c3:
             if st.button("👤 USER BAL"): st.session_state.selected_panel = "User Management"; st.rerun()
+        with ad_c4:
+            if st.button("💰 WITHDRAWS"): st.session_state.selected_panel = "Admin Withdrawals"; st.rerun()
+        with ad_c5:
+            if st.button("📢 CAMPAIGNS"): st.session_state.selected_panel = "Admin Campaigns"; st.rerun()
 
     # --- CLIENT USER OPERATIONS DASHBOARD ---
     else:
@@ -646,21 +693,51 @@ else:
                     
         elif st.session_state.selected_panel == "Cashout":
             st.markdown("<h5 style='font-family:\"Orbitron\"; color:#00f0ff;'>EXECUTE SECURE WITHDRAWALS</h5>", unsafe_allow_html=True)
-            st.selectbox("Target Bank Gateway:", MALAYSIAN_BANKS)
-            st.text_input("Account Number Route / Wallet Route:")
-            st.number_input("Settle Amount Out (RM):", min_value=10.0)
+            target_bank = st.selectbox("Target Bank Gateway:", MALAYSIAN_BANKS)
+            account_route = st.text_input("Account Number Route / Wallet Route:")
+            amount_input = st.number_input("Settle Amount Out (RM):", min_value=10.0)
             st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
             if st.button("INITIATE SETTLEMENT TRANSFERS", use_container_width=True):
-                st.error("Operation Halted: System compliance clearance pending.")
+                if wallet_bal >= amount_input:
+                    # Deduct the user's system wallet balance instantly
+                    query_db("UPDATE users SET balance = balance - ? WHERE username=?", (amount_input, st.session_state.current_user), commit=True)
+                    # Push it straight into the withdrawals holding area for Admin approval
+                    query_db("INSERT INTO withdrawals (username, bank, account, amount, status) VALUES (?, ?, ?, ?, 'Pending')",
+                             (st.session_state.current_user, target_bank, account_route.strip(), amount_input), commit=True)
+                    st.success("✅ Cashout request filed successfully! Dispatched to secure admin queue.")
+                    st.rerun()
+                else:
+                    st.error("❌ Transfer Declined: Insufficient fluid balance inside vault.")
+
+        elif st.session_state.selected_panel == "Promote_Video":
+            st.markdown("<h5 style='font-family:\"Orbitron\"; color:#00f0ff;'>📢 SELF-SERVICE VIDEO PROMOTION</h5>", unsafe_allow_html=True)
+            adv_email = st.text_input("Your Registered Email:", value=st.session_state.current_user)
+            video_url = st.text_input("YouTube Video URL (To Promote):", placeholder="https://www.youtube.com/watch?v=...")
+            views_req = st.number_input("Target Views Wanted:", min_value=100, step=100, value=100)
+            
+            total_cost = views_req * 0.10
+            st.info(f"💰 Total Campaign Cost: **RM {total_cost:.2f}**")
+            st.markdown("⚠️ Send the exact amount to our network and enter the transaction code below.")
+            payment_trx = st.text_input("Transaction reference ID / TXID Hash:")
+            
+            if st.button("🚀 TRANSMIT CAMPAIGN FOR REVIEW", use_container_width=True):
+                if adv_email.strip() and video_url.strip() and payment_trx.strip():
+                    query_db("INSERT INTO ad_campaigns (advertiser_email, video_url, target_views, trx_id, status) VALUES (?, ?, ?, ?, 'Pending')",
+                             (adv_email.strip(), video_url.strip(), views_req, payment_trx.strip()), commit=True)
+                    st.success("✅ Campaign submitted successfully! Waiting for admin activation.")
+                else:
+                    st.error("❌ Please fill out all campaign fields completely.")
 
         st.markdown("<hr style='border-color:#ff0055; opacity:0.2; margin:15px 0;'>", unsafe_allow_html=True)
-        usr_col1, usr_col2, usr_col3 = st.columns(3)
+        usr_col1, usr_col2, usr_col3, usr_col4 = st.columns(4)
         with usr_col1:
             if st.button("HOME", key="nav_home", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
         with usr_col2:
             if st.button("DEPOSIT", key="nav_dep", use_container_width=True): st.session_state.selected_panel = "Deposit"; st.rerun()
         with usr_col3:
             if st.button("🏛️ CASH OUT", key="nav_cash", use_container_width=True): st.session_state.selected_panel = "Cashout"; st.rerun()
+        with usr_col4:
+            if st.button("📢 PROMOTE", key="nav_prom", use_container_width=True): st.session_state.selected_panel = "Promote_Video"; st.rerun()
 
     if st.button("LOG OUT PORTAL", key="global_logout_btn", use_container_width=True):
         st.session_state.logged_in = False; st.session_state.is_admin = False
