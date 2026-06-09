@@ -12,7 +12,7 @@ st.set_page_config(page_title="GLOBAL MATRIX", page_icon="👑", layout="wide")
 
 # --- REAL SMTP BACKEND EMAIL GATEWAY CONFIGURATION ---
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
-SENDER_APP_PASSWORD = "lddfmerstvilicby"  
+SENDER_APP_PASSWORD = "mzdlczhlfmttykps"  
 
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     try:
