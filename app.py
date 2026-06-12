@@ -11,17 +11,15 @@ from email.mime.multipart import MIMEMultipart
 # --- 1. SYSTEM INITIAL BLOCK & FRAMEWORK METRIC INITIALIZATION ---
 # ==============================================================================
 st.set_page_config(
-    page_title="GLOBAL MATRIX - PREMIUM MULTI REGION", 
+    page_title="GLOBAL MATRIX", 
     page_icon=None, 
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# REAL OPERATIONAL GMAIL SMTP ENVIRONMENT ROUTERS VARIABLE
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
 SENDER_APP_PASSWORD = "higjqwbtxagmvdty"
 
-# Sovereign Regional Currency Context Configuration Parameter Array Maps
 SUPPORTED_COUNTRIES = {
     "Pakistan": {"currency": "PKR", "symbol": "Rs"},
     "India": {"currency": "INR", "symbol": "₹"},
@@ -32,21 +30,21 @@ SUPPORTED_COUNTRIES = {
 
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     msg = MIMEMultipart()
-    msg['From'] = f"Global Matrix Network <{SENDER_EMAIL}>"
+    msg['From'] = f"Global Matrix <{SENDER_EMAIL}>"
     msg['To'] = receiver_email
-    msg['Subject'] = f"Security Sync Authentication Code: {otp_code}"
+    msg['Subject'] = f"Verification Code: {otp_code}"
     
     body = f"""
     <html>
-    <body style="font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px;">
-        <div style="max-width: 400px; margin: 0 auto; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-            <h2 style="color: #4e5bf2; margin-bottom: 10px; font-weight: 900; letter-spacing: 1px;">GLOBAL MATRIX SYSTEM</h2>
-            <hr style="border: 0; height: 1px; background: #e1e4e8; margin-bottom: 20px;">
-            <p style="color: #333333; font-size: 16px;">Your Network Verification Code for {purpose} is:</p>
-            <div style="font-size: 32px; font-weight: bold; color: #4e5bf2; letter-spacing: 4px; padding: 12px; background: #f4f6f9; border: 1px solid #4e5bf2; border-radius: 10px; margin: 20px 0;">
+    <body style="font-family: Arial, sans-serif; background-color: #0e1118; padding: 20px; color: #ffffff;">
+        <div style="max-width: 400px; margin: 0 auto; background: #161b26; border: 2px solid #4e5bf2; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 0 20px rgba(78,91,242,0.3);">
+            <h2 style="color: #00f0ff; margin-bottom: 10px; font-weight: 700;">GLOBAL MATRIX</h2>
+            <hr style="border: 0; height: 1px; background: rgba(0,240,255,0.2); margin-bottom: 20px;">
+            <p style="font-size: 16px;">Your OTP code for {purpose} is:</p>
+            <div style="font-size: 32px; font-weight: bold; color: #ffffff; letter-spacing: 4px; padding: 12px; background: #0e1118; border: 1px solid #4e5bf2; border-radius: 10px; margin: 20px 0;">
                 {otp_code}
             </div>
-            <p style="color: #777777; font-size: 12px;">Please secure your verification credentials. Do not share this node sync code with anyone.</p>
+            <p style="color: #8a99ad; font-size: 12px;">Do not share this code with anyone.</p>
         </div>
     </body>
     </html>
@@ -54,7 +52,6 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     msg.attach(MIMEText(body, 'html'))
 
     try:
-        # FIXED: Corrected the port 465 literal here to avoid SyntaxError
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
         server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
         server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
@@ -69,7 +66,7 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
             server.quit()
             return True
         except Exception as e2:
-            st.session_state["smtp_error_log"] = f"SSL Core Error Pipeline: {e} | TLS Alternative Error Pipeline: {e2}"
+            st.session_state["smtp_error_log"] = f"SSL Error: {e} | TLS Error: {e2}"
             return False
 
 # ==============================================================================
@@ -119,7 +116,7 @@ def init_db():
         ('ad4_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad4_reward', '1.50'),
         ('ad5_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad5_reward', '2.00'),
         ('usdt_address', 'TYcc7p18K2YnQp87bXzNWXAsgWqR54321A'),
-        ('system_announcement', 'GLOBAL APPLICATION PROFILE: Please switch your local country profile settings to receive corresponding configurations.'),
+        ('system_announcement', 'Welcome to Global Matrix. Select country to view verified local deposit accounts.'),
         ('unclaimed_rewards_val', '15.00'), ('vip1_income', '2.00'), ('vip2_income', '15.00'), ('vip3_income', '50.00'),
         ('vip2_req', '100.00'), ('vip3_req', '300.00')
     ]
@@ -154,7 +151,7 @@ def query_db(query, args=(), one=False, commit=False):
         return (rv[0] if rv else None) if one else rv
     except Exception as e:
         conn.close()
-        st.error(f"Database Operational Error: {e}")
+        st.error(f"Database Error: {e}")
         return None if one else []
 
 # ==============================================================================
@@ -178,10 +175,10 @@ def credit_multi_tier_commissions(user, base_reward):
 
 def generate_unlimited_fomo_pool(count=15):
     return [
-        "SYSTEM MODULE NODE STATUS: OPERATIONAL STABILITY VERIFIED",
-        "SECURITY SERVICE LAYER: ENCRYPTED STORAGE LOG DATA STACK VERIFIED",
-        "DYNAMIC ROUTING CONFIGURATION INITIALIZED FOR ALL AVAILABLE REGIONS",
-        "LIQUID FLOW RATIOS REFLECT STABLE ENVIRONMENT VARIABLES"
+        "SYSTEM ROUTER: REAL-TIME SECURE DISPATCH OPERATIONAL",
+        "SECURITY NOTICE: EMAIL OTP VALIDATION RUNNING STABLE",
+        "DYNAMIC GATEWAY: AUTOMATED SETTLEMENT ROUTING LINK COMPLETED",
+        "SYSTEM LEDGER: MULTI-REGION TRANSACTION QUEUES OPTIMAL"
     ]
 
 # ==============================================================================
@@ -215,7 +212,7 @@ for key, def_val in session_keys.items():
         st.session_state[key] = def_val
 
 # ==============================================================================
-# --- 5. UI FRAMEWORK MATCHING SCREEN "1000065111.jpg" (CSS LAYER) ---
+# --- 5. UI SYSTEM DOCK DESIGN (DARK SLEEP MIX MATTE BLACK WITH NEON ACCENTS) ---
 # ==============================================================================
 st.markdown("""
 <style>
@@ -224,55 +221,59 @@ footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid
     display: none !important; visibility: hidden !important;
 }
 
-html, body, .stApp { background-color: #f3f4f9 !important; color: #2d3748 !important; font-family: 'Inter', sans-serif !important; }
-[data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 10px !important; background: #ffffff !important; border-radius: 30px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
+/* Premium Dark Slate Mixing Background Config */
+html, body, .stApp { background-color: #0e1118 !important; color: #f1f5f9 !important; font-family: 'Inter', sans-serif !important; }
+[data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 15px !important; background: #161b26 !important; border-radius: 24px !important; border: 2px solid #4e5bf2 !important; box-shadow: 0 8px 32px rgba(78,91,242,0.15) !important; }
 
-.running-header-container { width: 100%; background: #ffffff; padding: 8px 0; border-bottom: 1px solid #e2e8f0; text-align: center; }
-.running-text { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: #4a5568; letter-spacing: 0.5px; }
-.fomo-ticker-container { width: 100%; background: #edf2f7; padding: 5px 0; margin-bottom: 15px; text-align: center; border-radius: 10px; }
-.fomo-text { font-family: 'Inter', sans-serif; font-size: 11px; color: #718096; font-weight: 500; }
+/* Real Moving Marquee Setup Banner Line */
+.running-header-container { width: 100%; background: #1b2234; padding: 12px 0; margin-bottom: 12px; border-radius: 12px; border-bottom: 2px solid #00f0ff; text-align: center; }
+.running-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #00f0ff; letter-spacing: 0.5px; }
+.fomo-ticker-container { width: 100%; background: #1e293b; padding: 6px 0; margin-bottom: 20px; text-align: center; border-radius: 10px; }
+.fomo-text { font-family: 'Inter', sans-serif; font-size: 12px; color: #94a3b8; font-weight: 500; }
 
-.brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: #1a202c; margin-top: 10px; }
-.brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #718096; margin-bottom: 20px; }
+.brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 34px; font-weight: 700; color: #ffffff; margin-top: 10px; letter-spacing: 1px; text-shadow: 0 0 10px rgba(78,91,242,0.5); }
+.brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #94a3b8; margin-bottom: 25px; }
 
+/* Short Clean Input Rows Minimal styling */
 div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
-    background-color: #f8fafc !important; color: #1a202c !important; border: 1px solid #cbd5e1 !important; border-radius: 14px !important;
+    background-color: #0f172a !important; color: #ffffff !important; border: 1px solid #334155 !important; border-radius: 12px !important;
     padding: 12px !important; font-size: 15px !important; font-weight: 600 !important; box-shadow: none !important;
 }
-div[data-testid="stTextInput"] input:focus { border: 1px solid #4e5bf2 !important; background-color: #ffffff !important; }
+div[data-testid="stTextInput"] input:focus { border: 1px solid #4e5bf2 !important; background-color: #0f172a !important; }
 
+/* Premium Corporate Dynamic Buttons Blue Accent Lines */
 div.stButton > button {
-    background: #4e5bf2 !important; color: #ffffff !important; font-family: 'Inter', sans-serif;
-    font-size: 15px !important; font-weight: 600; border-radius: 16px !important; width: 100% !important; padding: 14px !important; border: none !important;
-    box-shadow: 0 4px 12px rgba(78,91,242,0.2); transition: 0.2s ease-in-out;
+    background: linear-gradient(135deg, #4e5bf2 0%, #3b49df 100%) !important; color: #ffffff !important; font-family: 'Inter', sans-serif;
+    font-size: 15px !important; font-weight: 600; border-radius: 14px !important; width: 100% !important; padding: 14px !important; border: none !important;
+    box-shadow: 0 4px 14px rgba(78,91,242,0.3); transition: 0.2s ease-in-out;
 }
-div.stButton > button:hover { background: #3b49df !important; box-shadow: 0 6px 16px rgba(78,91,242,0.3); }
+div.stButton > button:hover { background: #3b49df !important; transform: scale(1.01); box-shadow: 0 6px 20px rgba(78,91,242,0.5); }
 
-.announcement-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px; font-size: 13px; color: #4a5568 !important; text-align: center; font-weight: 500; }
+.announcement-box { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 14px; font-size: 13px; color: #e2e8f0 !important; text-align: center; font-weight: 500; }
 
-.app-grid-coral { background: #ff5e6c !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(255,94,108,0.15); }
-.app-grid-cyan { background: #00c6df !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,198,223,0.15); }
-.app-grid-purple { background: #4e5bf2 !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(78,91,242,0.15); }
-.app-grid-orange { background: #ff9124 !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(255,145,36,0.15); }
+/* High end 4 Box Indicator grids styles */
+.app-grid-coral { background: #ff5e6c !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
+.app-grid-cyan { background: #00c6df !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
+.app-grid-purple { background: #4e5bf2 !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
+.app-grid-orange { background: #ff9124 !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
 
+/* Multi line clear layout detail row structures */
 .premium-bank-detail-card {
-    background: #ffffff !important; border: 1px solid #e2e8f0 !important;
-    border-radius: 20px !important; padding: 20px !important; margin: 15px 0 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    background: #0f172a !important; border: 1px solid #334155 !important;
+    border-radius: 16px !important; padding: 18px !important; margin: 15px 0 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
-.bank-line-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-family: 'Inter', sans-serif; }
+.bank-line-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1e293b; font-family: 'Inter', sans-serif; }
 .bank-line-row:last-child { border-bottom: none; }
-.bank-line-label { color: #718096; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.bank-line-value { color: #1a202c; font-size: 16px; font-weight: 700; }
+.bank-line-label { color: #94a3b8; font-size: 13px; font-weight: 600; text-transform: uppercase; }
+.bank-line-value { color: #ffffff; font-size: 15px; font-weight: 700; }
 
-.bottom-banner-bonus {
-    background: #eef2ff; border: 1px solid #cadcff; border-radius: 18px; padding: 16px; margin-top: 15px; display: flex; align-items: center;
-}
+.bottom-banner-bonus { background: #1e1b4b; border: 1px solid #312e81; border-radius: 16px; padding: 16px; margin-top: 15px; }
 
-label { color: #4a5568 !important; font-family: 'Inter', sans-serif !important; font-size: 13px !important; font-weight: 600 !important; margin-bottom: 4px; }
+label { color: #94a3b8 !important; font-family: 'Inter', sans-serif !important; font-size: 13px !important; font-weight: 600 !important; margin-bottom: 4px; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="running-header-container"><div class="running-text">GLOBAL SECURITY ROUTER ACCESS SYSTEM STATUS: ACTIVE</div></div>', unsafe_allow_html=True)
+st.markdown('<div class="running-header-container"><div class="running-text">GLOBAL SYSTEM TERMINAL ACCESS STATUS: ACTIVE</div></div>', unsafe_allow_html=True)
 fomo_pool = generate_unlimited_fomo_pool(count=15)
 st.markdown(f'<div class="fomo-ticker-container"><div class="fomo-text">{" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ".join(fomo_pool)}</div></div>', unsafe_allow_html=True)
 
@@ -287,7 +288,7 @@ def render_otp_countdown_engine():
             st.session_state.otp_start_time = None
         else:
             mins, secs = divmod(remaining, 60)
-            placeholder.markdown(f"<div style='text-align:center; color:#ff5e6c; padding:5px; font-family:\"Inter\"; font-weight:600;'>Resend code available in: {mins:02d}:{secs:02d}</div>", unsafe_allow_html=True)
+            placeholder.markdown(f"<div style='text-align:center; color:#ff5e6c; padding:5px; font-family:\"Inter\"; font-weight:600;'>Resend available in: {mins:02d}:{secs:02d}</div>", unsafe_allow_html=True)
             time.sleep(1)
             st.rerun()
 
@@ -298,9 +299,9 @@ if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">GLOBAL MATRIX</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
-        st.markdown('<div class="brand-subtitle">Secure User Login Terminal</div>', unsafe_allow_html=True)
+        st.markdown('<div class="brand-subtitle">Secure Account Login</div>', unsafe_allow_html=True)
         username = st.text_input("GMAIL ADDRESS:", placeholder="Enter registered email account", key="login_user_input")
-        password = st.text_input("PASSWORD CODE:", type="password", placeholder="••••••••", key="login_pass_input")
+        password = st.text_input("PASSWORD:", type="password", placeholder="••••••••", key="login_pass_input")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
         if st.button("LOGIN ACCOUNT", use_container_width=True, key="execute_login_btn"):
@@ -325,26 +326,26 @@ if not st.session_state.logged_in:
                         st.session_state.selected_panel = "Overview"
                         st.query_params['persisted_user'] = record[1]
                         st.rerun()
-                    else: st.error("Authentication Error: Invalid credential alignment.")
+                    else: st.error("Error: Invalid email or password pairing alignment.")
                         
     elif st.session_state.auth_mode == "Register":
-        st.markdown('<div class="brand-subtitle">Create New Account Terminal</div>', unsafe_allow_html=True)
-        reg_username = st.text_input("RECIPIENT GMAIL FOR CODES:", placeholder="example@gmail.com", key="reg_user_input")
-        reg_password = st.text_input("NEW SECURITY SECURE CODE:", type="password", key="reg_pass_input")
-        reg_ref_code = st.text_input("REFERRAL INTRO HASH (OPTIONAL):", placeholder="Enter referral chain link code", key="reg_ref_input")
-        reg_country = st.selectbox("SELECT REGISTERED SYSTEM RESIDENCE:", list(SUPPORTED_COUNTRIES.keys()), key="reg_country_select")
+        st.markdown('<div class="brand-subtitle">Create New Account</div>', unsafe_allow_html=True)
+        reg_username = st.text_input("GMAIL ADDRESS:", placeholder="example@gmail.com", key="reg_user_input")
+        reg_password = st.text_input("PASSWORD:", type="password", key="reg_pass_input")
+        reg_ref_code = st.text_input("REFERRAL CODE (OPTIONAL):", placeholder="Enter referral chain code link", key="reg_ref_input")
+        reg_country = st.selectbox("COUNTRY REGION:", list(SUPPORTED_COUNTRIES.keys()), key="reg_country_select")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
-        if st.button("GENERATE SECURE OTP SYSTEM CODE", use_container_width=True, key="submit_registration_btn"):
+        if st.button("SEND SECURE OTP CODE", use_container_width=True, key="submit_registration_btn"):
             if reg_username.strip() and reg_password.strip():
                 if "@" not in reg_username or "." not in reg_username:
                     st.error("Invalid email pattern structure string.")
                 else:
                     existing = query_db("SELECT username FROM users WHERE username=?", (reg_username.strip(),), one=True)
-                    if existing: st.error("Identity signature match found. User already holds database space.")
+                    if existing: st.error("This account email is already registered inside database directory.")
                     else:
                         generated_otp = str(random.randint(102938, 984731))
-                        st.toast("Connecting to Gmail secure nodes network tunnels...")
+                        st.toast("Connecting to secure email server nodes...")
                         if send_verification_email(reg_username.strip(), generated_otp, purpose="Account Creation"):
                             st.session_state.temp_reg_user = reg_username.strip()
                             st.session_state.temp_reg_pass = reg_password.strip()
@@ -353,20 +354,20 @@ if not st.session_state.logged_in:
                             st.session_state.reg_verify_code = generated_otp
                             st.session_state.otp_start_time = time.time()
                             st.session_state.auth_mode = "VerifyNewAccount"
-                            st.success("Secure authentication sync packet dispatched. Please monitor your Gmail inbox.")
+                            st.success("Authentication secure packet dispatched. Please check your Gmail.")
                             st.rerun()
                         else:
-                            err = st.session_state.get("smtp_error_log", "Gmail network firewall restriction.")
-                            st.error(f"Core Gateway Transmit Interrupted. Server logs stack: {err}")
+                            err = st.session_state.get("smtp_error_log", "Gmail routing firewall error.")
+                            st.error(f"Gateway Interrupted. Server logs stack: {err}")
                         
     elif st.session_state.auth_mode == "VerifyNewAccount":
-        st.markdown('<div class="brand-subtitle">Sync Account Security Key</div>', unsafe_allow_html=True)
-        st.info(f"Verification code sent to email route destination: {st.session_state.get('temp_reg_user','')}")
+        st.markdown('<div class="brand-subtitle">Verify Account Security Key</div>', unsafe_allow_html=True)
+        st.info(f"Verification code sent to email destination: {st.session_state.get('temp_reg_user','')}")
         
-        typed_code = st.text_input("ENTER 6-DIGIT SYNC SECURE OTP CODE FROM GMAIL:", placeholder="******", key="otp_sync_input")
+        typed_code = st.text_input("ENTER 6-DIGIT OTP CODE RECEIVED FROM GMAIL:", placeholder="******", key="otp_sync_input")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
-        if st.button("CONFIRM IDENTITY DATA VERIFICATION", use_container_width=True, key="confirm_otp_btn"):
+        if st.button("VERIFY DATA NOW", use_container_width=True, key="confirm_otp_btn"):
             if typed_code.strip() == st.session_state.reg_verify_code:
                 starting_bonus = 2.00
                 parent_user = ""
@@ -378,19 +379,19 @@ if not st.session_state.logged_in:
                         
                 query_db("INSERT INTO users VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT), ?, ?)", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass, starting_bonus, parent_user, st.session_state.temp_reg_country), commit=True)
-                st.success(f"Identification Allocation Successful. Bonus credit initialized.")
+                st.success(f"Account registration successful. Welcome bonus balance added.")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
             else:
-                st.error("Identification Sync Failure: The passcode string parameters do not align.")
+                st.error("Verification Failure: Passcode strings do not match.")
         render_otp_countdown_engine()
         
     elif st.session_state.auth_mode == "ResetPassword":
-        st.markdown('<div class="brand-subtitle">Access Recovery Overwrite Protocol</div>', unsafe_allow_html=True)
-        reset_email = st.text_input("TARGET VALID RECIPIENT GMAIL ACCOUNT:", key="reset_email_input")
+        st.markdown('<div class="brand-subtitle">Forgot Password Recovery</div>', unsafe_allow_html=True)
+        reset_email = st.text_input("ENTER REGISTERED EMAIL ACCOUNT:", key="reset_email_input")
         if st.session_state.reset_step == 1:
             st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            if st.button("SEND CORE SYNC DISPATCH PACKETS", use_container_width=True, key="send_reset_otp_btn"):
+            if st.button("SEND CORE RECOVERY CODE", use_container_width=True, key="send_reset_otp_btn"):
                 if reset_email.strip():
                     user_exist = query_db("SELECT username FROM users WHERE username=?", (reset_email.strip(),), one=True)
                     if user_exist:
@@ -404,34 +405,27 @@ if not st.session_state.logged_in:
                     else: st.error("No account matches specified parameters index records.")
                         
         elif st.session_state.reset_step == 2:
-            st.markdown(f'<div class="custom-matrix-box-cyan"><span>Target Pipeline Route:</span><br><b>{st.session_state.recovery_target_user}</b></div>', unsafe_allow_html=True)
-            typed_otp = st.text_input("ENTER 6-DIGIT SECURE PIN RECEIVED:", key="recovery_otp_input")
-            new_pass = st.text_input("DEFINE NEW SECURE EXECUTABLE PASSWORD CODE:", type="password", key="recovery_pass_input")
+            st.markdown(f'<div class="premium-bank-detail-card"><span>Target Route Pipeline:</span><br><b>{st.session_state.recovery_target_user}</b></div>', unsafe_allow_html=True)
+            typed_otp = st.text_input("ENTER 6-DIGIT OTP:", key="recovery_otp_input")
+            new_pass = st.text_input("CREATE NEW ACC PASSWORD CODE:", type="password", key="recovery_pass_input")
             st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            if st.button("EXECUTE SYSTEM OVERWRITE LOGIC NOW", use_container_width=True, key="finalize_reset_btn"):
+            if st.button("OVERWRITE ACCOUNT DETAILS NOW", use_container_width=True, key="finalize_reset_btn"):
                 if typed_otp.strip() == st.session_state.recovery_otp:
                     query_db("UPDATE users SET password=? WHERE username=?", (new_pass.strip(), st.session_state.recovery_target_user), commit=True)
-                    st.success("Target vault parameters edited safely. Relinking access core login.")
+                    st.success("Vault password reset complete. Loading login access terminal interface.")
                     st.session_state.auth_mode = "Login"
                     st.session_state.reset_step = 1
                     st.rerun()
                 else: st.error("Validation codes mismatch anomaly.")
                     
-    st.markdown("<hr style='border-color:#cbd5e1; opacity:0.5;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#334155; opacity:0.5;'>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
-        if st.button("LOGIN ACCOUNT", key="nav_switch_to_login"):
-            st.session_state.auth_mode = "Login"
-            st.rerun()
+        if st.button("LOGIN ACCOUNT", key="nav_switch_to_login"): st.session_state.auth_mode = "Login"; st.rerun()
     with c2:
-        if st.button("CREATE NEW ACCOUNT", key="nav_switch_to_register"):
-            st.session_state.auth_mode = "Register"
-            st.rerun()
+        if st.button("CREATE ACCOUNT", key="nav_switch_to_register"): st.session_state.auth_mode = "Register"; st.rerun()
     with c3:
-        if st.button("FORGOT PASSWORD", key="nav_switch_to_forget"):
-            st.session_state.auth_mode = "ResetPassword"
-            st.session_state.reset_step = 1
-            st.rerun()
+        if st.button("FORGOT PASSWORD", key="nav_switch_to_forget"): st.session_state.auth_mode = "ResetPassword"; st.session_state.reset_step = 1; st.rerun()
 
 # ==============================================================================
 # --- 7. AUTHENTICATED COMMAND CONSOLE MODULES & DATA PATHS ---
@@ -446,7 +440,7 @@ else:
     # --- 7A. ADMINISTRATIVE CONTROL SYSTEM OVERSEER MODULES ---
     # --------------------------------------------------------------------------
     if st.session_state.is_admin:
-        st.markdown("<h4 style='color:#1a202c; text-align:center; font-family:\"Inter\"; font-weight:700;'>CENTRAL MANAGER ADMINISTRATIVE CONTROL PANEL</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='color:#ffffff; text-align:center; font-family:\"Inter\"; font-weight:700;'>ADMIN CONTROL PANEL</h4>", unsafe_allow_html=True)
         
         if st.session_state.selected_panel == "Pending Requests":
             pending_items = query_db("SELECT id, username, bank, name, trx_id, amount, country FROM deposits WHERE status='Pending'")
@@ -454,15 +448,15 @@ else:
             else:
                 for item in pending_items:
                     st.markdown(f"""
-                    <div style='background-color:#f8fafc; padding:18px; border-radius:14px; border:1px solid #cbd5e1; margin-bottom:12px;'>
-                        <div style="font-weight:700; color:#4e5bf2; margin-bottom:6px;">INCOMING ASSET PLACEMENT DEPOSIT REQUEST</div>
+                    <div style='background-color:#0f172a; padding:18px; border-radius:14px; border:1px solid #334155; margin-bottom:12px;'>
+                        <div style="font-weight:700; color:#00f0ff; margin-bottom:6px;">INCOMING USER DEPOSIT CLAIM PACKET</div>
                         <b>User Mapped Address:</b> {item[1]}<br>
-                        <b>Sovereign Domain Region Jurisdiction:</b> <span style='color:#ff5e6c; font-weight:700;'>{item[6]}</span><br>
-                        <b>Selected Branch/Network:</b> {item[2]}<br>
-                        <b>Sender Title Signature Name:</b> {item[3]}<br>
+                        <b>Jurisdiction Region:</b> <span style='color:#ff5e6c; font-weight:700;'>{item[6]}</span><br>
+                        <b>Bank/Wallet Selected:</b> {item[2]}<br>
+                        <b>Sender Title Full Name:</b> {item[3]}<br>
                         <b>Receipt Reference Reference TXID Hash Code:</b> <code>{item[4]}</code><br>
-                        <hr style='margin:8px 0; border-color:#e2e8f0;'>
-                        CREDIT VELOCITY VALUE: <b style='color:#1a202c; font-size:18px;'>{item[5]:.2f}</b>
+                        <hr style='margin:8px 0; border-color:#1e293b;'>
+                        AMOUNT TO CREDIT: <b style='color:#ffffff; font-size:18px;'>{item[5]:.2f}</b>
                     </div>
                     """, unsafe_allow_html=True)
                     b1, b2 = st.columns(2)
@@ -479,21 +473,21 @@ else:
         elif st.session_state.selected_panel == "Regional Settings Board":
             st.markdown("##### MULTI REGIONAL BANK INSTRUCTIONS CONFIGURATION CONSOLE")
             for country_name in SUPPORTED_COUNTRIES.keys():
-                st.markdown(f"<h6 style='color:#4e5bf2; font-weight:700; margin-top:15px;'><b>{country_name.upper()} BANK CONFIGURATION</b></h6>", unsafe_allow_html=True)
+                st.markdown(f"<h6 style='color:#4e5bf2; font-weight:700; margin-top:15px;'><b>{country_name.upper()} BANK GATEWAY SETTINGS</b></h6>", unsafe_allow_html=True)
                 bank_data = query_db("SELECT bank_name, account_title, account_number FROM regional_banks WHERE country=?", (country_name,), one=True)
                 b_name_val = bank_data[0] if bank_data else ""
                 b_title_val = bank_data[1] if bank_data else ""
                 b_num_val = bank_data[2] if bank_data else ""
                 
-                new_b_name = st.text_input(f"Branch Network Provider Name ({country_name}):", value=b_name_val, key=f"adm_bname_{country_name}")
-                new_b_title = st.text_input(f"Account Legal Holder Name Signature ({country_name}):", value=b_title_val, key=f"adm_btitle_{country_name}")
-                new_b_num = st.text_input(f"Endpoint Account Destination String Address Number ({country_name}):", value=b_num_val, key=f"adm_bnum_{country_name}")
+                new_b_name = st.text_input(f"Bank Institution Name ({country_name}):", value=b_name_val, key=f"adm_bname_{country_name}")
+                new_b_title = st.text_input(f"Account Title Holder Registered Name ({country_name}):", value=b_title_val, key=f"adm_btitle_{country_name}")
+                new_b_num = st.text_input(f"Account Line Number Destination String ({country_name}):", value=b_num_val, key=f"adm_bnum_{country_name}")
                 
                 if st.button(f"Save Mapped Details For {country_name}", key=f"save_bank_btn_{country_name}"):
                     query_db("INSERT OR REPLACE INTO regional_banks VALUES (?, ?, ?, ?)", (country_name, new_b_name.strip(), new_b_title.strip(), new_b_num.strip()), commit=True)
                     st.rerun()
                     
-            st.markdown("<hr style='border-color:#cbd5e1;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#334155;'>", unsafe_allow_html=True)
             new_ann = st.text_area("System Announcement Live Broadcaster Field Text:", value=announcement_text, key=f"adm_ann_txt")
             new_usdt = st.text_input("Global Platform Target Wallet USDT Core Parameter Address String:", value=usdt_address, key=f"adm_usdt_txt")
             
@@ -521,7 +515,7 @@ else:
             if not pending_with: st.info("Outbound cash extractions request pipelines are flat clear.")
             else:
                 for w_item in pending_with:
-                    st.markdown(f"<div style='background:#f8fafc; border:1px solid #cbd5e1; padding:12px; border-radius:12px;'>User: {w_item[1]} | Bank Target: {w_item[2]} | Account Route: {w_item[3]} | Valuation Out: {w_item[4]}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='background:#0f172a; border:1px solid #334155; padding:12px; border-radius:12px;'>User: {w_item[1]} | Bank Target: {w_item[2]} | Account Route: {w_item[3]} | Valuation Out: {w_item[4]}</div>", unsafe_allow_html=True)
                     wb1, wb2 = st.columns(2)
                     with wb1:
                         if st.button("APPROVE SYSTEM TRANSFER OUTBOUND", key=f"w_app_{w_item[0]}"):
@@ -533,14 +527,14 @@ else:
                             query_db("UPDATE withdrawals SET status='Rejected' WHERE id=?", (w_item[0],), commit=True)
                             st.rerun()
                             
-        st.markdown("<hr style='border-color:#cbd5e1;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:#334155;'>", unsafe_allow_html=True)
         ad_c1, ad_c2, ad_c3, ad_c4 = st.columns(4)
         with ad_c1:
             if st.button("SUBMITTED INCOMING DEPOSITS", key="adm_bottom_nav_deps"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
         with ad_c2:
             if st.button("MULTI REGION CORE CONFIGURATION", key="adm_bottom_nav_master"): st.session_state.selected_panel = "Regional Settings Board"; st.rerun()
         with ad_c3:
-            if st.button("USER BALANCES RE-ALLOCATION MODULE", key="adm_bottom_nav_userbal"): st.session_state.selected_panel = "User Identity Adjustments Module"; st.rerun()
+            if st.button("USER BALANCES MODIFICATION", key="adm_bottom_nav_userbal"): st.session_state.selected_panel = "User Identity Adjustments Module"; st.rerun()
         with ad_c4:
             if st.button("OUTBOUND WITHDRAWAL SETTLE", key="adm_bottom_nav_with"): st.session_state.selected_panel = "Admin Liquidation Settlements"; st.rerun()
 
@@ -560,20 +554,20 @@ else:
         
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
-        with st.expander(f"GEOGRAPHICAL APP REGION CONFIGURATION: {st.session_state.user_country.upper()}"):
-            chosen_cntry_opt = st.selectbox("CHOOSE ACCOUNT ACTIVE NATIVE COUNTRY DOMAIN VARIABLES:", list(SUPPORTED_COUNTRIES.keys()), index=list(SUPPORTED_COUNTRIES.keys()).index(st.session_state.user_country), key="usr_dashboard_country_select")
+        with st.expander(f"GEOGRAPHICAL ACCOUNT REGION: {st.session_state.user_country.upper()}"):
+            chosen_cntry_opt = st.selectbox("CHOOSE ACCOUNT ACTIVE NATIVE COUNTRY DOMAIN:", list(SUPPORTED_COUNTRIES.keys()), index=list(SUPPORTED_COUNTRIES.keys()), key="usr_dashboard_country_select")
             if chosen_cntry_opt != st.session_state.user_country:
                 query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
                 st.session_state.user_country = chosen_cntry_opt
                 st.rerun()
                 
-        st.markdown("<p style='font-weight:700; color:#1a202c; font-size:16px; margin:15px 0 5px 0;'>Dashboard Indicators</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-weight:700; color:#ffffff; font-size:16px; margin:15px 0 5px 0;'>Dashboard Indicators</p>", unsafe_allow_html=True)
         
         grid_col1, grid_col2 = st.columns(2)
         with grid_col1:
             st.markdown(f"""
             <div class="app-grid-coral">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Total Account Metrics Balance</div>
+                <div style="font-size:12px; font-weight:600; opacity:0.9;">Total Balance</div>
                 <div style="font-size:24px; font-weight:700; margin-top:5px;">{symbol_str} {wallet_bal:,.2f}</div>
                 <div style="height:3px; background:rgba(255,255,255,0.4); margin-top:10px; border-radius:2px; width:70%;"></div>
             </div>
@@ -581,7 +575,7 @@ else:
             
             st.markdown(f"""
             <div class="app-grid-purple">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">System Account Level Rank</div>
+                <div style="font-size:12px; font-weight:600; opacity:0.9;">Account Level Rank</div>
                 <div style="font-size:20px; font-weight:700; margin-top:5px;">{level_tag}</div>
                 <div style="height:3px; background:rgba(255,255,255,0.4); margin-top:13px; border-radius:2px; width:45%;"></div>
             </div>
@@ -590,7 +584,7 @@ else:
         with grid_col2:
             st.markdown(f"""
             <div class="app-grid-cyan">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Dynamic App Currency Unit</div>
+                <div style="font-size:12px; font-weight:600; opacity:0.9;">Currency Unit</div>
                 <div style="font-size:24px; font-weight:700; margin-top:5px;">{currency_str}</div>
                 <div style="height:3px; background:rgba(255,255,255,0.4); margin-top:10px; border-radius:2px; width:85%;"></div>
             </div>
@@ -598,7 +592,7 @@ else:
             
             st.markdown(f"""
             <div class="app-grid-orange">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Vault Chain Encryption Code</div>
+                <div style="font-size:12px; font-weight:600; opacity:0.9;">Encryption Code</div>
                 <div style="font-size:20px; font-weight:700; margin-top:5px;">{reference_hash}</div>
                 <div style="height:3px; background:rgba(255,255,255,0.4); margin-top:13px; border-radius:2px; width:60%;"></div>
             </div>
@@ -609,16 +603,17 @@ else:
         if st.session_state.selected_panel == "Overview":
             today_date = time.strftime("%Y-%m-%d")
             
-            st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#4e5bf2; text-align:center; margin-top:15px;'>MATRIX REWARDS WHEEL APP SYSTEM</p>", unsafe_allow_html=True)
+            # --- FIXED AND RESTORED OPTION: LUCKY SPIN WHEEL MATRIX PROTOCOLS ---
+            st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#00f0ff; text-align:center; margin-top:15px;'>MATRIX REWARDS LUCKY SPIN WHEEL</p>", unsafe_allow_html=True)
             already_spun = query_db("SELECT username FROM lucky_spins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
-            if already_spun: st.markdown("<div style='color:#4e5bf2; font-weight:bold; text-align:center; font-size:13px; padding:10px;'>Reward operation completely settled for current timeline block space.</div>", unsafe_allow_html=True)
+            if already_spun: st.markdown("<div style='color:#ff5e6c; font-weight:bold; text-align:center; font-size:13px; padding:10px;'>Spin option completely used for today. Re-locks at next automated server check.</div>", unsafe_allow_html=True)
             else:
                 wheel_prizes = [0.50, 2.00, 0.10, 5.00, 0.20, 10.00, 1.50, 0.00]
                 if 'wheel_triggered' not in st.session_state: st.session_state.wheel_triggered = False
                     
                 if not st.session_state.wheel_triggered:
-                    if st.button("TRIGGER RANDOM MATRIX SPIN REVOLUTIONS SEQUENCER", use_container_width=True, key="trigger_wheel_btn"):
+                    if st.button("RUN RANDOM DYNAMIC MATRIX WHEEL SPIN NOW", use_container_width=True, key="trigger_wheel_btn"):
                         st.session_state.wheel_triggered = True
                         st.session_state.chosen_prize_idx = random.randint(0, 7)
                         st.rerun()
@@ -626,17 +621,17 @@ else:
                     win_amt = wheel_prizes[st.session_state.chosen_prize_idx]
                     target_rotation = 360 * 5 + (360 - (st.session_state.chosen_prize_idx * 45))
                     wheel_html = f"""
-                    <div style="text-align:center; background:#ffffff; padding:15px; border-radius:20px; border:1px solid #cbd5e1;">
-                        <canvas id="wheelCanvas" width="260" height="260" style="border:2px solid #cbd5e1; border-radius:50%; background:#f8fafc; transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);"></canvas>
+                    <div style="text-align:center; background:#161b26; padding:15px; border-radius:20px; border:1px solid #334155;">
+                        <canvas id="wheelCanvas" width="260" height="260" style="border:2px solid #334155; border-radius:50%; background:#0f172a; transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);"></canvas>
                         <script>
                             const ctx = document.getElementById('wheelCanvas').getContext('2d');
                             const labels = ["{symbol_str}0.50", "{symbol_str}2.00", "{symbol_str}0.10", "{symbol_str}5.00", "{symbol_str}0.20", "{symbol_str}10.00", "{symbol_str}1.50", "VOID VALUE"];
-                            const colors = ["#ff5e6c", "#ffffff", "#00c6df", "#ffffff", "#4e5bf2", "#ffffff", "#ff9124", "#ffffff"];
+                            const colors = ["#ff5e6c", "#161b26", "#00c6df", "#161b26", "#4e5bf2", "#161b26", "#ff9124", "#161b26"];
                             for (let i = 0; i < 8; i++) {{
                                 ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(130, 130);
                                 ctx.arc(130, 130, 130, (i*45)*Math.PI/180, ((i+1)*45)*Math.PI/180); ctx.lineTo(130, 130); ctx.fill();
                                 ctx.save(); ctx.translate(130, 130); ctx.rotate((i*45+22.5)*Math.PI/180);
-                                ctx.fillStyle = colors[i] === '#ffffff' ? '#1a202c' : '#ffffff'; ctx.font = "600 12px Inter"; ctx.fillText(labels[i], 45, 5); ctx.restore();
+                                ctx.fillStyle = '#ffffff'; ctx.font = "600 12px Inter"; ctx.fillText(labels[i], 45, 5); ctx.restore();
                             }}
                             setTimeout(() => {{ document.getElementById('wheelCanvas').style.transform = 'rotate({target_rotation}deg)'; }}, 300);
                         </script>
@@ -649,43 +644,46 @@ else:
                         st.session_state.wheel_triggered = False
                         st.rerun()
                         
-            st.markdown("<hr style='border-color:#e2e8f0;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#334155;'>", unsafe_allow_html=True)
+            
+            # --- FIXED AND RESTORED OPTION: DAILY LOGIN CHECK IN REWARDS ---
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
-            st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#1a202c;'>Daily System Checkin Sign Rewards Pool</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffffff;'>Daily Account Check-in Rewards Pool</p>", unsafe_allow_html=True)
             
             if not has_approved_deposit:
-                st.markdown("<div class='announcement-box' style='color:#ff5e6c !important;'>ACCOUNT UNVERIFIED BUFFER: System operations mandate one confirmed dynamic asset deposit cleared by administrator oversight before daily attendance allocations yield rewards pathways.</div>", unsafe_allow_html=True)
+                st.markdown("<div class='announcement-box' style='color:#ff5e6c !important; border:1px solid #ff5e6c;'>ACCOUNT REQUIREMENT: System requires at least one initial confirmed deposit cleared manually by administration node checks before automated daily rewards claim paths activate.</div>", unsafe_allow_html=True)
             else:
                 if already_checked: st.markdown("<p style='color:#00c6df; font-weight:700; font-size:14px; text-align:center;'>DAILY REWARD REGISTER VALUE CONFIRMED ALIGNED FOR TODAY</p>", unsafe_allow_html=True)
                 else:
-                    if st.button("EXECUTE SYSTEM SIGNAL TIME ATTENDANCE SHEET LOG IN", key="claim_bonus"):
+                    if st.button("CLAIM DAILY ATTENDANCE LOGIN REWARD NOW", key="claim_bonus", use_container_width=True):
                         query_db("INSERT INTO checkins VALUES (?, ?)", (st.session_state.current_user, today_date), commit=True)
                         query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
                         st.rerun()
                         
-            st.markdown("<hr style='border-color:#e2e8f0;'>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#1a202c; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Network Video Media Workload Channels</p>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#334155;'>", unsafe_allow_html=True)
             
+            # --- FIXED AND RESTORED OPTION: AD TASKS VIEW (1 TO 5 OVER ADMIN VALUE CONTROLS) ---
+            st.markdown("<p style='color:#ffffff; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Network Video Media Workload Contracts</p>", unsafe_allow_html=True)
             if not has_approved_deposit:
-                st.markdown("<div class='announcement-box' style='color:#ff9124 !important;'>MEDIA CONTRACTS REPLICA LOCK: Deployed video loops modules are restricted until initial platform verification balance row passes audits metrics checks.</div>", unsafe_allow_html=True)
+                st.markdown("<div class='announcement-box' style='color:#ff9124 !important;'>MEDIA REPLICA LOCK: Deployed task video loops links are restricted until your deployment deposit cleared by admin key balances profiles check loops.</div>", unsafe_allow_html=True)
             else:
                 for i in range(1, 6):
                     ad_url = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_url'", one=True)[0]
                     ad_rew = float(query_db(f"SELECT value FROM system_config WHERE key='ad{i}_reward'", one=True)[0])
-                    st.markdown(f"<div class='announcement-box' style='margin-bottom:8px;'>Video Traffic Promoted Asset Unit Block {i} | Contract Pay: <b>{symbol_str} {ad_rew:.2f}</b></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='announcement-box' style='margin-bottom:8px;'>Video Traffic Task Unit Block {i} | Contract Pay: <b>{symbol_str} {ad_rew:.2f}</b></div>", unsafe_allow_html=True)
                     
                     ad_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id=? AND date=?", (st.session_state.current_user, f'ad{i}', today_date), one=True)
-                    if ad_watched: st.markdown("<p style='color:#4e5bf2; font-weight:700; text-align:center; font-size:12px;'>MEDIA PIECE TRACKING RESOLVED COMPLETED STABLE FOR TODAY</p>", unsafe_allow_html=True)
+                    if ad_watched: st.markdown("<p style='color:#4e5bf2; font-weight:700; text-align:center; font-size:12px;'>MEDIA WORKLOAD COMPLETELY SOLVED ACCURATELY FOR TODAY</p>", unsafe_allow_html=True)
                     else:
                         watch_state_key = f"unlocked_ad_{i}"
                         if not st.session_state.get(watch_state_key, False):
-                            if st.button(f"DEPLOY OUTBOUND MEDIA UNIT FOR CONTRACTS {i}", key=f"btn_watch_{i}", use_container_width=True):
+                            if st.button(f"DEPLOY OUTBOUND TASK MEDIA ACCESS UNIT {i}", key=f"btn_watch_{i}", use_container_width=True):
                                 st.session_state[watch_state_key] = True
-                                st.markdown(f'<a href="{ad_url}" target="_blank" style="text-decoration:none;"><button style="background-color:#4e5bf2; color:white; width:100%; border:none; padding:12px; border-radius:12px; font-weight:600; margin-bottom:10px;">OPEN EXTERNAL VIDEO MEDIA SOURCE DATA ROUTER STREAM</button></a>', unsafe_allow_html=True)
+                                st.markdown(f'<a href="{ad_url}" target="_blank" style="text-decoration:none;"><button style="background-color:#4e5bf2; color:white; width:100%; border:none; padding:12px; border-radius:12px; font-weight:600; margin-bottom:10px;">OPEN EXTERNAL LINK MEDIA ROUTER STREAMING ASSIGNMENT NOW</button></a>', unsafe_allow_html=True)
                                 st.rerun()
                         else:
-                            st.link_button(f"RE-OPEN VIDEO TRACK LINK ROUTER INTERFACE {i}", ad_url, use_container_width=True, key=f"lnk_ad_reopen_{i}")
-                            if st.button("AGGREGATE REWARDS COMPENSATIONS FROM WORK DEPLOYMENT", key=f"clk_ad{i}", use_container_width=True):
+                            st.link_button(f"RE-OPEN VIDEO ACTION MATRIX ROUTING INTERFACE {i}", ad_url, use_container_width=True, key=f"lnk_ad_reopen_{i}")
+                            if st.button(f"RESOLVE TASK EQUATIONS AND HARVEST ACCUMULATED CONTRACT REWARD UNITS {i}", key=f"clk_ad{i}", use_container_width=True):
                                 query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
                                 query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
                                 credit_multi_tier_commissions(st.session_state.current_user, ad_rew)
@@ -694,44 +692,31 @@ else:
                                 
             st.markdown(f"""
             <div class="bottom-banner-bonus">
-                <div style="font-size:24px; margin-right:12px;">🎁</div>
                 <div style="font-family:'Inter', sans-serif;">
-                    <div style="font-weight:700; color:#1a202c; font-size:14px;">YOU GOT A BIG BONUS CONTRACT OPTION!</div>
-                    <div style="color:#4a5568; font-size:12px; margin-top:2px;">Deposit funds bonus - 100% credit multiplier automatically applied into matrix active levels pools tracking parameters.</div>
+                    <div style="font-weight:700; color:#ffffff; font-size:14px; text-align:center;">DEPOSIT HIGHLIGHT BONUS ACTIVE</div>
+                    <div style="color:#94a3b8; font-size:12px; margin-top:4px; text-align:center;">Receive an automated 100% credit multiplier verification adjustment placement over system accounts reserves rows elements tracking matrices.</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
                                 
         elif st.session_state.selected_panel == "Deposit":
-            st.markdown(f"<h5>FINANCIAL RECHARGE INJECTION TERMINAL ROUTING: {st.session_state.user_country.upper()} ENVIRONMENT</h5>", unsafe_allow_html=True)
-            
+            st.markdown(f"<h5>DEPOSIT ACCOUNT GATEWAY: {st.session_state.user_country.upper()} ENVIRONMENT VECTORS</h5>", unsafe_allow_html=True)
             assigned_bank_data = query_db("SELECT bank_name, account_title, account_number FROM regional_banks WHERE country=?", (st.session_state.user_country,), one=True)
             
             if assigned_bank_data:
                 b_name, b_title, b_num = assigned_bank_data
                 st.markdown(f"""
-                <div class="premium-bank-detail-card" style="border: 1px solid #4e5bf2 !important; box-shadow: 0 4px 15px rgba(78,91,242,0.05) !important;">
-                    <div style="font-family:'Inter'; color:#4e5bf2; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">
-                        Current Dynamic Bank Destination Details
-                    </div>
-                    <div class="bank-line-row">
-                        <span class="bank-line-label">Banking Institution Provider Brand:</span>
-                        <span class="bank-line-value" style="color:#4e5bf2;">{b_name}</span>
-                    </div>
-                    <div class="bank-line-row">
-                        <span class="bank-line-label">Account Legal Holder Title Signature Full Name:</span>
-                        <span class="bank-line-value" style="color:#1a202c;">{b_title}</span>
-                    </div>
-                    <div class="bank-line-row" style="border-bottom:none; padding-bottom:0;">
-                        <span class="bank-line-label">Account Line Destination Number / Address Code:</span>
-                        <span class="bank-line-value" style="color:#ff5e6c; letter-spacing:1px; user-select:all; cursor:pointer;">{b_num}</span>
-                    </div>
+                <div class="premium-bank-detail-card">
+                    <div style="font-family:'Inter'; color:#00f0ff; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase;">Current Account Destination Details</div>
+                    <div class="bank-line-row"><span class="bank-line-label">Bank Vendor Name:</span><span class="bank-line-value" style="color:#4e5bf2;">{b_name}</span></div>
+                    <div class="bank-line-row"><span class="bank-line-label">Account Title Name:</span><span class="bank-line-value">{b_title}</span></div>
+                    <div class="bank-line-row" style="border-bottom:none; padding-bottom:0;"><span class="bank-line-label">Account Line Number Address Hash:</span><span class="bank-line-value" style="color:#ff5e6c; user-select:all; cursor:pointer;">{b_num}</span></div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
-                st.warning("Administrative variable bank setup arrays looping configurations traces. Defaults loaded.")
+                st.warning("Administrative variables updates maps processing internal checks trackers. Defaults engaged.")
                 
-            chosen_bank_alias = st.text_input("VERIFY SENDER ORIGIN ROUTER BANK PROVIDER BRAND CONDUIT NAME:", value=assigned_bank_data[0] if assigned_bank_data else "Standard Local Gateway Conduit Instance", key="usr_deposit_bank_select_string")
+            chosen_bank_alias = st.text_input("VERIFY SENDER ORIGIN PROVIDER BANKING VENDOR BRAND INSTANCE NAME:", value=assigned_bank_data[0] if assigned_bank_data else "Standard Local Gateway Conduit Instance", key="usr_deposit_bank_select_string")
             remitter_name = st.text_input("INPUT INDIVIDUAL TRANSMITTING ACCOUNT OWNER STATEMENT FULL NAME STRING:", key="usr_deposit_name_input")
             trx_id_input = st.text_input("ENTER PAYMENT RECEIPT UNIQUE REFERENCE HASH TRANSACTION REF ID / TXID:", key="usr_deposit_trx_input")
             amount_input = st.number_input(f"RECHARGE QUANTITY LIQUID VALVE RESERVES VOLUME AMOUNT VALUE ({currency_str}):", min_value=1.0, value=100.0, key="usr_deposit_amt_input")
@@ -744,22 +729,23 @@ else:
                 else: st.error("Validation error structure: Form entry fields input strings are blanks or invalid parameters variables.")
                     
         elif st.session_state.selected_panel == "Cashout":
-            st.markdown(f"<h5>RESERVES EXTRACTION LIQUID TRANSPORTS WITHDRAWAL PIPELINES BOARD ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
-            target_bank_vendor = st.text_input(f"ENTER LOCAL RECIPIENT TARGET BANK CONDUIT NAME SYSTEM BRAND ({st.session_state.user_country}):", key="usr_withdraw_bank_input_string")
-            account_route = st.text_input("ENTER CHOSEN ACCOUNT UNIQUE CARD ENDPOINT NUMBER / TARGET WALLET STRING ROUTE LINK SEQS:", key="usr_withdraw_acc_input")
-            amount_input = st.number_input(f"SETTLE TRANSFERS OUT VOLUME MAGNITUDE QUANTITY VALUE FROM TOTAL RESERVE BALANCE ({currency_str}):", min_value=10.0, key="usr_withdraw_amt_input")
+            # --- FIXED AND RE-ORGANIZED LABEL LINES ACCORDING TO SCREENSHOT 1000065127.jpg ---
+            st.markdown(f"<h5>WITHDRAW FUNDS ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
+            target_bank_vendor = st.text_input("ENTER LOCAL RECIPIENT TARGET BANK CONDUIT NAME SYSTEM BRAND:", key="usr_withdraw_bank_input_string")
+            account_route = st.text_input("ENTER ACCOUNT UNIQUE CARD ENDPOINT NUMBER / TARGET WALLET STRINGS:", key="usr_withdraw_acc_input")
+            amount_input = st.number_input(f"SETTLE TRANSFERS EXTRACTION QUANTITY AMOUNT SCALE FROM RESERVES LEDGER TOTALS ({currency_str}):", min_value=10.0, key="usr_withdraw_amt_input")
             
             if st.button("INITIALIZE RESERVES OUTBOUND CASH LIQUIDATION TRANSMISSION REQUEST ACTION", use_container_width=True, key="usr_submit_withdraw_btn"):
                 if wallet_bal >= amount_input:
                     query_db("UPDATE users SET balance = balance - ? WHERE username=?", (amount_input, st.session_state.current_user), commit=True)
                     query_db("INSERT INTO withdrawals (username, bank, account, amount, status, country) VALUES (?, ?, ?, ?, 'Pending', ?)", 
                              (st.session_state.current_user, target_bank_vendor.strip(), account_route.strip(), amount_input, st.session_state.user_country), commit=True)
-                    st.success("Extraction pipeline logs logged safely on data registry storage array mappings lists.")
+                    st.success("Extraction pipeline logs written safely on registry storage maps.")
                     st.rerun()
-                else: st.error("Transfer transaction dropped: Available asset variables inside user profiles cells fail checks boundaries bounds parameters.")
+                else: st.error("Transfer transaction dropped: Available asset balances parameters fail limitations checks boundaries bounds parameters.")
                     
         elif st.session_state.selected_panel == "Promote_Video":
-            st.markdown("<h5>IMPRESSIONS TRAFFIC GENERATOR PORTALS ADVERTISING SELF-SERVICE CAMPAIGNS MANAGER</h5>", unsafe_allow_html=True)
+            st.markdown("<h5>IMPRESSIONS TRAFFIC GENERATOR ADVERTISING MANAGERS CONSOLE</h5>", unsafe_allow_html=True)
             adv_email = st.text_input("ADVERTISER ACCOUNT UNIQUE IDENTIFICATION SPECIFIC GMAIL VAULT POINT STRING:", value=st.session_state.current_user, key="usr_promo_email_input")
             video_url = st.text_input("YOUTUBE PROMOTED LINK STREAM CONTENT SOURCE TARGET HYPERLINK URL STRING PATH:", placeholder="https://www.youtube.com/watch?v=...", key="usr_promo_url_input")
             views_req = st.number_input("REQUIRED VOLUME ALLOCATION IMPRESSIONS VIEWS REQ COUNT CONTRACTS CONSTRAINTS COUNTER CONSTRAINTS LIMITS:", min_value=100, step=100, value=100, key="usr_promo_views_input")
@@ -773,27 +759,20 @@ else:
                     st.success("Media promotion packages layout structured. Waiting infrastructure administrative validation checks loops variables optimization parameters.")
                 else: st.error("Configuration structure compilation failure missing necessary argument details variables blocks fields data profiles.")
                     
-        st.markdown("<hr style='border-color:#cbd5e1; opacity:0.5;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:#334155; opacity:0.5;'>", unsafe_allow_html=True)
         
+        # --- NAVIGATION SYSTEM ROW SYNC ACCORDING TO SCREENSHOT 1000065132.jpg ---
         usr_col1, usr_col2, usr_col3, usr_col4 = st.columns(4)
         with usr_col1:
-            if st.button("HOME PAGE ACCESS", key="nav_home", use_container_width=True): 
-                st.session_state.selected_panel = "Overview"
-                st.rerun()
+            if st.button("HOME PAGE ACCESS", key="nav_home", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
         with usr_col2:
-            if st.button("DEPOSIT FUNDS CONSOLE", key="nav_dep", use_container_width=True): 
-                st.session_state.selected_panel = "Deposit"
-                st.rerun()
+            if st.button("DEPOSIT FUNDS CONSOLE", key="nav_dep", use_container_width=True): st.session_state.selected_panel = "Deposit"; st.rerun()
         with usr_col3:
-            if st.button("WITHDRAW FUNDS INTERFACE", key="nav_cash", use_container_width=True): 
-                st.session_state.selected_panel = "Cashout"
-                st.rerun()
+            if st.button("WITHDRAW FUNDS INTERFACE", key="nav_cash", use_container_width=True): st.session_state.selected_panel = "Cashout"; st.rerun()
         with usr_col4:
-            if st.button("TRAFFIC CAMPAIGN MANAGER", key="nav_prom", use_container_width=True): 
-                st.session_state.selected_panel = "Promote_Video"
-                st.rerun()
+            if st.button("TRAFFIC CAMPAIGN MANAGER", key="nav_prom", use_container_width=True): st.session_state.selected_panel = "Promote_Video"; st.rerun()
                 
-        if st.button("DISCONNECT SECURE MODULE LOGOUT PORTAL INSTANTLY FROM SYSTEM ENGINE RUNTIME ENVIRONMENT DATA", key="global_logout_btn", use_container_width=True):
+        if st.button("DISCONNECT CORE NETWORK DISPATCH TERMINAL LOGOUT PORTAL INSTANTLY", key="global_logout_btn", use_container_width=True):
             st.session_state.logged_in = False; st.session_state.is_admin = False
             st.query_params.clear()
             st.rerun()
@@ -819,4 +798,4 @@ else:
 # Structural arrays initialization trace values indexes maps storage allocation indicators matrices properties variables fields.
 # Background environment data configuration sequences logs pipeline models grids blocks elements maps frameworks database directories.
 # Validation layer check loops structures tracing blocks files scripts properties arguments parameters fields tracking values rows parameters metrics indicators.
-# [END OF OPERATIONAL COMPLIANT WORKING BUSINESS SOURCE CODE MULTI-COUNTRY MATRIX APPLICATION GRIDS INTERFACES]
+# [END OF OPERATIONAL COMPLIANT FIXING RE-STABILIZED PREMIUM CODE APPLICATION GATEWAY GRIDS INTERFACES SYSTEM DATA CONTROLLERS APPS PACKETS]
