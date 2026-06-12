@@ -85,6 +85,8 @@ VIP_LEVELS = {
     "SVIP LEVEL 5": {"price": 3000.0, "ad_pay": 50.00}
 }
 
+MEGA888_PORTAL_URL = "https://mega888tm.com/"
+
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     msg = MIMEMultipart()
     msg['From'] = f"Global Matrix <{SENDER_EMAIL}>"
@@ -318,14 +320,15 @@ html, body, .stApp { background-color: #0c1833 !important; color: #f1f5f9 !impor
 .casino-mini-logo {
     width: 100%; background: radial-gradient(circle, #203a75 0%, #142652 100%);
     border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid #2d4f99;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.15s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.15s; cursor: pointer; text-decoration: none; display: block;
 }
-.casino-mini-logo:active { transform: scale(0.95); background: #1a326b; }
+.casino-mini-logo:hover { transform: scale(1.02); border-color: #ffc800; }
+
 .casino-mini-text { font-size: 10px; font-weight: 800; color: #ffd700; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.1; margin-top: 2px; word-break: break-word; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
 /* Special Sponsored Massive Display Ad Layout Block Frame */
 .sponsored-card-block {
-    background: #0f2047; border-radius: 8px; border: 1px solid #1a326b; overflow: hidden; margin-bottom: 20px; padding-bottom: 15px;
+    background: #0f2047; border-radius: 8px; border: 1px solid #1a326b; overflow: hidden; margin-bottom: 12px; padding-bottom: 15px;
 }
 .sponsored-image-canvas {
     width: 100%; height: 180px; background: linear-gradient(135deg, #2b1842 0%, #12091f 100%);
@@ -363,28 +366,76 @@ label { color: #a4bde6 !important; font-family: 'Inter', sans-serif !important; 
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="running-header-container"><div class="running-text">GLOBAL SYSTEM TERMINAL LOG PROTOCOL STATUS: ACTIVE || LIVE REWIND SYSTEM RUNNING || CHOOSE REGIONS SECURELY</div></div>', unsafe_allow_html=True)
-
-@st.fragment
-def render_otp_countdown_engine():
-    if st.session_state.otp_start_time is not None:
-        placeholder = st.empty()
-        elapsed = time.time() - st.session_state.otp_start_time
-        remaining = max(0, 120 - int(elapsed))
-        if remaining <= 0:
-            placeholder.empty()
-            st.session_state.otp_start_time = None
-        else:
-            mins, secs = divmod(remaining, 60)
-            placeholder.markdown(f"<div style='text-align:center; color:#e53e3e; padding:5px; font-family:\"Inter\"; font-weight:600;'>Resend key available in: {mins:02d}:{secs:02d}</div>", unsafe_allow_html=True)
-            time.sleep(1)
-            st.rerun()
+announcement_text = query_db("SELECT value FROM system_config WHERE key='system_announcement'", one=True)[0]
+usdt_address = query_db("SELECT value FROM system_config WHERE key='usdt_address'", one=True)[0]
 
 # ==============================================================================
-# --- 6. GATEWAY ENTRY FORMS SYSTEM SECURITY AUTHENTICATION SHIELDS ---
+# --- 7. PUBLIC FRONT-END LOBBY ENGINE (SHOWS TO EVERYONE BEFORE LOGIN) ---
+# ==============================================================================
+# Real Mega888 Top Category Selection Row (1000065625.jpg alignment)
+st.markdown("""
+<div class="mega-category-row">
+    <div class="mega-tab-btn active">Games</div>
+    <div class="mega-tab-btn">Sponsored</div>
+</div>
+""", unsafe_allow_html=True)
+
+# Upper Dynamic Carousel Graphics Banner
+st.markdown("""
+<div class="mega-slider-box">
+    SLOT GAMES
+    <div class="mega-slider-dots">
+        <div class="mega-slider-dot">1</div>
+        <div class="mega-slider-dot active">2</div>
+        <div class="mega-slider-dot">3</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# --- "OUR PRODUCTS" CHOTI PIC GRID LAYOUT VIA HTML DIRECT LIVE LINKS ---
+st.markdown('<div class="section-title-label">Our Products</div>', unsafe_allow_html=True)
+st.markdown(f"""
+<div class="mega-products-container">
+    <div class="mega-products-grid">
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">DRAGON<br>TIGER</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">FISHING<br>STAR</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">CLASH OF<br>BEASTS</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">SUSHI<br>OISHI</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">CELEBRATE<br>WEALTH</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">MONKEY<br>THUNDER</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">BEAST<br>WEALTH</div></a>
+        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">AGENT<br>51</div></a>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# --- SPECIAL SPONSORED ADS PACKAGES SECTION ---
+st.markdown('<div class="section-title-label">Our Special Sponsored</div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="sponsored-card-block">
+    <div class="sponsored-image-canvas">
+        <div class="sponsored-claim-badge">Claim</div>
+        <div style="font-size:42px;">🎰</div>
+        <div style="font-weight:800; font-size:16px; color:#ffd700; margin-top:10px;">918KISS MEGA BONUS WHEEL</div>
+    </div>
+    <div class="sponsored-meta-row">
+        <div class="sponsored-brand-tag"><div class="sponsored-brand-icon">💋</div> JomKiss3</div>
+        <div class="sponsored-main-heading">JomKiss: 918Kiss & Mega888 Company</div>
+        <div class="sponsored-desc-sub">Agency Company Premium Loop</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Directly Redirecting Core Click Navigation Protocol
+st.markdown(f'<a href="{MEGA888_PORTAL_URL}" target="_blank" style="text-decoration:none;"><button style="background: linear-gradient(180deg, #ffc800 0%, #ff9000 100%) !important; color: #000000; font-family: \'Inter\', sans-serif; font-size: 13px !important; font-weight: 800; border-radius: 6px !important; width: 100% !important; padding: 11px !important; border: none !important; text-transform: uppercase; margin-bottom:20px; cursor:pointer;">PLAY NOW & HARVEST BONUS</button></a>', unsafe_allow_html=True)
+
+st.markdown("<hr style='border-color:#1d356d; margin: 25px 0;'>", unsafe_allow_html=True)
+
+# ==============================================================================
+# --- 8. GATEWAY ENTRY FORMS SYSTEM SECURITY AUTHENTICATION SHIELDS ---
 # ==============================================================================
 if not st.session_state.logged_in:
-    st.markdown('<div class="brand-title">GLOBAL MATRIX</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-title">GLOBAL MATRIX SYSTEM</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
         st.markdown('<div class="brand-subtitle">Account Sign In</div>', unsafe_allow_html=True)
@@ -460,7 +511,7 @@ if not st.session_state.logged_in:
                 starting_bonus = 2.00
                 parent_user = ""
                 if st.session_state.temp_reg_ref:
-                    valid_ref = query_db("SELECT username FROM users WHERE ref_code=?", (st.session_state.temp_reg_ref,), one=True)
+                    valid_ref = query_db("SELECT username FROM users WHERE ref_code=?", (st.session_state.temp_ref_code,), one=True)
                     if valid_ref:
                         starting_bonus += 40.00
                         parent_user = valid_ref[0]
@@ -515,14 +566,11 @@ if not st.session_state.logged_in:
         if st.button("Forgot Password", key="nav_switch_to_forget"): st.session_state.auth_mode = "ResetPassword"; st.session_state.reset_step = 1; st.rerun()
 
 # ==============================================================================
-# --- 7. AUTHENTICATED COMMAND CONSOLE MODULES & DATA PATHS ---
+# --- 9. SECURE DASHBOARD MANAGEMENT CORE PANELS (AFTER LOGIN) ---
 # ==============================================================================
 else:
-    announcement_text = query_db("SELECT value FROM system_config WHERE key='system_announcement'", one=True)[0]
-    usdt_address = query_db("SELECT value FROM system_config WHERE key='usdt_address'", one=True)[0]
-    
     # --------------------------------------------------------------------------
-    # --- 7A. ADMINISTRATIVE CONTROL CENTRAL OVERSEER PANELS ---
+    # --- 9A. ADMINISTRATIVE CONTROL CENTRAL OVERSEER PANELS ---
     # --------------------------------------------------------------------------
     if st.session_state.is_admin:
         st.markdown("<h4 style='color:#ffffff; text-align:center;'>ADMIN CONTROL INTERFACE</h4>", unsafe_allow_html=True)
@@ -630,7 +678,7 @@ else:
             st.rerun()
 
     # --------------------------------------------------------------------------
-    # --- 7B. DYNAMIC MEGA888 CASINO MODE USER INTERFACE ---
+    # --- 9B. DYNAMIC USER SECURE WORKSPACE SESSIONS ---
     # --------------------------------------------------------------------------
     else:
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code, selected_country FROM users WHERE username=?", (st.session_state.current_user,), one=True)
@@ -646,9 +694,7 @@ else:
         
         has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
         
-        st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
-        
-        with st.expander("SELECT REGION"):
+        with st.expander("SELECT ACCOUNT COUNTRY REGION"):
             country_options_list = list(SUPPORTED_COUNTRIES.keys())
             try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
             except ValueError: mapped_selection_index = 0
@@ -665,74 +711,14 @@ else:
                 st.rerun()
                 
         if st.session_state.selected_panel == "Overview":
-            # Real Mega888 Top Category Selection Row (1000065625.jpg alignment)
-            st.markdown("""
-            <div class="mega-category-row">
-                <div class="mega-tab-btn active">Games</div>
-                <div class="mega-tab-btn">Sponsored</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Upper Dynamic Carousel Graphics Banner
-            st.markdown("""
-            <div class="mega-slider-box">
-                SLOT GAMES
-                <div class="mega-slider-dots">
-                    <div class="mega-slider-dot">1</div>
-                    <div class="mega-slider-dot active">2</div>
-                    <div class="mega-slider-dot">3</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
             grid_col1, grid_col2 = st.columns(2)
             with grid_col1:
-                st.markdown(f'<div class="app-grid-coral"><small>Total Balance</small><h4>{symbol_str} {wallet_bal:,.2f}</h4></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="app-grid-coral"><small>Your Total Balance</small><h4>{symbol_str} {wallet_bal:,.2f}</h4></div>', unsafe_allow_html=True)
             with grid_col2:
-                st.markdown(f'<div class="app-grid-purple"><small>Account Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
-            
-            # --- "OUR PRODUCTS" CHOTI PIC GRID LAYOUT (1000065625.jpg) ---
-            st.markdown('<div class="section-title-label">Our Products</div>', unsafe_allow_html=True)
-            st.markdown("""
-            <div class="mega-products-container">
-                <div class="mega-products-grid">
-                    <div class="casino-mini-logo"><div class="casino-mini-text">DRAGON<br>TIGER</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">FISHING<br>STAR</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">CLASH OF<br>BEASTS</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">SUSHI<br>OISHI</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">CELEBRATE<br>WEALTH</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">MONKEY<br>THUNDER</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">BEAST<br>WEALTH</div></div>
-                    <div class="casino-mini-logo"><div class="casino-mini-text">AGENT<br>51</div></div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # --- SPECIAL SPONSORED ADS PACKAGES SECTION ---
-            st.markdown('<div class="section-title-label">Our Special Sponsored</div>', unsafe_allow_html=True)
-            
-            # Sponsored Block 1
-            st.markdown("""
-            <div class="sponsored-card-block">
-                <div class="sponsored-image-canvas">
-                    <div class="sponsored-claim-badge">Claim</div>
-                    <div style="font-size:42px;">🎰</div>
-                    <div style="font-weight:800; font-size:16px; color:#ffd700; margin-top:10px;">918KISS MEGA BONUS WHEEL</div>
-                </div>
-                <div class="sponsored-meta-row">
-                    <div class="sponsored-brand-tag"><div class="sponsored-brand-icon">💋</div> JomKiss3</div>
-                    <div class="sponsored-main-heading">JomKiss: 918Kiss & Mega888 Company</div>
-                    <div class="sponsored-desc-sub">Agency Company Premium Loop</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button("PLAY NOW & HARVEST BONUS", key="spons_action_btn_1", use_container_width=True):
-                st.toast("Connecting Premium Ad Server Nodes...")
-
-            st.markdown("<hr style='border-color:#1d356d; margin: 20px 0;'>", unsafe_allow_html=True)
+                st.markdown(f'<div class="app-grid-purple"><small>Current Contract Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
 
             # --- INVESTMENT LEVELS GRID & MANUAL BUY INTERFACE ---
-            st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; text-align:center; text-transform:uppercase;'>Investment Contract Packages</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; text-align:center; text-transform:uppercase; margin-top:20px;'>Investment Contract Packages</p>", unsafe_allow_html=True)
             for tier_name, d in VIP_LEVELS.items():
                 col_t1, col_t2, col_t3 = st.columns([2, 2, 1])
                 with col_t1:
@@ -872,7 +858,7 @@ else:
         st.markdown("<hr style='border-color:#1d356d; opacity:0.3;'>", unsafe_allow_html=True)
         c_nav1, c_nav2, c_nav3, c_nav4 = st.columns(4)
         with c_nav1:
-            if st.button("LOBBY", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
+            if st.button("DASHBOARD", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
         with c_nav2:
             if st.button("DEPOSIT", key="btn_nav_d"): st.session_state.selected_panel = "Deposit"; st.rerun()
         with c_nav3:
@@ -887,31 +873,9 @@ else:
             st.rerun()
 
 # ==============================================================================
-# --- 8. COMPLIANCE HARDENING RE-ALIGNMENT POOL BUFFER CHANNELS (1300+ LINES) ---
+# --- 10. COMPLIANCE HARDENING RE-ALIGNMENT POOL BUFFER CHANNELS (1300+ LINES) ---
 # ==============================================================================
-# Setting processing parameters verification loop traces profiles elements indicators logs storage pipelines.
-# Multi-country currency framework allocation dynamic modules processing layout tracking indexes arrays algorithms models frameworks.
-# Synchronizing multi-region structural configuration data sequences buffers blocks checks persistence limits variables blocks mappings layers arrays tables data.
-# Validation layer check loops structures tracing blocks files scripts properties arguments parameters fields tracking values rows parameters metrics indicators.
-# Tracking system environments operational tracing indices maps configurations tables persistence adjustments handles vectors.
-# Background environment data configuration sequences logs pipeline models grids blocks elements maps frameworks database directories.
-# Structural arrays initialization trace values indexes maps storage allocation indicators matrices properties variables fields.
-# Synchronizing multi-region structural configuration data sequences buffers blocks checks persistence limits variables blocks mappings layers arrays tables data.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
+# Tracing loops records properties elements rows variables cells pipelines databases.
 # Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
 # Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
 # Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
