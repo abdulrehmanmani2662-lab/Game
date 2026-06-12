@@ -221,11 +221,9 @@ footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid
     display: none !important; visibility: hidden !important;
 }
 
-/* Premium Dark Slate Mixing Background Config */
 html, body, .stApp { background-color: #0e1118 !important; color: #f1f5f9 !important; font-family: 'Inter', sans-serif !important; }
 [data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 15px !important; background: #161b26 !important; border-radius: 24px !important; border: 2px solid #4e5bf2 !important; box-shadow: 0 8px 32px rgba(78,91,242,0.15) !important; }
 
-/* Real Moving Marquee Setup Banner Line */
 .running-header-container { width: 100%; background: #1b2234; padding: 12px 0; margin-bottom: 12px; border-radius: 12px; border-bottom: 2px solid #00f0ff; text-align: center; }
 .running-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #00f0ff; letter-spacing: 0.5px; }
 .fomo-ticker-container { width: 100%; background: #1e293b; padding: 6px 0; margin-bottom: 20px; text-align: center; border-radius: 10px; }
@@ -234,14 +232,12 @@ html, body, .stApp { background-color: #0e1118 !important; color: #f1f5f9 !impor
 .brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 34px; font-weight: 700; color: #ffffff; margin-top: 10px; letter-spacing: 1px; text-shadow: 0 0 10px rgba(78,91,242,0.5); }
 .brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #94a3b8; margin-bottom: 25px; }
 
-/* Short Clean Input Rows Minimal styling */
 div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
     background-color: #0f172a !important; color: #ffffff !important; border: 1px solid #334155 !important; border-radius: 12px !important;
     padding: 12px !important; font-size: 15px !important; font-weight: 600 !important; box-shadow: none !important;
 }
 div[data-testid="stTextInput"] input:focus { border: 1px solid #4e5bf2 !important; background-color: #0f172a !important; }
 
-/* Premium Corporate Dynamic Buttons Blue Accent Lines */
 div.stButton > button {
     background: linear-gradient(135deg, #4e5bf2 0%, #3b49df 100%) !important; color: #ffffff !important; font-family: 'Inter', sans-serif;
     font-size: 15px !important; font-weight: 600; border-radius: 14px !important; width: 100% !important; padding: 14px !important; border: none !important;
@@ -251,13 +247,11 @@ div.stButton > button:hover { background: #3b49df !important; transform: scale(1
 
 .announcement-box { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 14px; font-size: 13px; color: #e2e8f0 !important; text-align: center; font-weight: 500; }
 
-/* High end 4 Box Indicator grids styles */
 .app-grid-coral { background: #ff5e6c !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
 .app-grid-cyan { background: #00c6df !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
 .app-grid-purple { background: #4e5bf2 !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
 .app-grid-orange { background: #ff9124 !important; border-radius: 16px; padding: 18px; color: #ffffff !important; margin-bottom: 12px; }
 
-/* Multi line clear layout detail row structures */
 .premium-bank-detail-card {
     background: #0f172a !important; border: 1px solid #334155 !important;
     border-radius: 16px !important; padding: 18px !important; margin: 15px 0 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -555,7 +549,19 @@ else:
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
         with st.expander(f"GEOGRAPHICAL ACCOUNT REGION: {st.session_state.user_country.upper()}"):
-            chosen_cntry_opt = st.selectbox("CHOOSE ACCOUNT ACTIVE NATIVE COUNTRY DOMAIN:", list(SUPPORTED_COUNTRIES.keys()), index=list(SUPPORTED_COUNTRIES.keys()), key="usr_dashboard_country_select")
+            # FIXED: Changed index parameter type from whole list object to matching integer mapping index value
+            country_keys_list = list(SUPPORTED_COUNTRIES.keys())
+            try:
+                current_country_index = country_keys_list.index(st.session_state.user_country)
+            except ValueError:
+                current_country_index = 0
+
+            chosen_cntry_opt = st.selectbox(
+                "CHOOSE ACCOUNT ACTIVE NATIVE COUNTRY DOMAIN:", 
+                options=country_keys_list, 
+                index=current_country_index, 
+                key="usr_dashboard_country_select"
+            )
             if chosen_cntry_opt != st.session_state.user_country:
                 query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
                 st.session_state.user_country = chosen_cntry_opt
@@ -603,7 +609,6 @@ else:
         if st.session_state.selected_panel == "Overview":
             today_date = time.strftime("%Y-%m-%d")
             
-            # --- FIXED AND RESTORED OPTION: LUCKY SPIN WHEEL MATRIX PROTOCOLS ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#00f0ff; text-align:center; margin-top:15px;'>MATRIX REWARDS LUCKY SPIN WHEEL</p>", unsafe_allow_html=True)
             already_spun = query_db("SELECT username FROM lucky_spins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
@@ -646,7 +651,6 @@ else:
                         
             st.markdown("<hr style='border-color:#334155;'>", unsafe_allow_html=True)
             
-            # --- FIXED AND RESTORED OPTION: DAILY LOGIN CHECK IN REWARDS ---
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffffff;'>Daily Account Check-in Rewards Pool</p>", unsafe_allow_html=True)
             
@@ -662,7 +666,6 @@ else:
                         
             st.markdown("<hr style='border-color:#334155;'>", unsafe_allow_html=True)
             
-            # --- FIXED AND RESTORED OPTION: AD TASKS VIEW (1 TO 5 OVER ADMIN VALUE CONTROLS) ---
             st.markdown("<p style='color:#ffffff; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Network Video Media Workload Contracts</p>", unsafe_allow_html=True)
             if not has_approved_deposit:
                 st.markdown("<div class='announcement-box' style='color:#ff9124 !important;'>MEDIA REPLICA LOCK: Deployed task video loops links are restricted until your deployment deposit cleared by admin key balances profiles check loops.</div>", unsafe_allow_html=True)
@@ -729,7 +732,6 @@ else:
                 else: st.error("Validation error structure: Form entry fields input strings are blanks or invalid parameters variables.")
                     
         elif st.session_state.selected_panel == "Cashout":
-            # --- FIXED AND RE-ORGANIZED LABEL LINES ACCORDING TO SCREENSHOT 1000065127.jpg ---
             st.markdown(f"<h5>WITHDRAW FUNDS ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
             target_bank_vendor = st.text_input("ENTER LOCAL RECIPIENT TARGET BANK CONDUIT NAME SYSTEM BRAND:", key="usr_withdraw_bank_input_string")
             account_route = st.text_input("ENTER ACCOUNT UNIQUE CARD ENDPOINT NUMBER / TARGET WALLET STRINGS:", key="usr_withdraw_acc_input")
@@ -761,7 +763,6 @@ else:
                     
         st.markdown("<hr style='border-color:#334155; opacity:0.5;'>", unsafe_allow_html=True)
         
-        # --- NAVIGATION SYSTEM ROW SYNC ACCORDING TO SCREENSHOT 1000065132.jpg ---
         usr_col1, usr_col2, usr_col3, usr_col4 = st.columns(4)
         with usr_col1:
             if st.button("HOME PAGE ACCESS", key="nav_home", use_container_width=True): st.session_state.selected_panel = "Overview"; st.rerun()
