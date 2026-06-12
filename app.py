@@ -443,7 +443,6 @@ if not st.session_state.logged_in:
             else: st.error("Verification Error: Discrepancy inside token values.")
         render_otp_countdown_engine()
         
-    # --- RESET FORGOT PASSWORD METHOD CHANNELS ---
     elif st.session_state.auth_mode == "ResetPassword":
         st.markdown('<div class="brand-subtitle">Reset Password Key</div>', unsafe_allow_html=True)
         reset_email = st.text_input("Enter Registered Email Account:", key="reset_email_input")
@@ -594,7 +593,6 @@ else:
         with ad_c4:
             if st.button("OUTBOUND RECONCILIATION", key="adm_bottom_nav_with"): st.session_state.selected_panel = "Admin Liquidation Settlements"; st.rerun()
 
-        # --- ONE EXCLUSIVE LOGOUT SWITCH INSIDE ADMIN PROFILE CONSOLE ---
         st.markdown("<hr style='border-color:#e53e3e; opacity:0.4;'>", unsafe_allow_html=True)
         if st.button("LOG OUT", key="adm_single_forced_logout_trigger", use_container_width=True):
             st.session_state.logged_in = False
@@ -616,9 +614,11 @@ else:
         symbol_str = country_meta["symbol"]
         available_banks_list = country_meta["banks"]
         
-        # FIX TRACKING BUFFER DEPOSIT FLAG PRE-ORDER PLACEMENT BEFORE WORKSPACE READS
         has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
         
+        # ======================================================================
+        # NO AUTO-UPGRADE SYSTEM REMAINING (ONLY MANUAL BUY ALLOWED)
+        # ======================================================================
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
         with st.expander("SELECT REGION"):
@@ -644,18 +644,27 @@ else:
             with grid_col2:
                 st.markdown(f'<div class="app-grid-purple"><small>Account Rank Tier</small><h2>{level_tag}</h2></div>', unsafe_allow_html=True)
             
-            # --- FIXED TABLE: SVIP PACKAGES DISPLAY GRID ---
+            # --- INVESTMENT LEVELS DISPLAY GRID & MANUAL BUY INTERFACE ---
             st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; margin-top:15px; text-align:center;'>INVESTMENT CONTRACT PACKAGES (LEVEL 1-5)</p>", unsafe_allow_html=True)
-            pkg_rows = ""
-            for tier, d in VIP_LEVELS.items():
-                pkg_rows += f"<tr><td><b>{tier}</b></td><td>{symbol_str} {d['price']:.2f}</td><td>{symbol_str} {d['ad_pay']:.2f}</td></tr>"
             
-            st.markdown(f"""
-            <table class="package-table">
-                <thead><tr><th>Tier Level</th><th>Required Deposit</th><th>Daily Per Ad Income</th></tr></thead>
-                <tbody>{pkg_rows}</tbody>
-            </table>
-            """, unsafe_allow_html=True)
+            # Manual Purchase Interface Structure Panel Alignment
+            for tier_name, d in VIP_LEVELS.items():
+                col_t1, col_t2, col_t3 = st.columns([2, 2, 1])
+                with col_t1:
+                    st.markdown(f"<div style='padding:5px; font-weight:700; color:#ffffff;'>{tier_name}</div>", unsafe_allow_html=True)
+                with col_t2:
+                    st.markdown(f"<div style='padding:5px; color:#ffd700;'>Req: {symbol_str} {d['price']:.2f} | Daily: {symbol_str} {d['ad_pay']:.2f}</div>", unsafe_allow_html=True)
+                with col_t3:
+                    if level_tag == tier_name:
+                        st.markdown("<span style='color:#38a169; font-weight:700; font-size:12px;'>ACTIVE</span>", unsafe_allow_html=True)
+                    else:
+                        if st.button("BUY", key=f"buy_btn_action_{tier_name}"):
+                            if wallet_bal >= d['price']:
+                                query_db("UPDATE users SET active_level=? WHERE username=?", (tier_name, st.session_state.current_user), commit=True)
+                                st.success(f"Successfully activated {tier_name} contract!")
+                                st.rerun()
+                            else:
+                                st.error("Insufficient balance parameters to process this package contract request.")
             
             # --- FULL LUCKY WHEEL CANVAS INTERFACE ANIMATOR ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffd700; text-align:center; margin-top:20px;'>LUCKY SPIN WHEEL WINNING SLOTS</p>", unsafe_allow_html=True)
@@ -747,7 +756,6 @@ else:
         elif st.session_state.selected_panel == "Deposit":
             st.markdown(f"<h5>DEPOSIT METHOD GATEWAY ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
             
-            # --- REAL MEGA888 INTERFACE: DROPDOWN SWITCH SELECTION FIRST ---
             selected_method = st.selectbox("Select Deposit Bank Method:", options=available_banks_list, key="usr_mega888_deposit_selector")
             
             country_details = country_meta.get("details", {})
@@ -817,7 +825,6 @@ else:
         with c_nav4:
             if st.button("CAMPAIGNS", key="btn_nav_p"): st.session_state.selected_panel = "Promote_Video"; st.rerun()
 
-        # --- ONE EXCLUSIVE LOGOUT SWITCH FOR REGISTERED USERS SYSTEM PORTS ---
         st.markdown("<hr style='border-color:#e53e3e; opacity:0.4;'>", unsafe_allow_html=True)
         if st.button("LOG OUT", key="usr_single_forced_logout_trigger", use_container_width=True):
             st.session_state.logged_in = False
