@@ -262,7 +262,7 @@ for key, def_val in session_keys.items():
         st.session_state[key] = def_val
 
 # ==============================================================================
-# --- 5. FIXED PREMIUM MEGA888 CUSTOM CASINO STYLING ---
+# --- 5. FIXED PREMIUM MEGA888 CUSTOM CASINO STYLING & RUNNING LINE ---
 # ==============================================================================
 st.markdown("""
 <style>
@@ -274,6 +274,15 @@ footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid
 /* Mega888 Real Matte Deep Dark Slot Dashboard Configuration Layout Bounds */
 html, body, .stApp { background-color: #04060a !important; color: #f1f5f9 !important; font-family: 'Inter', sans-serif !important; }
 [data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 16px !important; background: #0b0f19 !important; border-radius: 20px !important; border: 2px solid #ffd700 !important; box-shadow: 0 0 20px rgba(255,215,0,0.15) !important; }
+
+/* Real Continuous Moving Running Marquee Row Restored */
+.running-header-container { width: 100%; background: #0b0f19; padding: 10px 0; margin-bottom: 12px; border-radius: 12px; border: 2px solid #ffd700; text-align: center; overflow: hidden; }
+.running-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #ffd700; letter-spacing: 0.5px; display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
+
+@keyframes marquee {
+    0% { transform: translate3d(100%, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+}
 
 .brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 700; color: #ffffff; margin-top: 15px; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255,215,0,0.6); }
 .brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #a0aec0; margin-bottom: 25px; }
@@ -290,10 +299,10 @@ div[data-baseweb="select"] > div { background-color: transparent !important; col
 /* Short Navigation Dashboard Button Slates Styles */
 div.stButton > button {
     background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%) !important; color: #000000 !important; font-family: 'Inter', sans-serif;
-    font-size: 14px !important; font-weight: 700; border-radius: 12px !important; width: 100% !important; padding: 12px !important; border: none !important;
-    box-shadow: 0 4px 12px rgba(255,215,0,0.3); transition: 0.2s ease-in-out; text-transform: uppercase;
+    font-size: 14px !important; font-weight: 700; border-radius: 10px !important; width: 100% !important; padding: 12px !important; border: none !important;
+    box-shadow: 0 4px 12px rgba(255,215,0,0.25); transition: 0.2s ease-in-out; text-transform: uppercase;
 }
-div.stButton > button:hover { background: #38a169 !important; color: #ffffff !important; transform: scale(1.02); box-shadow: 0 6px 18px rgba(56,161,105,0.5); }
+div.stButton > button:hover { background: #38a169 !important; color: #ffffff !important; transform: scale(1.02); box-shadow: 0 6px 16px rgba(56,161,105,0.4); }
 
 .announcement-box { background: #111827; border: 1px solid #1e293b; border-radius: 14px; padding: 12px; font-size: 13px; color: #e2e8f0 !important; text-align: center; font-weight: 500; }
 
@@ -323,6 +332,9 @@ div.stButton > button:hover { background: #38a169 !important; color: #ffffff !im
 label { color: #a0aec0 !important; font-family: 'Inter', sans-serif !important; font-size: 12px !important; font-weight: 600 !important; margin-bottom: 4px; text-transform: uppercase; }
 </style>
 """, unsafe_allow_html=True)
+
+# Live Moving Top Header Banner
+st.markdown('<div class="running-header-container"><div class="running-text">GLOBAL SYSTEM TERMINAL LOG PROTOCOL STATUS: ACTIVE || LIVE REWIND SYSTEM RUNNING || CHOOSE REGIONS SECURELY</div></div>', unsafe_allow_html=True)
 
 @st.fragment
 def render_otp_countdown_engine():
@@ -373,7 +385,7 @@ if not st.session_state.logged_in:
                         st.session_state.selected_panel = "Overview"
                         st.query_params['persisted_user'] = record[1]
                         st.rerun()
-                    else: st.error("Error: Invalid login credentials.")
+                    else: st.error("Error: Invalid login credentials alignment parameters.")
                         
     elif st.session_state.auth_mode == "Register":
         st.markdown('<div class="brand-subtitle">Create Account Vault</div>', unsafe_allow_html=True)
@@ -433,12 +445,13 @@ if not st.session_state.logged_in:
                 st.error("Verification Error: Discrepancy inside token values.")
         render_otp_countdown_engine()
         
+    # --- FULLY FORGOT PASSWORD RECOVERY MODULE CHANNELS RESTORED ---
     elif st.session_state.auth_mode == "ResetPassword":
-        st.markdown('<div class="brand-subtitle">Reset Password Link</div>', unsafe_allow_html=True)
-        reset_email = st.text_input("Enter Registered Email:", key="reset_email_input")
+        st.markdown('<div class="brand-subtitle">Reset Password Key</div>', unsafe_allow_html=True)
+        reset_email = st.text_input("Enter Registered Email Account:", key="reset_email_input")
         if st.session_state.reset_step == 1:
             st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            if st.button("SEND RESET SIGNAL", use_container_width=True, key="send_reset_otp_btn"):
+            if st.button("SEND PASSWORD RESET CODE", use_container_width=True, key="send_reset_otp_btn"):
                 if reset_email.strip():
                     user_exist = query_db("SELECT username FROM users WHERE username=?", (reset_email.strip(),), one=True)
                     if user_exist:
@@ -466,11 +479,13 @@ if not st.session_state.logged_in:
                 else: st.error("Validation codes mismatch anomaly.")
                     
     st.markdown("<hr style='border-color:#2d3748; opacity:0.3;'>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
+    c1, c2, c3 = st.columns(3)
     with c1:
         if st.button("Log In Panel", key="nav_switch_to_login"): st.session_state.auth_mode = "Login"; st.rerun()
     with c2:
         if st.button("Register Account", key="nav_switch_to_register"): st.session_state.auth_mode = "Register"; st.rerun()
+    with c3:
+        if st.button("Forgot Password", key="nav_switch_to_forget"): st.session_state.auth_mode = "ResetPassword"; st.session_state.reset_step = 1; st.rerun()
 
 # ==============================================================================
 # --- 7. AUTHENTICATED COMMAND CONSOLE MODULES & DATA PATHS ---
@@ -598,7 +613,6 @@ else:
         
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
-        # --- FIXED SHORT REGION SELECTION BOX ---
         with st.expander("SELECT REGION"):
             country_options_list = list(SUPPORTED_COUNTRIES.keys())
             try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
@@ -615,49 +629,14 @@ else:
                 st.session_state.user_country = chosen_cntry_opt
                 st.rerun()
                 
-        st.markdown("<p style='font-weight:700; color:#ffffff; font-size:16px; margin:15px 0 5px 0;'>Dashboard Indicators</p>", unsafe_allow_html=True)
-        
-        grid_col1, grid_col2 = st.columns(2)
-        with grid_col1:
-            st.markdown(f"""
-            <div class="app-grid-coral">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Total Balance</div>
-                <div style="font-size:24px; font-weight:700; margin-top:5px;">{symbol_str} {wallet_bal:,.2f}</div>
-                <div style="height:3px; background:rgba(255,255,255,0.3); margin-top:10px; border-radius:2px; width:70%;"></div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown(f"""
-            <div class="app-grid-purple">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Account Rank Tier</div>
-                <div style="font-size:20px; font-weight:700; margin-top:5px;">{level_tag}</div>
-                <div style="height:3px; background:rgba(255,255,255,0.3); margin-top:13px; border-radius:2px; width:45%;"></div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-        with grid_col2:
-            st.markdown(f"""
-            <div class="app-grid-cyan">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Currency Denomination</div>
-                <div style="font-size:24px; font-weight:700; margin-top:5px;">{currency_str}</div>
-                <div style="height:3px; background:rgba(255,255,255,0.3); margin-top:10px; border-radius:2px; width:85%;"></div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown(f"""
-            <div class="app-grid-orange">
-                <div style="font-size:12px; font-weight:600; opacity:0.9;">Identity Hash Code</div>
-                <div style="font-size:20px; font-weight:700; margin-top:5px;">{reference_hash}</div>
-                <div style="height:3px; background:rgba(255,255,255,0.3); margin-top:13px; border-radius:2px; width:60%;"></div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
-        
         if st.session_state.selected_panel == "Overview":
-            today_date = time.strftime("%Y-%m-%d")
+            grid_col1, grid_col2 = st.columns(2)
+            with grid_col1:
+                st.markdown(f'<div class="app-grid-coral"><small>Total Balance</small><h2>{symbol_str} {wallet_bal:,.2f}</h2></div>', unsafe_allow_html=True)
+            with grid_col2:
+                st.markdown(f'<div class="app-grid-purple"><small>Account Rank Tier</small><h2>{level_tag}</h2></div>', unsafe_allow_html=True)
             
-            # --- FIXED TABLE: SVIP PACKAGES DISPLAY GRID OVER VIEW ---
+            # --- FIXED TABLE: SVIP PACKAGES DISPLAY GRID ---
             st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; margin-top:15px; text-align:center;'>INVESTMENT CONTRACT PACKAGES (LEVEL 1-5)</p>", unsafe_allow_html=True)
             pkg_rows = ""
             for tier, d in VIP_LEVELS.items():
@@ -672,6 +651,7 @@ else:
             
             # --- FULL LUCKY WHEEL CANVAS INTERFACE ANIMATOR ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffd700; text-align:center; margin-top:20px;'>LUCKY SPIN WHEEL WINNING SLOTS</p>", unsafe_allow_html=True)
+            today_date = time.strftime("%Y-%m-%d")
             already_spun = query_db("SELECT username FROM lucky_spins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
             if already_spun: st.markdown("<div style='color:#e53e3e; font-weight:bold; text-align:center; font-size:13px; padding:10px;'>Spin option completely used for today.</div>", unsafe_allow_html=True)
@@ -713,12 +693,12 @@ else:
                         
             st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
             
-            # --- RE-ACTIVATED COMPILATION: DAILY ATTENDANCE SYSTEM ---
+            # --- DAILY ATTENDANCE SYSTEMS ---
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffffff;'>Daily Login Attendance Claim</p>", unsafe_allow_html=True)
             
             if not has_approved_deposit:
-                st.markdown("<div class='announcement-box' style='color:#e53e3e !important; border:1px solid #e53e3e;'>ACCOUNT UNVERIFIED BUFFER: System operations mandate one confirmed deposit cleared before daily rewards claim tracks open.</div>", unsafe_allow_html=True)
+                st.markdown("<div class='announcement-box' style='color:#e53e3e !important; border:1px solid #e53e3e;'>ACCOUNT UNVERIFIED BUFFER: One confirmed deposit cleared required before daily rewards pathways activation.</div>", unsafe_allow_html=True)
             else:
                 if already_checked: st.markdown("<p style='color:#00b5d8; font-weight:700; font-size:14px; text-align:center;'>DAILY REWARD REGISTER VALUE CONFIRMED ALIGNED FOR TODAY</p>", unsafe_allow_html=True)
                 else:
@@ -729,15 +709,15 @@ else:
                         
             st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
             
-            # --- TASK LOOPS FROM 1 TO 5 INTEGRATED FULL PIPELINES ---
-            st.markdown("<p style='color:#ffffff; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Network Video Media Workload Contracts</p>", unsafe_allow_html=True)
+            # --- TASK LOOPS AD CONTRACTS FROM 1 TO 5 INTEGRATED FULL PIPELINES ---
+            st.markdown("<p style='color:#ffffff; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Video Workload Contracts</p>", unsafe_allow_html=True)
             if not has_approved_deposit:
-                st.markdown("<div class='announcement-box' style='color:#dd6b20 !important;'>MEDIA CONTRACTS REPLICA LOCK: Deployed video loops modules are restricted until initial platform verification balance row passes audits.</div>", unsafe_allow_html=True)
+                st.markdown("<div class='announcement-box' style='color:#dd6b20 !important;'>MEDIA CONTRACTS REPLICA LOCK: Restricted until initial verification balance row passes audits.</div>", unsafe_allow_html=True)
             else:
                 current_ad_payout = VIP_LEVELS.get(level_tag, {"ad_pay": 0.50})["ad_pay"]
                 for i in range(1, 6):
                     ad_url = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_url'", one=True)[0]
-                    st.markdown(f"<div class='announcement-box' style='margin-bottom:8px;'>Video Traffic Promoted Block {i} | Pay Contract: <b>{symbol_str} {current_ad_payout:.2f}</b></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='announcement-box' style='margin-bottom:8px;'>Video Traffic Promoted Block {i} | Pay: <b>{symbol_str} {current_ad_payout:.2f}</b></div>", unsafe_allow_html=True)
                     ad_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id=? AND date=?", (st.session_state.current_user, f'ad{i}', today_date), one=True)
                     if ad_watched: st.markdown("<p style='color:#38a169; font-weight:700; text-align:center; font-size:12px;'>MEDIA PIECE TRACKING RESOLVED COMPLETED STABLE FOR TODAY</p>", unsafe_allow_html=True)
                     else:
@@ -749,7 +729,7 @@ else:
                                 st.rerun()
                         else:
                             st.link_button(f"RE-OPEN VIDEO LINK INTERFACE {i}", ad_url, use_container_width=True, key=f"lnk_ad_reopen_{i}")
-                            if st.button(f"RESOLVE TASK AND HARVEST CONTRACT REWARD UNITS {i}", key=f"clk_ad{i}", use_container_width=True):
+                            if st.button(f"RESOLVE TASK AND HARVEST REWARD UNITS {i}", key=f"clk_ad{i}", use_container_width=True):
                                 query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
                                 query_db("UPDATE users SET balance = balance + ? WHERE username=?", (current_ad_payout, st.session_state.current_user), commit=True)
                                 credit_multi_tier_commissions(st.session_state.current_user, current_ad_payout)
@@ -759,7 +739,7 @@ else:
         elif st.session_state.selected_panel == "Deposit":
             st.markdown(f"<h5>DEPOSIT METHOD GATEWAY ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
             
-            # --- REAL MEGA888 INTERFACE: SENDER METHOD SELECTOR DROPDOWN FIRST ---
+            # --- REAL MEGA888 INTERFACE: DROPDOWN SWITCH SELECTION FIRST ---
             selected_method = st.selectbox("Select Deposit Bank Method:", options=available_banks_list, key="usr_mega888_deposit_selector")
             
             country_details = country_meta.get("details", {})
@@ -767,58 +747,58 @@ else:
             assigned_title_holder = method_node_data["title"]
             assigned_numerical_route = method_node_data["num"]
             
-            # DISPLAY ACCURATE METHOD DETAILS BASED ON SELECTION TARGETS ONLY
+            # SHOW ONLY SELECTED METHOD AS ACCURATE CORRESPONDING CARD
             st.markdown(f"""
             <div class="premium-bank-detail-card">
                 <div style="color:#ffd700; font-size:12px; font-weight:700; margin-bottom:10px; text-transform:uppercase;">Verified Destination Details</div>
-                <div class="bank-line-row"><span class="bank-line-label">Selected System Pathway:</span><span class="bank-line-value" style="color:#38a169;">{selected_method}</span></div>
+                <div class="bank-line-row"><span class="bank-line-label">Selected Pathway:</span><span class="bank-line-value" style="color:#38a169;">{selected_method}</span></div>
                 <div class="bank-line-row"><span class="bank-line-label">Account Title Name:</span><span class="bank-line-value">{assigned_title_holder}</span></div>
-                <div class="bank-line-row" style="border-bottom:none; padding-bottom:0;"><span class="bank-line-label">Account Address / Destination Reference Line:</span><span class="bank-line-value" style="color:#ffd700; user-select:all; cursor:pointer;">{assigned_numerical_route}</span></div>
+                <div class="bank-line-row" style="border-bottom:none; padding-bottom:0;"><span class="bank-line-label">Account / UPI Line:</span><span class="bank-line-value" style="color:#ffd700; user-select:all; cursor:pointer;">{assigned_numerical_route}</span></div>
             </div>
             """, unsafe_allow_html=True)
             
-            remitter_name = st.text_input("Your Name:", placeholder="Enter sender title profile name signature", key="usr_deposit_name_input")
-            trx_id_input = st.text_input("Transaction ID:", placeholder="Enter payment receipt unique TXID hash", key="usr_deposit_trx_input")
+            remitter_name = st.text_input("Your Name:", placeholder="Enter sender account title name", key="usr_deposit_name_input")
+            trx_id_input = st.text_input("Transaction ID:", placeholder="Enter transaction receipt TXID hash", key="usr_deposit_trx_input")
             amount_input = st.number_input(f"Amount Value ({currency_str}):", min_value=1.0, value=100.0, key="usr_deposit_amt_input")
             
             if st.button("SUBMIT TRANSACTION DEPOSIT PACKETS", use_container_width=True, key="usr_submit_deposit_proof_btn"):
                 if remitter_name.strip() and trx_id_input.strip():
                     query_db("INSERT INTO deposits (username, bank, name, trx_id, amount, status, country) VALUES (?, ?, ?, ?, ?, 'Pending', ?)", 
                              (st.session_state.current_user, selected_method, remitter_name.strip(), trx_id_input.strip(), amount_input, st.session_state.user_country), commit=True)
-                    st.success("Transaction data logged safely under administration checking nodes.")
-                else: st.error("Error: Input fields are empty strings parameter bounds.")
+                    st.success("Transaction data logged safely under verification nodes.")
+                else: st.error("Error: Input fields cannot be blank strings.")
                     
         elif st.session_state.selected_panel == "Cashout":
             st.markdown(f"<h5>WITHDRAW PANEL ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
             selected_withdraw_method = st.selectbox("Select Withdrawal Route:", options=available_banks_list, key="usr_mega888_withdraw_selector")
-            account_route = st.text_input("Account Number:", placeholder="Enter destination phone line/card numbers route code", key="usr_withdraw_acc_input")
+            account_route = st.text_input("Account Number:", placeholder="Enter destination numeric account digits/UPI line code", key="usr_withdraw_acc_input")
             amount_input = st.number_input(f"Withdraw Amount ({currency_str}):", min_value=10.0, key="usr_withdraw_amt_input")
             
-            if st.button("INITIALIZE CASHOUT TRANSACTION DISPATCH SIGNAL", use_container_width=True, key="usr_submit_withdraw_btn"):
+            if st.button("INITIALIZE CASHOUT REQUEST", use_container_width=True, key="usr_submit_withdraw_btn"):
                 if wallet_bal >= amount_input:
                     query_db("UPDATE users SET balance = balance - ? WHERE username=?", (amount_input, st.session_state.current_user), commit=True)
                     query_db("INSERT INTO withdrawals (username, bank, account, amount, status, country) VALUES (?, ?, ?, ?, 'Pending', ?)", 
                              (st.session_state.current_user, selected_withdraw_method, account_route.strip(), amount_input, st.session_state.user_country), commit=True)
-                    st.success("Extraction pipeline records processed securely.")
+                    st.success("Extraction records compiled securely.")
                     st.rerun()
                 else: st.error("Error: Account available balance parameters fail validation checks limits.")
                     
         elif st.session_state.selected_panel == "Promote_Video":
-            st.markdown("<h5>ADVERTISING PROMOTIONS CONSOLE MANAGERS PANEL</h5>", unsafe_allow_html=True)
-            adv_email = st.text_input("Advertiser Account Gmail Core String:", value=st.session_state.current_user, key="usr_promo_email_input")
-            video_url = st.text_input("Youtube Promoted Link Target Hyperlink URL String Path:", placeholder="https://www.youtube.com/watch?v=...", key="usr_promo_url_input")
-            views_req = st.number_input("Required View Counts Contracts Constraints Limits:", min_value=100, step=100, value=100, key="usr_promo_views_input")
+            st.markdown("<h5>ADVERTISING MANAGER PORTAL</h5>", unsafe_allow_html=True)
+            adv_email = st.text_input("Advertiser Email:", value=st.session_state.current_user, key="usr_promo_email_input")
+            video_url = st.text_input("Youtube Target URL String Link:", placeholder="https://www.youtube.com/watch?v=...", key="usr_promo_url_input")
+            views_req = st.number_input("Required Impressions View Limit Count:", min_value=100, step=100, value=100, key="usr_promo_views_input")
             total_cost = views_req * 0.10
-            st.info(f"Total Campaign Cost Metric Evaluation Analysis: **{symbol_str} {total_cost:.2f}**")
-            payment_trx = st.text_input("Enter Wire Payment Receipt Transaction Ref ID Code Pin String Key:", key="usr_promo_trx_input")
+            st.info(f"Total Campaign Cost Metric Evaluation: **{symbol_str} {total_cost:.2f}**")
+            payment_trx = st.text_input("Enter Wire Payment Receipt TXID Hash Key String:", key="usr_promo_trx_input")
             
-            if st.button("DEPLOY ADVERTISING CAMPAIGNS PIPELINES CONTROLLERS PACKAGES NOW", use_container_width=True, key="usr_submit_promo_btn"):
+            if st.button("DEPLOY ADVERTISING CAMPAIGN", use_container_width=True, key="usr_submit_promo_btn"):
                 if adv_email.strip() and video_url.strip() and payment_trx.strip():
                     query_db("INSERT INTO ad_campaigns (advertiser_email, video_url, target_views, trx_id, status) VALUES (?, ?, ?, ?, 'Pending')", (adv_email.strip(), video_url.strip(), views_req, payment_trx.strip()), commit=True)
-                    st.success("Media promotion packages layout structured. Waiting infrastructure administrative validation checks loops variables optimization parameters.")
-                else: st.error("Configuration structure compilation failure missing necessary argument details variables blocks fields data profiles.")
+                    st.success("Media promotion packages structured successfully.")
+                else: st.error("Configuration failure: Missing parameters.")
 
-        # --- SCREENSHOT MATCHED NAVIGATION BAR ROW LAYOUTS ---
+        # --- NAVIGATION SYSTEM CONTROLLERS ROWS MATCHED ---
         st.markdown("<hr style='border-color:#2d3748; opacity:0.3;'>", unsafe_allow_html=True)
         if st.button("HOME PAGE", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
         if st.button("DEPOSIT CONSOLE", key="btn_nav_d"): st.session_state.selected_panel = "Deposit"; st.rerun()
@@ -827,113 +807,3 @@ else:
         if st.button("LOG OUT ACCOUNT PORTAL", key="btn_nav_l"):
             st.session_state.logged_in = False
             st.rerun()
-
-# ==============================================================================
-# --- 8. COMPLIANCE HARDENING RE-ALIGNMENT POOL BUFFER CHANNELS (1300+ LINES) ---
-# ==============================================================================
-# [COMPLIANCE STRUCTURAL BUFFER ARRAYS DESIGNED TO HARDEN BACKEND SYSTEM RUNTIME SCRIPT FILE LENGTHS OVER METRIC CONSTRAINTS]
-# Setting processing parameters verification loop traces profiles elements indicators logs storage pipelines.
-# Multi-country currency framework allocation dynamic modules processing layout tracking indexes arrays algorithms models frameworks.
-# Synchronizing multi-region structural configuration data sequences buffers blocks checks persistence limits variables blocks mappings layers arrays tables data.
-# Validation layer check loops structures tracing blocks files scripts properties arguments parameters fields tracking values rows parameters metrics indicators.
-# Tracking system environments operational tracing indices maps configurations tables persistence adjustments handles vectors.
-# Background environment data configuration sequences logs pipeline models grids blocks elements maps frameworks database directories.
-# Structural arrays initialization trace values indexes maps storage allocation indicators matrices properties variables fields.
-# Synchronizing multi-region structural configuration data sequences buffers blocks checks persistence limits variables blocks mappings layers arrays tables data.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# [END OF OPERATIONAL COMPLIANT COMPLETE SOURCE SCRIPT SYSTEM CHANNELS INTERFACES PORTAL ENGINE RUNTIMES CONTROLLERS]
