@@ -307,6 +307,21 @@ div.stButton > button:hover { background: #38a169 !important; color: #ffffff !im
 
 .announcement-box { background: #111827; border: 1px solid #1e293b; border-radius: 14px; padding: 12px; font-size: 13px; color: #e2e8f0 !important; text-align: center; font-weight: 500; }
 
+/* Mega888 Graphic Live Banner Blocks Styles */
+.mega888-ad-banner {
+    background: linear-gradient(135deg, #111827 0%, #070b12 100%);
+    border: 2px solid #ffd700; border-radius: 16px; padding: 20px; text-align: center;
+    margin-bottom: 16px; position: relative; overflow: hidden;
+    box-shadow: 0 0 15px rgba(255,215,0,0.15);
+}
+.mega888-ad-badge {
+    position: absolute; top: 0; right: 0; background: #ffd700; color: #000;
+    font-size: 10px; font-weight: 800; padding: 4px 12px; border-bottom-left-radius: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.mega888-ad-title { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+.mega888-ad-subtitle { font-size: 12px; color: #38a169; font-weight: 700; text-transform: uppercase; margin-top: 4px; margin-bottom: 12px; }
+
 /* Informational Cards */
 .app-grid-coral { background: #e53e3e !important; border-radius: 14px; padding: 16px; color: #ffffff !important; margin-bottom: 12px; }
 .app-grid-cyan { background: #00b5d8 !important; border-radius: 14px; padding: 16px; color: #ffffff !important; margin-bottom: 12px; }
@@ -616,9 +631,6 @@ else:
         
         has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
         
-        # ======================================================================
-        # NO AUTO-UPGRADE SYSTEM REMAINING (ONLY MANUAL BUY ALLOWED)
-        # ======================================================================
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
         with st.expander("SELECT REGION"):
@@ -644,10 +656,46 @@ else:
             with grid_col2:
                 st.markdown(f'<div class="app-grid-purple"><small>Account Rank Tier</small><h2>{level_tag}</h2></div>', unsafe_allow_html=True)
             
-            # --- INVESTMENT LEVELS DISPLAY GRID & MANUAL BUY INTERFACE ---
-            st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; margin-top:15px; text-align:center;'>INVESTMENT CONTRACT PACKAGES (LEVEL 1-5)</p>", unsafe_allow_html=True)
+            # --- REAL MEGA888 CASINO HIGH INTENSITY PROMOTIONAL AD BANNERS GRID ---
+            st.markdown("<p style='font-size:15px; font-weight:800; color:#ffd700; margin-top:20px; text-align:center; letter-spacing:1px; text-transform:uppercase;'>🔥 MEGA888 HOT CASINO LIVE SLOTS BANNERS 🔥</p>", unsafe_allow_html=True)
             
-            # Manual Purchase Interface Structure Panel Alignment
+            # Banner 1
+            st.markdown(f"""
+            <div class="mega888-ad-banner">
+                <div class="mega888-ad-badge">LIVE HOT</div>
+                <div class="mega888-ad-title">🎰 MEGA JACKPOT 777 SLOTS</div>
+                <div class="mega888-ad-subtitle">Daily Media Traffic Promotion Loop</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("CLAIM JACKPOT AD REWARD UNITS", key="mega_ad_btn_1", use_container_width=True):
+                st.toast("Processing Arcade Streams...")
+            
+            # Banner 2
+            st.markdown(f"""
+            <div class="mega888-ad-banner">
+                <div class="mega888-ad-badge">VIP ONLY</div>
+                <div class="mega888-ad-title">👑 SVIP REWARD BONANZA POOL</div>
+                <div class="mega888-ad-subtitle">Exclusive Network Ad Traffic Stream</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("HARVEST SVIP BONANZA CONTRACT VALUE", key="mega_ad_btn_2", use_container_width=True):
+                st.toast("Syncing Node Pools...")
+                
+            # Banner 3
+            st.markdown(f"""
+            <div class="mega888-ad-banner">
+                <div class="mega888-ad-badge">PROMO LIVE</div>
+                <div class="mega888-ad-title">🔮 MYSTIC DRAGON ARCADE SLOTS</div>
+                <div class="mega888-ad-subtitle">Premium Promoting Partner Ad Loop</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("HARVEST MYSTIC ARCADE AD UNITS", key="mega_ad_btn_3", use_container_width=True):
+                st.toast("Mystic Streams Initialized...")
+
+            st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
+
+            # --- INVESTMENT LEVELS GRID & MANUAL BUY INTERFACE ---
+            st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; margin-top:15px; text-align:center;'>INVESTMENT CONTRACT PACKAGES (LEVEL 1-5)</p>", unsafe_allow_html=True)
             for tier_name, d in VIP_LEVELS.items():
                 col_t1, col_t2, col_t3 = st.columns([2, 2, 1])
                 with col_t1:
@@ -664,7 +712,7 @@ else:
                                 st.success(f"Successfully activated {tier_name} contract!")
                                 st.rerun()
                             else:
-                                st.error("Insufficient balance parameters to process this package contract request.")
+                                st.error("Insufficient balance parameters.")
             
             # --- FULL LUCKY WHEEL CANVAS INTERFACE ANIMATOR ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffd700; text-align:center; margin-top:20px;'>LUCKY SPIN WHEEL WINNING SLOTS</p>", unsafe_allow_html=True)
@@ -723,39 +771,9 @@ else:
                         query_db("INSERT INTO checkins VALUES (?, ?)", (st.session_state.current_user, today_date), commit=True)
                         query_db("UPDATE users SET balance = balance + 0.50 WHERE username=?", (st.session_state.current_user,), commit=True)
                         st.rerun()
-                        
-            st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
-            
-            # --- TASK LOOPS AD CONTRACTS FROM 1 TO 5 INTEGRATED FULL PIPELINES ---
-            st.markdown("<p style='color:#ffffff; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Video Workload Contracts</p>", unsafe_allow_html=True)
-            if not has_approved_deposit:
-                st.markdown("<div class='announcement-box' style='color:#dd6b20 !important;'>MEDIA CONTRACTS LOCK: Deployed video loops are restricted until initial verification deposit passes admin audits.</div>", unsafe_allow_html=True)
-            else:
-                current_ad_payout = VIP_LEVELS.get(level_tag, {"ad_pay": 0.50})["ad_pay"]
-                for i in range(1, 6):
-                    ad_url = query_db(f"SELECT value FROM system_config WHERE key='ad{i}_url'", one=True)[0]
-                    st.markdown(f"<div class='announcement-box' style='margin-bottom:8px;'>Video Traffic Promoted Block {i} | Pay: <b>{symbol_str} {current_ad_payout:.2f}</b></div>", unsafe_allow_html=True)
-                    ad_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND ad_id=? AND date=?", (st.session_state.current_user, f'ad{i}', today_date), one=True)
-                    if ad_watched: st.markdown("<p style='color:#38a169; font-weight:700; text-align:center; font-size:12px;'>MEDIA PIECE TRACKING RESOLVED COMPLETED STABLE FOR TODAY</p>", unsafe_allow_html=True)
-                    else:
-                        watch_state_key = f"unlocked_ad_{i}"
-                        if not st.session_state.get(watch_state_key, False):
-                            if st.button(f"DEPLOY OUTBOUND MEDIA UNIT FOR CONTRACTS {i}", key=f"btn_watch_{i}", use_container_width=True):
-                                st.session_state[watch_state_key] = True
-                                st.markdown(f'<a href="{ad_url}" target="_blank" style="text-decoration:none;"><button style="background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%) !important; color:black; width:100%; border:none; padding:12px; border-radius:12px; font-weight:700; margin-bottom:10px; text-transform:uppercase; cursor:pointer;">OPEN EXTERNAL LINK MEDIA ROUTER STREAM</button></a>', unsafe_allow_html=True)
-                                st.rerun()
-                        else:
-                            st.link_button(f"RE-OPEN VIDEO LINK INTERFACE {i}", ad_url, use_container_width=True, key=f"lnk_ad_reopen_{i}")
-                            if st.button(f"RESOLVE TASK AND HARVEST REWARD UNITS {i}", key=f"clk_ad{i}", use_container_width=True):
-                                query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
-                                query_db("UPDATE users SET balance = balance + ? WHERE username=?", (current_ad_payout, st.session_state.current_user), commit=True)
-                                credit_multi_tier_commissions(st.session_state.current_user, current_ad_payout)
-                                st.session_state[watch_state_key] = False
-                                st.rerun()
 
         elif st.session_state.selected_panel == "Deposit":
             st.markdown(f"<h5>DEPOSIT METHOD GATEWAY ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
-            
             selected_method = st.selectbox("Select Deposit Bank Method:", options=available_banks_list, key="usr_mega888_deposit_selector")
             
             country_details = country_meta.get("details", {})
@@ -817,13 +835,13 @@ else:
         st.markdown("<hr style='border-color:#2d3748; opacity:0.3;'>", unsafe_allow_html=True)
         c_nav1, c_nav2, c_nav3, c_nav4 = st.columns(4)
         with c_nav1:
-            if st.button("HOME PAGE", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
+            if st.button("LOBBY", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
         with c_nav2:
             if st.button("DEPOSIT", key="btn_nav_d"): st.session_state.selected_panel = "Deposit"; st.rerun()
         with c_nav3:
             if st.button("WITHDRAW", key="btn_nav_w"): st.session_state.selected_panel = "Cashout"; st.rerun()
         with c_nav4:
-            if st.button("CAMPAIGNS", key="btn_nav_p"): st.session_state.selected_panel = "Promote_Video"; st.rerun()
+            if st.button("SLOTS PROMO", key="btn_nav_p"): st.session_state.selected_panel = "Promote_Video"; st.rerun()
 
         st.markdown("<hr style='border-color:#e53e3e; opacity:0.4;'>", unsafe_allow_html=True)
         if st.button("LOG OUT", key="usr_single_forced_logout_trigger", use_container_width=True):
