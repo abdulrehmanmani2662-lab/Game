@@ -267,87 +267,102 @@ for key, def_val in session_keys.items():
 # ==============================================================================
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid="stHeader"] {
     display: none !important; visibility: hidden !important;
 }
 
 /* Mega888 Dark Luxe Arcade Interface Config */
-html, body, .stApp { background-color: #04060a !important; color: #f1f5f9 !important; font-family: 'Inter', sans-serif !important; }
-[data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 16px !important; background: #0b0f19 !important; border-radius: 20px !important; border: 2px solid #ffd700 !important; box-shadow: 0 0 25px rgba(255,215,0,0.2) !important; }
+html, body, .stApp { background-color: #0c1833 !important; color: #f1f5f9 !important; font-family: 'Inter', sans-serif !important; }
+[data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 14px !important; background: #13244d !important; border-radius: 0px !important; border: none !important; box-shadow: 0 4px 30px rgba(0,0,0,0.4) !important; }
 
-/* Real Continuous Moving Running Marquee Row Restored */
-.running-header-container { width: 100%; background: #0b0f19; padding: 10px 0; margin-bottom: 15px; border-radius: 12px; border: 1px solid #ffd700; text-align: center; overflow: hidden; }
-.running-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #ffd700; display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
+/* Top Header Running Line */
+.running-header-container { width: 100%; background: #0c1833; padding: 8px 0; margin-bottom: 15px; text-align: center; overflow: hidden; border-bottom: 1px solid #1d356d; }
+.running-text { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #ffd700; display: inline-block; white-space: nowrap; animation: marquee 16s linear infinite; }
 
 @keyframes marquee {
     0% { transform: translate3d(100%, 0, 0); }
     100% { transform: translate3d(-100%, 0, 0); }
 }
 
-.brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 34px; font-weight: 700; color: #ffffff; margin-top: 10px; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255,215,0,0.6); }
+.brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 34px; font-weight: 800; color: #ffffff; margin-top: 10px; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
 .brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #a0aec0; margin-bottom: 25px; text-transform: uppercase; }
 
-/* Form Fields Styling Elements */
+/* Mega888 True Layout Top Category Filter Tabs Row */
+.mega-category-row { display: flex; gap: 10px; margin-bottom: 15px; }
+.mega-tab-btn { flex: 1; background: #1c3366; padding: 12px; border-radius: 6px; text-align: center; font-weight: 700; font-size: 14px; color: #a4bde6; border: 1px solid #28478c; }
+.mega-tab-btn.active { background: linear-gradient(180deg, #244385 0%, #172d5c 100%); color: #ffffff; border: 1px solid #3d66bd; box-shadow: inset 0 1px 3px rgba(255,255,255,0.2); }
+
+/* Dynamic Slider Graphics Card Container */
+.mega-slider-box {
+    width: 100%; background: linear-gradient(90deg, #781c1c 0%, #a82e2e 50%, #781c1c 100%);
+    border-radius: 8px; padding: 25px 15px; text-align: center; font-weight: 800; font-size: 24px;
+    color: #ffd700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;
+    border: 1px solid #cc4343; text-shadow: 0 2px 4px rgba(0,0,0,0.5); position: relative;
+}
+.mega-slider-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+.mega-slider-dot { width: 18px; height: 18px; border-radius: 50%; background: #0c1833; color: #fff; font-size: 10px; line-height: 18px; text-align: center; font-weight: 700; }
+.mega-slider-dot.active { background: #0088ff; }
+
+/* Our Products Container Section Header Label */
+.section-title-label { font-size: 15px; font-weight: 700; color: #a4bde6; margin: 15px 0 10px 2px; text-transform: capitalize; }
+
+/* 1000065625.jpg Product Choti-Choti Pic Icons Grid Restructuring Layout */
+.mega-products-container {
+    background: #0f2047; border-radius: 8px; padding: 15px; 
+    border: 1px solid #1a326b; margin-bottom: 20px;
+}
+.mega-products-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; justify-items: center; align-items: center;
+}
+.casino-mini-logo {
+    width: 100%; background: radial-gradient(circle, #203a75 0%, #142652 100%);
+    border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid #2d4f99;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.15s;
+}
+.casino-mini-logo:active { transform: scale(0.95); background: #1a326b; }
+.casino-mini-text { font-size: 10px; font-weight: 800; color: #ffd700; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.1; margin-top: 2px; word-break: break-word; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+/* Special Sponsored Massive Display Ad Layout Block Frame */
+.sponsored-card-block {
+    background: #0f2047; border-radius: 8px; border: 1px solid #1a326b; overflow: hidden; margin-bottom: 20px; padding-bottom: 15px;
+}
+.sponsored-image-canvas {
+    width: 100%; height: 180px; background: linear-gradient(135deg, #2b1842 0%, #12091f 100%);
+    position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid #1a326b;
+}
+.sponsored-claim-badge {
+    position: absolute; top: 12px; left: 12px; background: #00cc22; color: #ffffff;
+    font-size: 12px; font-weight: 700; padding: 5px 16px; border-radius: 4px; text-transform: capitalize; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+.sponsored-meta-row { padding: 12px 15px; }
+.sponsored-brand-tag { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #ffffff; font-size: 14px; margin-bottom: 4px; }
+.sponsored-brand-icon { width: 24px; height: 24px; background: #e6005c; border-radius: 50%; font-size: 11px; line-height: 24px; text-align: center; font-weight: 800; }
+.sponsored-main-heading { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+.sponsored-desc-sub { font-size: 13px; color: #f0a500; font-weight: 600; }
+
+/* Custom Overwrites for Buttons and Inputs */
 div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
-    background-color: #04060a !important; color: #ffffff !important; border: 1px solid #1e293b !important; border-radius: 10px !important;
-    padding: 10px !important; font-size: 14px !important; font-weight: 600 !important; box-shadow: none !important;
+    background-color: #0c1833 !important; color: #ffffff !important; border: 1px solid #1d356d !important; border-radius: 6px !important;
+    padding: 10px !important; font-size: 14px !important; font-weight: 600 !important;
 }
-div[data-testid="stTextInput"] input:focus, div[data-testid="stSelectbox"] div[data-baseweb="select"]:focus { border: 1px solid #38a169 !important; background-color: #04060a !important; }
-
-div[data-baseweb="select"] > div { background-color: transparent !important; color: #ffffff !important; }
-
-/* Casino Style Golden Core Buttons */
 div.stButton > button {
-    background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%) !important; color: #000000 !important; font-family: 'Inter', sans-serif;
-    font-size: 13px !important; font-weight: 700; border-radius: 10px !important; width: 100% !important; padding: 11px !important; border: none !important;
-    box-shadow: 0 4px 12px rgba(255,215,0,0.25); transition: 0.2s; text-transform: uppercase;
+    background: linear-gradient(180deg, #ffc800 0%, #ff9000 100%) !important; color: #000000 !important; font-family: 'Inter', sans-serif;
+    font-size: 13px !important; font-weight: 800; border-radius: 6px !important; width: 100% !important; padding: 11px !important; border: none !important;
+    text-transform: uppercase; box-shadow: 0 2px 8px rgba(240,165,0,0.3);
 }
-div.stButton > button:hover { background: #38a169 !important; color: #ffffff !important; transform: scale(1.01); box-shadow: 0 5px 15px rgba(56,161,105,0.4); }
+div.stButton > button:hover { transform: scale(1.01); background: #fffa00 !important; }
 
-.announcement-box { background: #111827; border: 1px solid #1e293b; border-radius: 14px; padding: 12px; font-size: 13px; color: #e2e8f0 !important; text-align: center; font-weight: 500; }
+.app-grid-coral { background: linear-gradient(135deg, #e53e3e 0%, #b81d1d 100%) !important; border-radius: 8px; padding: 14px; color: #ffffff !important; }
+.app-grid-purple { background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%) !important; border-radius: 8px; padding: 14px; color: #ffffff !important; }
 
-/* Mega888 Graphic Live Banner Blocks Styles */
-.mega888-ad-banner {
-    background: linear-gradient(135deg, #111827 0%, #070b12 100%);
-    border: 2px solid #ffd700; border-radius: 16px; padding: 20px; text-align: center;
-    margin-bottom: 16px; position: relative; overflow: hidden;
-    box-shadow: 0 0 15px rgba(255,215,0,0.15);
-}
-.mega888-ad-badge {
-    position: absolute; top: 0; right: 0; background: #ffd700; color: #000;
-    font-size: 10px; font-weight: 800; padding: 4px 12px; border-bottom-left-radius: 10px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-}
-.mega888-ad-title { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-.mega888-ad-subtitle { font-size: 12px; color: #38a169; font-weight: 700; text-transform: uppercase; margin-top: 4px; margin-bottom: 12px; }
+.announcement-box { background: #0c1833; border: 1px solid #1d356d; border-radius: 8px; padding: 12px; font-size: 13px; color: #a4bde6 !important; text-align: center; font-weight: 500; margin-bottom: 15px; }
+.package-table td { background-color: #0c1833; color: #fff; border: 1px solid #1d356d; padding: 8px; }
 
-/* Informational Cards */
-.app-grid-coral { background: #e53e3e !important; border-radius: 14px; padding: 16px; color: #ffffff !important; margin-bottom: 12px; }
-.app-grid-cyan { background: #00b5d8 !important; border-radius: 14px; padding: 16px; color: #ffffff !important; margin-bottom: 12px; }
-.app-grid-purple { background: #38a169 !important; border-radius: 14px; padding: 16px; color: #ffffff !important; margin-bottom: 12px; }
-.app-grid-orange { background: #dd6b20 !important; border-radius: 14px; padding: 16px; color: #ffffff !important; margin-bottom: 12px; }
-
-/* Dynamic Selector Core Boxes */
-.premium-bank-detail-card {
-    background: #04060a !important; border: 2px solid #38a169 !important;
-    border-radius: 16px !important; padding: 18px !important; margin: 15px 0 !important; box-shadow: 0 4px 15px rgba(56,161,105,0.25);
-}
-.bank-line-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #111827; }
-.bank-line-row:last-child { border-bottom: none; }
-.bank-line-label { color: #a0aec0; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-.bank-line-value { color: #ffffff; font-size: 14px; font-weight: 700; }
-
-/* Table Elements Grid */
-.package-table { width:100%; border-collapse: collapse; margin-top:12px; font-size:12px; text-align:center; }
-.package-table th { background-color: #ffd700; color: #000; padding: 8px; font-weight:700; text-transform: uppercase; }
-.package-table td { padding: 8px; border: 1px solid #1e293b; background-color: #04060a; color: #fff; }
-
-label { color: #a0aec0 !important; font-family: 'Inter', sans-serif !important; font-size: 12px !important; font-weight: 600 !important; margin-bottom: 4px; text-transform: uppercase; }
+label { color: #a4bde6 !important; font-family: 'Inter', sans-serif !important; font-size: 11px !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: 0.5px; }
 </style>
 """, unsafe_allow_html=True)
 
-# Live Moving Top Header Banner Running Text
 st.markdown('<div class="running-header-container"><div class="running-text">GLOBAL SYSTEM TERMINAL LOG PROTOCOL STATUS: ACTIVE || LIVE REWIND SYSTEM RUNNING || CHOOSE REGIONS SECURELY</div></div>', unsafe_allow_html=True)
 
 @st.fragment
@@ -490,7 +505,7 @@ if not st.session_state.logged_in:
                     st.rerun()
                 else: st.error("Validation codes mismatch anomaly.")
                     
-    st.markdown("<hr style='border-color:#2d3748; opacity:0.3;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#1d356d; opacity:0.3;'>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
         if st.button("Log In Panel", key="nav_switch_to_login"): st.session_state.auth_mode = "Login"; st.rerun()
@@ -650,52 +665,74 @@ else:
                 st.rerun()
                 
         if st.session_state.selected_panel == "Overview":
+            # Real Mega888 Top Category Selection Row (1000065625.jpg alignment)
+            st.markdown("""
+            <div class="mega-category-row">
+                <div class="mega-tab-btn active">Games</div>
+                <div class="mega-tab-btn">Sponsored</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Upper Dynamic Carousel Graphics Banner
+            st.markdown("""
+            <div class="mega-slider-box">
+                SLOT GAMES
+                <div class="mega-slider-dots">
+                    <div class="mega-slider-dot">1</div>
+                    <div class="mega-slider-dot active">2</div>
+                    <div class="mega-slider-dot">3</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
             grid_col1, grid_col2 = st.columns(2)
             with grid_col1:
-                st.markdown(f'<div class="app-grid-coral"><small>Total Balance</small><h2>{symbol_str} {wallet_bal:,.2f}</h2></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="app-grid-coral"><small>Total Balance</small><h4>{symbol_str} {wallet_bal:,.2f}</h4></div>', unsafe_allow_html=True)
             with grid_col2:
-                st.markdown(f'<div class="app-grid-purple"><small>Account Rank Tier</small><h2>{level_tag}</h2></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="app-grid-purple"><small>Account Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
             
-            # --- REAL MEGA888 CASINO HIGH INTENSITY PROMOTIONAL AD BANNERS GRID ---
-            st.markdown("<p style='font-size:15px; font-weight:800; color:#ffd700; margin-top:20px; text-align:center; letter-spacing:1px; text-transform:uppercase;'>🔥 MEGA888 HOT CASINO LIVE SLOTS BANNERS 🔥</p>", unsafe_allow_html=True)
-            
-            # Banner 1
-            st.markdown(f"""
-            <div class="mega888-ad-banner">
-                <div class="mega888-ad-badge">LIVE HOT</div>
-                <div class="mega888-ad-title">🎰 MEGA JACKPOT 777 SLOTS</div>
-                <div class="mega888-ad-subtitle">Daily Media Traffic Promotion Loop</div>
+            # --- "OUR PRODUCTS" CHOTI PIC GRID LAYOUT (1000065625.jpg) ---
+            st.markdown('<div class="section-title-label">Our Products</div>', unsafe_allow_html=True)
+            st.markdown("""
+            <div class="mega-products-container">
+                <div class="mega-products-grid">
+                    <div class="casino-mini-logo"><div class="casino-mini-text">DRAGON<br>TIGER</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">FISHING<br>STAR</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">CLASH OF<br>BEASTS</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">SUSHI<br>OISHI</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">CELEBRATE<br>WEALTH</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">MONKEY<br>THUNDER</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">BEAST<br>WEALTH</div></div>
+                    <div class="casino-mini-logo"><div class="casino-mini-text">AGENT<br>51</div></div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
-            if st.button("CLAIM JACKPOT AD REWARD UNITS", key="mega_ad_btn_1", use_container_width=True):
-                st.toast("Processing Arcade Streams...")
             
-            # Banner 2
-            st.markdown(f"""
-            <div class="mega888-ad-banner">
-                <div class="mega888-ad-badge">VIP ONLY</div>
-                <div class="mega888-ad-title">👑 SVIP REWARD BONANZA POOL</div>
-                <div class="mega888-ad-subtitle">Exclusive Network Ad Traffic Stream</div>
+            # --- SPECIAL SPONSORED ADS PACKAGES SECTION ---
+            st.markdown('<div class="section-title-label">Our Special Sponsored</div>', unsafe_allow_html=True)
+            
+            # Sponsored Block 1
+            st.markdown("""
+            <div class="sponsored-card-block">
+                <div class="sponsored-image-canvas">
+                    <div class="sponsored-claim-badge">Claim</div>
+                    <div style="font-size:42px;">🎰</div>
+                    <div style="font-weight:800; font-size:16px; color:#ffd700; margin-top:10px;">918KISS MEGA BONUS WHEEL</div>
+                </div>
+                <div class="sponsored-meta-row">
+                    <div class="sponsored-brand-tag"><div class="sponsored-brand-icon">💋</div> JomKiss3</div>
+                    <div class="sponsored-main-heading">JomKiss: 918Kiss & Mega888 Company</div>
+                    <div class="sponsored-desc-sub">Agency Company Premium Loop</div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
-            if st.button("HARVEST SVIP BONANZA CONTRACT VALUE", key="mega_ad_btn_2", use_container_width=True):
-                st.toast("Syncing Node Pools...")
-                
-            # Banner 3
-            st.markdown(f"""
-            <div class="mega888-ad-banner">
-                <div class="mega888-ad-badge">PROMO LIVE</div>
-                <div class="mega888-ad-title">🔮 MYSTIC DRAGON ARCADE SLOTS</div>
-                <div class="mega888-ad-subtitle">Premium Promoting Partner Ad Loop</div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button("HARVEST MYSTIC ARCADE AD UNITS", key="mega_ad_btn_3", use_container_width=True):
-                st.toast("Mystic Streams Initialized...")
+            if st.button("PLAY NOW & HARVEST BONUS", key="spons_action_btn_1", use_container_width=True):
+                st.toast("Connecting Premium Ad Server Nodes...")
 
-            st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#1d356d; margin: 20px 0;'>", unsafe_allow_html=True)
 
             # --- INVESTMENT LEVELS GRID & MANUAL BUY INTERFACE ---
-            st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; margin-top:15px; text-align:center;'>INVESTMENT CONTRACT PACKAGES (LEVEL 1-5)</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; text-align:center; text-transform:uppercase;'>Investment Contract Packages</p>", unsafe_allow_html=True)
             for tier_name, d in VIP_LEVELS.items():
                 col_t1, col_t2, col_t3 = st.columns([2, 2, 1])
                 with col_t1:
@@ -733,12 +770,12 @@ else:
                     win_amt = wheel_prizes[st.session_state.chosen_prize_idx]
                     target_rotation = 360 * 5 + (360 - (st.session_state.chosen_prize_idx * 45))
                     wheel_html = f"""
-                    <div style="text-align:center; background:#0e131f; padding:15px; border-radius:20px; border:2px solid #2d3748;">
-                        <canvas id="wheelCanvas" width="260" height="260" style="border:2px solid #2d3748; border-radius:50%; background:#05070b; transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);"></canvas>
+                    <div style="text-align:center; background:#0f2047; padding:15px; border-radius:8px; border:1px solid #1a326b;">
+                        <canvas id="wheelCanvas" width="260" height="260" style="border:2px solid #1a326b; border-radius:50%; background:#0c1833; transition: transform 4s cubic-bezier(0.1, 0.8, 0.3, 1);"></canvas>
                         <script>
                             const ctx = document.getElementById('wheelCanvas').getContext('2d');
                             const labels = ["{symbol_str}0.50", "{symbol_str}2.00", "{symbol_str}0.10", "{symbol_str}5.00", "{symbol_str}0.20", "{symbol_str}10.00", "{symbol_str}1.50", "VOID"];
-                            const colors = ["#e53e3e", "#0e131f", "#00b5d8", "#0e131f", "#6366f1", "#0e131f", "#dd6b20", "#0e131f"];
+                            const colors = ["#e53e3e", "#0c1833", "#00b5d8", "#0c1833", "#6366f1", "#0c1833", "#dd6b20", "#0c1833"];
                             for (let i = 0; i < 8; i++) {{
                                 ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(130, 130);
                                 ctx.arc(130, 130, 130, (i*45)*Math.PI/180, ((i+1)*45)*Math.PI/180); ctx.lineTo(130, 130); ctx.fill();
@@ -756,7 +793,7 @@ else:
                         st.session_state.wheel_triggered = False
                         st.rerun()
                         
-            st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#1d356d;'>", unsafe_allow_html=True)
             
             # --- DAILY ATTENDANCE SYSTEMS ---
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
@@ -832,7 +869,7 @@ else:
                 else: st.error("Configuration failure: Missing parameters.")
 
         # --- NAVIGATION SYSTEM CONTROLLERS ---
-        st.markdown("<hr style='border-color:#2d3748; opacity:0.3;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:#1d356d; opacity:0.3;'>", unsafe_allow_html=True)
         c_nav1, c_nav2, c_nav3, c_nav4 = st.columns(4)
         with c_nav1:
             if st.button("LOBBY", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
