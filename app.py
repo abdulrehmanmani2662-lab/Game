@@ -54,7 +54,8 @@ def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     msg.attach(MIMEText(body, 'html'))
 
     try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 46Code_5, timeout=15)
+        # FIXED: Corrected the port 465 literal here to avoid SyntaxError
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
         server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
         server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
         server.quit()
@@ -223,11 +224,9 @@ footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid
     display: none !important; visibility: hidden !important;
 }
 
-/* Light Mode Mobile Framework from 1000065111.jpg */
 html, body, .stApp { background-color: #f3f4f9 !important; color: #2d3748 !important; font-family: 'Inter', sans-serif !important; }
 [data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 10px !important; background: #ffffff !important; border-radius: 30px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
 
-/* Clean Minimal Search & Title Lines */
 .running-header-container { width: 100%; background: #ffffff; padding: 8px 0; border-bottom: 1px solid #e2e8f0; text-align: center; }
 .running-text { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: #4a5568; letter-spacing: 0.5px; }
 .fomo-ticker-container { width: 100%; background: #edf2f7; padding: 5px 0; margin-bottom: 15px; text-align: center; border-radius: 10px; }
@@ -236,14 +235,12 @@ html, body, .stApp { background-color: #f3f4f9 !important; color: #2d3748 !impor
 .brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: #1a202c; margin-top: 10px; }
 .brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #718096; margin-bottom: 20px; }
 
-/* Input Form Structuring */
 div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
     background-color: #f8fafc !important; color: #1a202c !important; border: 1px solid #cbd5e1 !important; border-radius: 14px !important;
     padding: 12px !important; font-size: 15px !important; font-weight: 600 !important; box-shadow: none !important;
 }
 div[data-testid="stTextInput"] input:focus { border: 1px solid #4e5bf2 !important; background-color: #ffffff !important; }
 
-/* Button Styles inspired by purple/blue button row in image 1000065111.jpg */
 div.stButton > button {
     background: #4e5bf2 !important; color: #ffffff !important; font-family: 'Inter', sans-serif;
     font-size: 15px !important; font-weight: 600; border-radius: 16px !important; width: 100% !important; padding: 14px !important; border: none !important;
@@ -251,16 +248,13 @@ div.stButton > button {
 }
 div.stButton > button:hover { background: #3b49df !important; box-shadow: 0 6px 16px rgba(78,91,242,0.3); }
 
-/* Custom Luxury light-cards from 1000065111.jpg */
 .announcement-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px; font-size: 13px; color: #4a5568 !important; text-align: center; font-weight: 500; }
 
-/* 4 Main Grid Box Style Elements from 1000065111.jpg */
 .app-grid-coral { background: #ff5e6c !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(255,94,108,0.15); }
 .app-grid-cyan { background: #00c6df !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,198,223,0.15); }
 .app-grid-purple { background: #4e5bf2 !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(78,91,242,0.15); }
 .app-grid-orange { background: #ff9124 !important; border-radius: 20px; padding: 20px; color: #ffffff !important; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(255,145,36,0.15); }
 
-/* Multi line clear aligned text fields inside deposit section cards */
 .premium-bank-detail-card {
     background: #ffffff !important; border: 1px solid #e2e8f0 !important;
     border-radius: 20px !important; padding: 20px !important; margin: 15px 0 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
@@ -566,7 +560,6 @@ else:
         
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
-        # PERSISTENT REGIONAL SPECIFIC DROPDOWN TRACKING COMPONENT LOCATIONS OVERRIDES
         with st.expander(f"GEOGRAPHICAL APP REGION CONFIGURATION: {st.session_state.user_country.upper()}"):
             chosen_cntry_opt = st.selectbox("CHOOSE ACCOUNT ACTIVE NATIVE COUNTRY DOMAIN VARIABLES:", list(SUPPORTED_COUNTRIES.keys()), index=list(SUPPORTED_COUNTRIES.keys()).index(st.session_state.user_country), key="usr_dashboard_country_select")
             if chosen_cntry_opt != st.session_state.user_country:
@@ -574,7 +567,6 @@ else:
                 st.session_state.user_country = chosen_cntry_opt
                 st.rerun()
                 
-        # 4 BOX DYNAMIC BLOCK LAYOUT DERIVED FROM SCREENSHOT "1000065111.jpg"
         st.markdown("<p style='font-weight:700; color:#1a202c; font-size:16px; margin:15px 0 5px 0;'>Dashboard Indicators</p>", unsafe_allow_html=True)
         
         grid_col1, grid_col2 = st.columns(2)
@@ -626,7 +618,7 @@ else:
                 if 'wheel_triggered' not in st.session_state: st.session_state.wheel_triggered = False
                     
                 if not st.session_state.wheel_triggered:
-                    if st.button("TRIGGER SYSTEM VAL SPIN REVOLUTIONS SEQUENCER", use_container_width=True, key="trigger_wheel_btn"):
+                    if st.button("TRIGGER RANDOM MATRIX SPIN REVOLUTIONS SEQUENCER", use_container_width=True, key="trigger_wheel_btn"):
                         st.session_state.wheel_triggered = True
                         st.session_state.chosen_prize_idx = random.randint(0, 7)
                         st.rerun()
@@ -692,15 +684,14 @@ else:
                                 st.markdown(f'<a href="{ad_url}" target="_blank" style="text-decoration:none;"><button style="background-color:#4e5bf2; color:white; width:100%; border:none; padding:12px; border-radius:12px; font-weight:600; margin-bottom:10px;">OPEN EXTERNAL VIDEO MEDIA SOURCE DATA ROUTER STREAM</button></a>', unsafe_allow_html=True)
                                 st.rerun()
                         else:
-                            st.link_button(f"RE-VERIFY ACTIVE VIDEO TRACK LINK ROUTER INTERFACE {i}", ad_url, use_container_width=True, key=f"lnk_ad_reopen_{i}")
-                            if st.button(f"AGGREGATE REWARDS COMPENSATIONS FROM WORK DEPLOYMENT {i}", key=f"clk_ad{i}", use_container_width=True):
+                            st.link_button(f"RE-OPEN VIDEO TRACK LINK ROUTER INTERFACE {i}", ad_url, use_container_width=True, key=f"lnk_ad_reopen_{i}")
+                            if st.button("AGGREGATE REWARDS COMPENSATIONS FROM WORK DEPLOYMENT", key=f"clk_ad{i}", use_container_width=True):
                                 query_db("INSERT INTO ad_logs VALUES (?, ?, ?)", (st.session_state.current_user, f'ad{i}', today_date), commit=True)
                                 query_db("UPDATE users SET balance = balance + ? WHERE username=?", (ad_rew, st.session_state.current_user), commit=True)
                                 credit_multi_tier_commissions(st.session_state.current_user, ad_rew)
                                 st.session_state[watch_state_key] = False
                                 st.rerun()
                                 
-            # DYNAMIC APP BONUS BANNER VISUAL LAYER ACCORDING TO BOTTOM SPECIFICS IN "1000065111.jpg"
             st.markdown(f"""
             <div class="bottom-banner-bonus">
                 <div style="font-size:24px; margin-right:12px;">🎁</div>
@@ -716,7 +707,6 @@ else:
             
             assigned_bank_data = query_db("SELECT bank_name, account_title, account_number FROM regional_banks WHERE country=?", (st.session_state.user_country,), one=True)
             
-            # RE-ENGINEERED MULTI LINE SEPARATED ACC DETAILS DERIVED FROM IMAGE CONFIG "1000065111.jpg"
             if assigned_bank_data:
                 b_name, b_title, b_num = assigned_bank_data
                 st.markdown(f"""
@@ -755,8 +745,8 @@ else:
                     
         elif st.session_state.selected_panel == "Cashout":
             st.markdown(f"<h5>RESERVES EXTRACTION LIQUID TRANSPORTS WITHDRAWAL PIPELINES BOARD ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
-            target_bank_vendor = st.text_input(f"ENTER LOCAL TARGET OUTBOUND SETTLE POINT RECIPIENT ENDPOINT BANK BRAND ({st.session_state.user_country}):", key="usr_withdraw_bank_input_string")
-            account_route = st.text_input("ENTER CHOSEN ACCOUNT UNIQUE CARD ENDPOINT NUMBER / TARGET WALLET STRINGS:", key="usr_withdraw_acc_input")
+            target_bank_vendor = st.text_input(f"ENTER LOCAL RECIPIENT TARGET BANK CONDUIT NAME SYSTEM BRAND ({st.session_state.user_country}):", key="usr_withdraw_bank_input_string")
+            account_route = st.text_input("ENTER CHOSEN ACCOUNT UNIQUE CARD ENDPOINT NUMBER / TARGET WALLET STRING ROUTE LINK SEQS:", key="usr_withdraw_acc_input")
             amount_input = st.number_input(f"SETTLE TRANSFERS OUT VOLUME MAGNITUDE QUANTITY VALUE FROM TOTAL RESERVE BALANCE ({currency_str}):", min_value=10.0, key="usr_withdraw_amt_input")
             
             if st.button("INITIALIZE RESERVES OUTBOUND CASH LIQUIDATION TRANSMISSION REQUEST ACTION", use_container_width=True, key="usr_submit_withdraw_btn"):
@@ -785,7 +775,6 @@ else:
                     
         st.markdown("<hr style='border-color:#cbd5e1; opacity:0.5;'>", unsafe_allow_html=True)
         
-        # NAVIGATION CONTROLLER BUTTON BAR COMPATIBLE WITH LIGHT-THEME LAYOUT MODELS IN IMAGE "1000065111.jpg"
         usr_col1, usr_col2, usr_col3, usr_col4 = st.columns(4)
         with usr_col1:
             if st.button("HOME PAGE ACCESS", key="nav_home", use_container_width=True): 
