@@ -28,6 +28,62 @@ SUPPORTED_COUNTRIES = {
     "Saudi Arabia": {"currency": "SAR", "symbol": "SR"}
 }
 
+# --- DYNAMIC BANK LISTS FOR DROPDOWN ---
+COUNTRY_BANKS_LIST = {
+    "Malaysia": [
+        "Maybank (Malayan Banking Berhad)",
+        "CIMB Bank Berhad",
+        "Public Bank Berhad",
+        "RHB Bank Berhad",
+        "Hong Leong Bank",
+        "AmBank Berhad",
+        "UOB Malaysia",
+        "Bank Islam Malaysia",
+        "Affin Bank",
+        "Alliance Bank",
+        "Standard Chartered Malaysia",
+        "HSBC Bank Malaysia"
+    ],
+    "Pakistan": [
+        "Habib Bank Limited (HBL)",
+        "National Bank of Pakistan (NBP)",
+        "Meezan Bank",
+        "Bank Alfalah",
+        "United Bank Limited (UBL)",
+        "MCB Bank",
+        "Allied Bank Limited (ABL)",
+        "JazzCash Gateway",
+        "EasyPaisa Gateway",
+        "Nayapay / Sadapay"
+    ],
+    "India": [
+        "State Bank of India (SBI)",
+        "HDFC Bank",
+        "ICICI Bank",
+        "Punjab National Bank (PNB)",
+        "Bank of Baroda",
+        "Axis Bank",
+        "UPI Gateway Connection",
+        "Paytm Payments Bank"
+    ],
+    "Dubai": [
+        "Emirates NBD",
+        "Abu Dhabi Commercial Bank (ADCB)",
+        "First Abu Dhabi Bank (FAB)",
+        "Mashreq Bank",
+        "Dubai Islamic Bank (DIB)",
+        "Abu Dhabi Islamic Bank (ADIB)"
+    ],
+    "Saudi Arabia": [
+        "Al Rajhi Bank",
+        "The Saudi National Bank (SNB)",
+        "Alinma Bank",
+        "Riyad Bank",
+        "SAB (Saudi Awwal Bank)",
+        "Arab National Bank (ANB)"
+    ]
+}
+
 def send_verification_email(receiver_email, otp_code, purpose="Registration"):
     msg = MIMEMultipart()
     msg['From'] = f"Global Matrix <{SENDER_EMAIL}>"
@@ -558,7 +614,6 @@ else:
         st.markdown(f'<div class="announcement-box">{announcement_text}</div>', unsafe_allow_html=True)
         
         with st.expander(f"GEOGRAPHICAL ENVIRONMENT PROFILE CONTROLS: {st.session_state.user_country.upper()}"):
-            # FIXED DROPDOWN SELECTION SYSTEM: Properly mapping indices as structural alignment values mapping array integers
             country_options_list = list(SUPPORTED_COUNTRIES.keys())
             try:
                 mapped_selection_index = country_options_list.index(st.session_state.user_country)
@@ -618,7 +673,6 @@ else:
         if st.session_state.selected_panel == "Overview":
             today_date = time.strftime("%Y-%m-%d")
             
-            # --- RESTORED DASHBOARD BLOCK OPTION: LUCKY SPIN WHEEL MATRIX SEQS ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#d4af37; text-align:center; margin-top:15px;'>MATRIX REWARDS LUCKY SPIN WHEEL CORE</p>", unsafe_allow_html=True)
             already_spun = query_db("SELECT username FROM lucky_spins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
@@ -661,7 +715,6 @@ else:
                         
             st.markdown("<hr style='border-color:#2e3748;'>", unsafe_allow_html=True)
             
-            # --- RESTORED DASHBOARD BLOCK OPTION: DAILY ATTENDANCE SYSTEM ---
             already_checked = query_db("SELECT username FROM checkins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffffff;'>Daily Time Sheet Attendance Claim</p>", unsafe_allow_html=True)
             
@@ -677,7 +730,6 @@ else:
                         
             st.markdown("<hr style='border-color:#2e3748;'>", unsafe_allow_html=True)
             
-            # --- RESTORED DASHBOARD BLOCK OPTION: AD TASKS MEDIA WORKLOADS (1 TO 5 CONTRACTS) ---
             st.markdown("<p style='color:#ffffff; font-family:\"Inter\"; font-size:14px; font-weight:700; text-align:center;'>Traffic Network Video Workload Channels</p>", unsafe_allow_html=True)
             if not has_approved_deposit:
                 st.markdown("<div class='announcement-box' style='color:#f97316 !important;'>MEDIA CONTRACTS REPLICA LOCK: Deployed video loops modules are restricted until initial platform verification balance row passes audits metrics checks.</div>", unsafe_allow_html=True)
@@ -731,7 +783,16 @@ else:
             else:
                 st.warning("Administrative tracking parameters initialization defaults engaged.")
                 
-            chosen_bank_alias = st.text_input("Verify Bank Name Brand:", value=assigned_bank_data[0] if assigned_bank_data else "Local Gateway Conduit", key="usr_deposit_bank_select_string")
+            # --- Restored Dropdown List Logic for Selected Country ---
+            available_banks = COUNTRY_BANKS_LIST.get(st.session_state.user_country, ["Local Bank Provider"])
+            
+            chosen_bank_alias = st.selectbox(
+                "Verify Bank Name Brand:", 
+                options=available_banks, 
+                index=0, 
+                key="usr_deposit_bank_select_string"
+            )
+            
             remitter_name = st.text_input("Sender Account Owner Title Full Name:", key="usr_deposit_name_input")
             trx_id_input = st.text_input("Payment Reference Hash Receipt ID / TXID:", key="usr_deposit_trx_input")
             amount_input = st.number_input(f"Recharge Volume Amount Scale Value ({currency_str}):", min_value=1.0, value=100.0, key="usr_deposit_amt_input")
@@ -744,9 +805,16 @@ else:
                 else: st.error("Validation error structure: Form entry fields input strings are blanks or invalid parameters variables.")
                     
         elif st.session_state.selected_panel == "Cashout":
-            # --- PERFECT STRUCTURAL MATCH TO USER EXPECTED SHORTER LABELS ---
             st.markdown(f"<h5>WITHDRAW FUNDS CONTROL INTERFACE ({st.session_state.user_country.upper()})</h5>", unsafe_allow_html=True)
-            target_bank_vendor = st.text_input("Target Receiving Banking Brand Name:", key="usr_withdraw_bank_input_string")
+            
+            available_withdrawal_banks = COUNTRY_BANKS_LIST.get(st.session_state.user_country, ["Local Bank Provider"])
+            target_bank_vendor = st.selectbox(
+                "Target Receiving Banking Brand Name:", 
+                options=available_withdrawal_banks,
+                index=0,
+                key="usr_withdraw_bank_input_string"
+            )
+            
             account_route = st.text_input("Destination Account Line Number / Electronic Wallet Hashing Address:", key="usr_withdraw_acc_input")
             amount_input = st.number_input(f"Extraction Liquid Valuation Volume Amount ({currency_str}):", min_value=10.0, key="usr_withdraw_amt_input")
             
@@ -812,4 +880,3 @@ else:
 # Structural arrays initialization trace values indexes maps storage allocation indicators matrices properties variables fields.
 # Background environment data configuration sequences logs pipeline models grids blocks elements maps frameworks database directories.
 # Validation layer check loops structures tracing blocks files scripts properties arguments parameters fields tracking values rows parameters metrics indicators.
-# [END OF OPERATIONAL COMPLIANT FIXING RE-STABILIZED PREMIUM CODE APPLICATION GATEWAY GRIDS INTERFACES SYSTEM DATA CONTROLLERS APPS PACKETS]
