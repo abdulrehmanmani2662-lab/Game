@@ -20,7 +20,7 @@ st.set_page_config(
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
 SENDER_APP_PASSWORD = "higjqwbtxagmvdty"
 
-# Complete Regional Banks Array Matrix Configuration (PAKISTAN REMOVED)
+# Complete Regional Banks Array Matrix Configuration
 SUPPORTED_COUNTRIES = {
     "India": {
         "currency": "INR", 
@@ -148,7 +148,7 @@ def init_db():
     cursor.execute("CREATE TABLE IF NOT EXISTS withdrawals (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, bank TEXT, account TEXT, amount REAL, status TEXT, country TEXT)")
     cursor.execute("CREATE TABLE IF NOT EXISTS ad_campaigns (id INTEGER PRIMARY KEY AUTOINCREMENT, advertiser_email TEXT, video_url TEXT, target_views INTEGER, trx_id TEXT, status TEXT)")
     
-    # NEW TABLES & COLUMNS FOR UPDATE
+    # NEW TABLES & COLUMNS
     cursor.execute("CREATE TABLE IF NOT EXISTS level_videos (level TEXT PRIMARY KEY, video_url TEXT)")
     
     try: cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
@@ -163,15 +163,8 @@ def init_db():
     except sqlite3.OperationalError: pass
 
     configs = [
-        ('ad1_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad1_reward', '3.00'),
-        ('ad2_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad2_reward', '2.30'),
-        ('ad3_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad3_reward', '4.50'),
-        ('ad4_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad4_reward', '1.50'),
-        ('ad5_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'), ('ad5_reward', '2.00'),
         ('usdt_address', 'TYcc7p18K2YnQp87bXzNWXAsgWqR54321A'),
-        ('system_announcement', 'Welcome to Global Matrix Terminal. Select country inside configurations panel to view details.'),
-        ('unclaimed_rewards_val', '15.00'), ('vip1_income', '2.00'), ('vip2_income', '15.00'), ('vip3_income', '50.00'),
-        ('vip2_req', '100.00'), ('vip3_req', '300.00')
+        ('system_announcement', 'Welcome to Global Matrix Terminal.')
     ]
     for key, val in configs:
         cursor.execute("INSERT OR IGNORE INTO system_config VALUES (?, ?)", (key, val))
@@ -209,25 +202,6 @@ def query_db(query, args=(), one=False, commit=False):
 init_db()
 
 # ==============================================================================
-# --- 3. REFERRAL COMMISSION CALCULATIONS ENGINE (KEPT BUT UNUSED) ---
-# ==============================================================================
-def credit_multi_tier_commissions(user, base_reward):
-    tier_1_parent = query_db("SELECT referred_by FROM users WHERE username=?", (user,), one=True)
-    if not tier_1_parent or not tier_1_parent[0]: return
-    p1 = tier_1_parent[0]
-    query_db("UPDATE users SET balance = balance + ? WHERE username=?", (base_reward * 0.10, p1), commit=True)
-    
-    tier_2_parent = query_db("SELECT referred_by FROM users WHERE username=?", (p1,), one=True)
-    if not tier_2_parent or not tier_2_parent[0]: return
-    p2 = tier_2_parent[0]
-    query_db("UPDATE users SET balance = balance + ? WHERE username=?", (base_reward * 0.05, p2), commit=True)
-    
-    tier_3_parent = query_db("SELECT referred_by FROM users WHERE username=?", (p2,), one=True)
-    if not tier_3_parent or not tier_3_parent[0]: return
-    p3 = tier_3_parent[0]
-    query_db("UPDATE users SET balance = balance + ? WHERE username=?", (base_reward * 0.02, p3), commit=True)
-
-# ==============================================================================
 # --- 4. SESSION SYSTEM DATA REGISTRY STORAGE ---
 # ==============================================================================
 if 'logged_in' not in st.session_state:
@@ -251,7 +225,7 @@ if 'logged_in' not in st.session_state:
 session_keys = {
     'current_user': "", 'is_admin': False, 'selected_panel': "Overview", 
     'auth_mode': "Login", 'reset_step': 1, 'otp_start_time': None, 
-    'reg_verify_code': "", 'user_country': "India"
+    'reg_verify_code': "", 'user_country': "India", 'watch_timer': "idle"
 }
 for key, def_val in session_keys.items():
     if key not in st.session_state:
@@ -267,182 +241,108 @@ footer, .stDeployButton, #MainMenu, [data-testid="stStatusWidget"], [data-testid
     display: none !important; visibility: hidden !important;
 }
 
-/* Mega888 Dark Luxe Arcade Interface Config */
 html, body, .stApp { background-color: #0c1833 !important; color: #f1f5f9 !important; font-family: 'Inter', sans-serif !important; }
 [data-testid="stVerticalBlock"] { max-width: 480px !important; margin: 0 auto !important; padding: 14px !important; background: #13244d !important; border-radius: 0px !important; border: none !important; box-shadow: 0 4px 30px rgba(0,0,0,0.4) !important; }
 
-/* Top Header Running Line */
 .running-header-container { width: 100%; background: #0c1833; padding: 8px 0; margin-bottom: 15px; text-align: center; overflow: hidden; border-bottom: 1px solid #1d356d; }
 .running-text { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #ffd700; display: inline-block; white-space: nowrap; animation: marquee 16s linear infinite; }
 
-@keyframes marquee {
-    0% { transform: translate3d(100%, 0, 0); }
-    100% { transform: translate3d(-100%, 0, 0); }
-}
+@keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
 .brand-title { text-align: center; font-family: 'Inter', sans-serif; font-size: 34px; font-weight: 800; color: #ffffff; margin-top: 10px; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
 .brand-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #a0aec0; margin-bottom: 25px; text-transform: uppercase; }
 
-/* Mega888 True Layout Top Category Filter Tabs Row */
 .mega-category-row { display: flex; gap: 10px; margin-bottom: 15px; }
 .mega-tab-btn { flex: 1; background: #1c3366; padding: 12px; border-radius: 6px; text-align: center; font-weight: 700; font-size: 14px; color: #a4bde6; border: 1px solid #28478c; }
 .mega-tab-btn.active { background: linear-gradient(180deg, #244385 0%, #172d5c 100%); color: #ffffff; border: 1px solid #3d66bd; box-shadow: inset 0 1px 3px rgba(255,255,255,0.2); }
 
-/* Dynamic Slider Graphics Card Container */
-.mega-slider-box {
-    width: 100%; background: linear-gradient(90deg, #781c1c 0%, #a82e2e 50%, #781c1c 100%);
-    border-radius: 8px; padding: 25px 15px; text-align: center; font-weight: 800; font-size: 24px;
-    color: #ffd700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;
-    border: 1px solid #cc4343; text-shadow: 0 2px 4px rgba(0,0,0,0.5); position: relative;
-}
+.mega-slider-box { width: 100%; background: linear-gradient(90deg, #781c1c 0%, #a82e2e 50%, #781c1c 100%); border-radius: 8px; padding: 25px 15px; text-align: center; font-weight: 800; font-size: 24px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border: 1px solid #cc4343; text-shadow: 0 2px 4px rgba(0,0,0,0.5); position: relative; }
 .mega-slider-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
 .mega-slider-dot { width: 18px; height: 18px; border-radius: 50%; background: #0c1833; color: #fff; font-size: 10px; line-height: 18px; text-align: center; font-weight: 700; }
 .mega-slider-dot.active { background: #0088ff; }
 
-/* Our Products Container Section Header Label */
 .section-title-label { font-size: 15px; font-weight: 700; color: #a4bde6; margin: 15px 0 10px 2px; text-transform: capitalize; }
-
-/* 1000065625.jpg Product Choti-Choti Pic Icons Grid Restructuring Layout */
-.mega-products-container {
-    background: #0f2047; border-radius: 8px; padding: 15px; 
-    border: 1px solid #1a326b; margin-bottom: 20px;
-}
-.mega-products-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; justify-items: center; align-items: center;
-}
-.casino-mini-logo {
-    width: 100%; background: radial-gradient(circle, #203a75 0%, #142652 100%);
-    border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid #2d4f99;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.15s; cursor: pointer; text-decoration: none; display: block;
-}
+.mega-products-container { background: #0f2047; border-radius: 8px; padding: 15px; border: 1px solid #1a326b; margin-bottom: 20px; }
+.mega-products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; justify-items: center; align-items: center; }
+.casino-mini-logo { width: 100%; background: radial-gradient(circle, #203a75 0%, #142652 100%); border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid #2d4f99; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.15s; cursor: pointer; text-decoration: none; display: block; }
 .casino-mini-logo:hover { transform: scale(1.02); border-color: #ffc800; }
 .casino-mini-text { font-size: 10px; font-weight: 800; color: #ffd700; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.1; margin-top: 2px; word-break: break-word; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
-/* Special Sponsored Massive Display Ad Layout Block Frame */
-.sponsored-card-block {
-    background: #0f2047; border-radius: 8px; border: 1px solid #1a326b; overflow: hidden; margin-bottom: 12px; padding-bottom: 15px;
-}
-.sponsored-image-canvas {
-    width: 100%; height: 180px; background: linear-gradient(135deg, #2b1842 0%, #12091f 100%);
-    position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid #1a326b;
-}
-.sponsored-claim-badge {
-    position: absolute; top: 12px; left: 12px; background: #00cc22; color: #ffffff;
-    font-size: 12px; font-weight: 700; padding: 5px 16px; border-radius: 4px; text-transform: capitalize; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
+.sponsored-card-block { background: #0f2047; border-radius: 8px; border: 1px solid #1a326b; overflow: hidden; margin-bottom: 12px; padding-bottom: 15px; }
+.sponsored-image-canvas { width: 100%; height: 180px; background: linear-gradient(135deg, #2b1842 0%, #12091f 100%); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid #1a326b; }
+.sponsored-claim-badge { position: absolute; top: 12px; left: 12px; background: #00cc22; color: #ffffff; font-size: 12px; font-weight: 700; padding: 5px 16px; border-radius: 4px; text-transform: capitalize; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 .sponsored-meta-row { padding: 12px 15px; }
 .sponsored-brand-tag { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #ffffff; font-size: 14px; margin-bottom: 4px; }
 .sponsored-brand-icon { width: 24px; height: 24px; background: #e6005c; border-radius: 50%; font-size: 11px; line-height: 24px; text-align: center; font-weight: 800; }
 .sponsored-main-heading { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
 .sponsored-desc-sub { font-size: 13px; color: #f0a500; font-weight: 600; }
 
-/* Custom Overwrites for Buttons and Inputs */
-div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] {
-    background-color: #0c1833 !important; color: #ffffff !important; border: 1px solid #1d356d !important; border-radius: 6px !important;
-    padding: 10px !important; font-size: 14px !important; font-weight: 600 !important;
-}
-div.stButton > button {
-    background: linear-gradient(180deg, #ffc800 0%, #ff9000 100%) !important; color: #000000 !important; font-family: 'Inter', sans-serif;
-    font-size: 13px !important; font-weight: 800; border-radius: 6px !important; width: 100% !important; padding: 11px !important; border: none !important;
-    text-transform: uppercase; box-shadow: 0 2px 8px rgba(240,165,0,0.3);
-}
+div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input, div[data-testid="stSelectbox"] div[data-baseweb="select"] { background-color: #0c1833 !important; color: #ffffff !important; border: 1px solid #1d356d !important; border-radius: 6px !important; padding: 10px !important; font-size: 14px !important; font-weight: 600 !important; }
+div.stButton > button { background: linear-gradient(180deg, #ffc800 0%, #ff9000 100%) !important; color: #000000 !important; font-family: 'Inter', sans-serif; font-size: 13px !important; font-weight: 800; border-radius: 6px !important; width: 100% !important; padding: 11px !important; border: none !important; text-transform: uppercase; box-shadow: 0 2px 8px rgba(240,165,0,0.3); }
 div.stButton > button:hover { transform: scale(1.01); background: #fffa00 !important; }
-
-/* Highlighted Country Selector Border Block Custom Component */
-.highlight-country-selector-box {
-    border: 2px dashed #ffc800 !important;
-    background-color: #11244f !important;
-    border-radius: 10px !important;
-    padding: 15px !important;
-    margin: 15px 0 !important;
-    box-shadow: 0 0 15px rgba(255, 200, 0, 0.25) !important;
-}
-.highlight-country-label {
-    font-size: 12px; font-weight: 800; color: #ffc800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;
-}
 
 .app-grid-coral { background: linear-gradient(135deg, #e53e3e 0%, #b81d1d 100%) !important; border-radius: 8px; padding: 14px; color: #ffffff !important; }
 .app-grid-purple { background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%) !important; border-radius: 8px; padding: 14px; color: #ffffff !important; }
-
 .announcement-box { background: #0c1833; border: 1px solid #1d356d; border-radius: 8px; padding: 12px; font-size: 13px; color: #a4bde6 !important; text-align: center; font-weight: 500; margin-bottom: 15px; }
-.package-table td { background-color: #0c1833; color: #fff; border: 1px solid #1d356d; padding: 8px; }
 
 label { color: #a4bde6 !important; font-family: 'Inter', sans-serif !important; font-size: 11px !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: 0.5px; }
 </style>
 """, unsafe_allow_html=True)
 
-announcement_text = query_db("SELECT value FROM system_config WHERE key='system_announcement'", one=True)[0]
-usdt_address = query_db("SELECT value FROM system_config WHERE key='usdt_address'", one=True)[0]
-
 # ==============================================================================
-# --- 7. PUBLIC FRONT-END LOBBY ENGINE (SHOWS TO EVERYONE BEFORE LOGIN) ---
+# --- 7. PUBLIC FRONT-END LOBBY ENGINE ---
 # ==============================================================================
-# Real Mega888 Top Category Selection Row (1000065625.jpg alignment)
-st.markdown("""
-<div class="mega-category-row">
-    <div class="mega-tab-btn active">Games</div>
-    <div class="mega-tab-btn">Sponsored</div>
-</div>
-""", unsafe_allow_html=True)
-
-# Upper Dynamic Carousel Graphics Banner
-st.markdown("""
-<div class="mega-slider-box">
-    SLOT GAMES
-    <div class="mega-slider-dots">
-        <div class="mega-slider-dot">1</div>
-        <div class="mega-slider-dot active">2</div>
-        <div class="mega-slider-dot">3</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# --- "OUR PRODUCTS" CHOTI PIC GRID LAYOUT VIA HTML DIRECT LIVE LINKS ---
-st.markdown('<div class="section-title-label">Our Products</div>', unsafe_allow_html=True)
-st.markdown(f"""
-<div class="mega-products-container">
-    <div class="mega-products-grid">
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">DRAGON<br>TIGER</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">FISHING<br>STAR</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">CLASH OF<br>BEASTS</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">SUSHI<br>OISHI</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">CELEBRATE<br>WEALTH</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">MONKEY<br>THUNDER</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">BEAST<br>WEALTH</div></a>
-        <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">AGENT<br>51</div></a>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# --- SPECIAL SPONSORED ADS PACKAGES SECTION ---
-st.markdown('<div class="section-title-label">Our Special Sponsored</div>', unsafe_allow_html=True)
-st.markdown("""
-<div class="sponsored-card-block">
-    <div class="sponsored-image-canvas">
-        <div class="sponsored-claim-badge">Claim</div>
-        <div style="font-size:42px;">🎰</div>
-        <div style="font-weight:800; font-size:16px; color:#ffd700; margin-top:10px;">918KISS MEGA BONUS WHEEL</div>
-    </div>
-    <div class="sponsored-meta-row">
-        <div class="sponsored-brand-tag"><div class="sponsored-brand-icon">💋</div> JomKiss3</div>
-        <div class="sponsored-main-heading">JomKiss: 918Kiss & Mega888 Company</div>
-        <div class="sponsored-desc-sub">Agency Company Premium Loop</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# Directly Redirecting Core Click Navigation Protocol
-st.markdown(f'<a href="{MEGA888_PORTAL_URL}" target="_blank" style="text-decoration:none;"><button style="background: linear-gradient(180deg, #ffc800 0%, #ff9000 100%) !important; color: #000000; font-family: \'Inter\', sans-serif; font-size: 13px !important; font-weight: 800; border-radius: 6px !important; width: 100% !important; padding: 11px !important; border: none !important; text-transform: uppercase; margin-bottom:20px; cursor:pointer;">PLAY NOW & HARVEST BONUS</button></a>', unsafe_allow_html=True)
-
-st.markdown("<hr style='border-color:#1d356d; margin: 25px 0;'>", unsafe_allow_html=True)
-
-# ==============================================================================
-# --- 8. GATEWAY ENTRY FORMS SYSTEM SECURITY AUTHENTICATION SHIELDS ---
-# ==============================================================================
-def render_otp_countdown_engine():
-    pass # Simple stub for compatibility with original code
-
 if not st.session_state.logged_in:
+    st.markdown("""
+    <div class="mega-category-row">
+        <div class="mega-tab-btn active">Games</div>
+        <div class="mega-tab-btn">Sponsored</div>
+    </div>
+    <div class="mega-slider-box">
+        SLOT GAMES
+        <div class="mega-slider-dots">
+            <div class="mega-slider-dot">1</div>
+            <div class="mega-slider-dot active">2</div>
+            <div class="mega-slider-dot">3</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="section-title-label">Our Products</div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="mega-products-container">
+        <div class="mega-products-grid">
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">DRAGON<br>TIGER</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">FISHING<br>STAR</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">CLASH OF<br>BEASTS</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">SUSHI<br>OISHI</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">CELEBRATE<br>WEALTH</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">MONKEY<br>THUNDER</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">BEAST<br>WEALTH</div></a>
+            <a href="{MEGA888_PORTAL_URL}" target="_blank" class="casino-mini-logo"><div class="casino-mini-text">AGENT<br>51</div></a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="section-title-label">Our Special Sponsored</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="sponsored-card-block">
+        <div class="sponsored-image-canvas">
+            <div class="sponsored-claim-badge">Claim</div>
+            <div style="font-size:42px;">🎰</div>
+            <div style="font-weight:800; font-size:16px; color:#ffd700; margin-top:10px;">918KISS MEGA BONUS WHEEL</div>
+        </div>
+        <div class="sponsored-meta-row">
+            <div class="sponsored-brand-tag"><div class="sponsored-brand-icon">💋</div> JomKiss3</div>
+            <div class="sponsored-main-heading">JomKiss: 918Kiss & Mega888 Company</div>
+            <div class="sponsored-desc-sub">Agency Company Premium Loop</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown(f'<a href="{MEGA888_PORTAL_URL}" target="_blank" style="text-decoration:none;"><button style="background: linear-gradient(180deg, #ffc800 0%, #ff9000 100%) !important; color: #000000; font-family: \'Inter\', sans-serif; font-size: 13px !important; font-weight: 800; border-radius: 6px !important; width: 100% !important; padding: 11px !important; border: none !important; text-transform: uppercase; margin-bottom:20px; cursor:pointer;">PLAY NOW & HARVEST BONUS</button></a>', unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#1d356d; margin: 25px 0;'>", unsafe_allow_html=True)
+
     st.markdown('<div class="brand-title">GLOBAL MATRIX SYSTEM</div>', unsafe_allow_html=True)
     
     if st.session_state.auth_mode == "Login":
@@ -479,7 +379,6 @@ if not st.session_state.logged_in:
         st.markdown('<div class="brand-subtitle">Create Account Vault</div>', unsafe_allow_html=True)
         reg_username = st.text_input("Gmail Address:", placeholder="example@gmail.com", key="reg_user_input")
         reg_password = st.text_input("Choose Password:", type="password", key="reg_pass_input")
-        # REFERRAL CODE REMOVED FROM HERE
         reg_country = st.selectbox("Select Country:", list(SUPPORTED_COUNTRIES.keys()), key="reg_country_select")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
@@ -509,21 +408,18 @@ if not st.session_state.logged_in:
     elif st.session_state.auth_mode == "VerifyNewAccount":
         st.markdown('<div class="brand-subtitle">Sync Protection Key</div>', unsafe_allow_html=True)
         st.info(f"Target destination: {st.session_state.get('temp_reg_user','')}")
-        
         typed_code = st.text_input("Enter OTP Code:", placeholder="******", key="otp_sync_input")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
         if st.button("VERIFY ACCOUNT SPACE", use_container_width=True, key="confirm_otp_btn"):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                starting_bonus = 2.00 # Fixed starting bonus, no referral check anymore
-                
+                starting_bonus = 2.00
                 query_db("INSERT INTO users (username, password, balance, liquidation, active_level, ref_code, referred_by, selected_country, level_locked_until) VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'NONE', '', ?, 0.0)", 
                          (st.session_state.temp_reg_user, st.session_state.temp_reg_pass, starting_bonus, st.session_state.temp_reg_country), commit=True)
                 st.success(f"Account validated successfully.")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
             else: st.error("Verification Error: Discrepancy inside token values.")
-        render_otp_countdown_engine()
         
     elif st.session_state.auth_mode == "ResetPassword":
         st.markdown('<div class="brand-subtitle">Reset Password Key</div>', unsafe_allow_html=True)
@@ -613,22 +509,13 @@ else:
                 b_title_val = bank_data[1] if bank_data else ""
                 b_num_val = bank_data[2] if bank_data else ""
                 
-                new_b_name = st.text_input(f"Institution Route Name Vendor ({country_name}):", value=b_name_val, key=f"adm_bname_{country_name}")
-                new_b_title = st.text_input(f"Legal Statement Account Title ({country_name}):", value=b_title_val, key=f"adm_btitle_{country_name}")
-                new_b_num = st.text_input(f"Core Terminal Number Code Destination String ({country_name}):", value=b_num_val, key=f"adm_bnum_{country_name}")
+                new_b_name = st.text_input(f"Institution Route Name ({country_name}):", value=b_name_val, key=f"adm_bname_{country_name}")
+                new_b_title = st.text_input(f"Account Title ({country_name}):", value=b_title_val, key=f"adm_btitle_{country_name}")
+                new_b_num = st.text_input(f"Account Number/UPI ({country_name}):", value=b_num_val, key=f"adm_bnum_{country_name}")
                 
-                if st.button(f"Save Mapping Details For {country_name}", key=f"save_bank_btn_{country_name}"):
+                if st.button(f"Save Details For {country_name}", key=f"save_bank_btn_{country_name}"):
                     query_db("INSERT OR REPLACE INTO regional_banks VALUES (?, ?, ?, ?)", (country_name, new_b_name.strip(), new_b_title.strip(), new_b_num.strip()), commit=True)
                     st.rerun()
-                    
-            st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
-            new_ann = st.text_area("Live System Text Banner Announcement Content:", value=announcement_text, key=f"adm_ann_txt")
-            new_usdt = st.text_input("USDT Core System Secure Wallet String Account:", value=usdt_address, key=f"adm_usdt_txt")
-            
-            if st.button("SAVE METRIC CONSOLE ADJUSTMENTS", use_container_width=True, key="save_admin_config_btn"):
-                query_db("UPDATE system_config SET value=? WHERE key='system_announcement'", (new_ann.strip(),), commit=True)
-                query_db("UPDATE system_config SET value=? WHERE key='usdt_address'", (new_usdt.strip(),), commit=True)
-                st.rerun()
                 
         elif st.session_state.selected_panel == "User Identity Adjustments Module":
             st.markdown("##### USER PROFILE RESERVES LEDGER ADJUSTMENT PROTOCOLS")
@@ -644,7 +531,7 @@ else:
                 else: st.error("No profile matches that user space variable record.")
                     
         elif st.session_state.selected_panel == "Admin Liquidation Settlements":
-            st.markdown("##### OUTBOUND CASHOUT EXTRACTIONS QUEUES DISPATCH SECTIONS")
+            st.markdown("##### OUTBOUND CASHOUT EXTRACTIONS QUEUES")
             pending_with = query_db("SELECT id, username, bank, account, amount, country FROM withdrawals WHERE status='Pending'")
             if not pending_with: st.info("Outbound liquidation pipelines run flat clear.")
             else:
@@ -652,19 +539,18 @@ else:
                     st.markdown(f"<div style='background:#05070b; border:1px solid #2d3748; padding:12px; border-radius:12px;'>User Target: {w_item[1]} | Bank Provider: {w_item[2]} | Account Route: {w_item[3]} | Volume Scale: {w_item[4]}</div>", unsafe_allow_html=True)
                     wb1, wb2 = st.columns(2)
                     with wb1:
-                        if st.button("APPROVE OUTBOUND SETTLEMENT WIRE", key=f"w_app_{w_item[0]}"):
+                        if st.button("APPROVE WIRE", key=f"w_app_{w_item[0]}"):
                             query_db("UPDATE withdrawals SET status='Approved' WHERE id=?", (w_item[0],), commit=True)
                             st.rerun()
                     with wb2:
-                        if st.button("REJECT EXTRACTION AND REFUND ASSET", key=f"w_rej_{w_item[0]}"):
+                        if st.button("REJECT REFUND", key=f"w_rej_{w_item[0]}"):
                             query_db("UPDATE users SET balance = balance + ? WHERE username=?", (w_item[4], w_item[1]), commit=True)
                             query_db("UPDATE withdrawals SET status='Rejected' WHERE id=?", (w_item[0],), commit=True)
                             st.rerun()
                             
-        # --- NEW ADMIN PANEL FOR VIDEOS ---
         elif st.session_state.selected_panel == "Video Manager":
             st.markdown("##### LEVEL VIDEO LINK MANAGER PORTAL")
-            st.info("Yahan par aap har level ke liye alag video set kar sakte hain.")
+            st.info("Ensure the YouTube URL is a valid full link (e.g. https://www.youtube.com/watch?v=...) to prevent errors.")
             
             selected_tier = st.selectbox("Select VIP Level to Update Video:", list(VIP_LEVELS.keys()), key="admin_video_tier_select")
             current_vid = query_db("SELECT video_url FROM level_videos WHERE level=?", (selected_tier,), one=True)
@@ -677,19 +563,34 @@ else:
                 st.success(f"Video mapping successfully updated for {selected_tier}!")
                 st.rerun()
 
+        # --- NAYA ADMIN FEATURE: USER LIST (Jahan sab details ayen gi) ---
+        elif st.session_state.selected_panel == "Users List":
+            st.markdown("##### REGISTERED USERS DIRECTORY")
+            all_users = query_db("SELECT username, balance, active_level, selected_country FROM users WHERE username != 'admin'")
+            st.info(f"Total Registered Users Network: **{len(all_users) if all_users else 0}**")
+            
+            if all_users:
+                table_html = "<table style='width:100%; color:white; border-collapse:collapse; text-align:left; font-size:13px;'>"
+                table_html += "<tr style='background:#1c3366; border-bottom:2px solid #ffd700; padding:8px;'><th style='padding:8px;'>Email / Username</th><th style='padding:8px;'>Balance</th><th style='padding:8px;'>VIP Level</th><th style='padding:8px;'>Country</th></tr>"
+                for u in all_users:
+                    table_html += f"<tr style='border-bottom:1px solid #2d4f99;'><td style='padding:8px;'>{u[0]}</td><td style='padding:8px;'>{u[1]:.2f}</td><td style='padding:8px;'>{u[2]}</td><td style='padding:8px;'>{u[3]}</td></tr>"
+                table_html += "</table>"
+                st.markdown(table_html, unsafe_allow_html=True)
+            else:
+                st.markdown("<div style='color:#a4bde6;'>No active users found in directory yet.</div>", unsafe_allow_html=True)
+
         st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
-        # ADMIN NAVIGATION CONTROLS UPDATED
-        ad_c1, ad_c2, ad_c3, ad_c4, ad_c5 = st.columns(5)
+        # ADMIN NAVIGATION CONTROLS (Updated with 6 buttons)
+        ad_c1, ad_c2, ad_c3 = st.columns(3)
         with ad_c1:
             if st.button("DEPOSITS", key="adm_nav_deps"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
+            if st.button("CASHOUTS", key="adm_nav_with"): st.session_state.selected_panel = "Admin Liquidation Settlements"; st.rerun()
         with ad_c2:
             if st.button("REGIONAL", key="adm_nav_master"): st.session_state.selected_panel = "Regional Settings Board"; st.rerun()
+            if st.button("VIDEOS", key="adm_nav_vids"): st.session_state.selected_panel = "Video Manager"; st.rerun()
         with ad_c3:
             if st.button("USER BAL", key="adm_nav_userbal"): st.session_state.selected_panel = "User Identity Adjustments Module"; st.rerun()
-        with ad_c4:
-            if st.button("CASHOUTS", key="adm_nav_with"): st.session_state.selected_panel = "Admin Liquidation Settlements"; st.rerun()
-        with ad_c5:
-            if st.button("VIDEOS", key="adm_nav_vids"): st.session_state.selected_panel = "Video Manager"; st.rerun()
+            if st.button("USERS LIST", key="adm_nav_users_list"): st.session_state.selected_panel = "Users List"; st.rerun()
 
         st.markdown("<hr style='border-color:#e53e3e; opacity:0.4;'>", unsafe_allow_html=True)
         if st.button("LOG OUT", key="adm_single_forced_logout_trigger", use_container_width=True):
@@ -709,7 +610,7 @@ else:
         else:
             wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country, locked_until = (0.00, 0.00, 'SVIP LEVEL 1', 'NONE', 'India', 0.0)
             
-        if not saved_user_country or saved_user_country == "Pakistan": saved_user_country = "India"
+        if not saved_user_country: saved_user_country = "India"
         st.session_state.user_country = saved_user_country
         
         country_meta = SUPPORTED_COUNTRIES.get(st.session_state.user_country, {"currency": "INR", "symbol": "₹", "banks": ["UPI Gateway"]})
@@ -719,26 +620,8 @@ else:
         
         has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
         
-        # --- HIGHLIGHTED COUNTRY SELECTOR BORDER INTERFACE (DASHBOARD CENTER) ---
-        st.markdown('<div class="highlight-country-selector-box"><div class="highlight-country-label">🌍 SELECT YOUR ACTIVE COUNTRY REGION</div>', unsafe_allow_html=True)
-        country_options_list = list(SUPPORTED_COUNTRIES.keys())
-        try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
-        except ValueError: mapped_selection_index = 0
-            
-        chosen_cntry_opt = st.selectbox(
-            "Active Country:", 
-            options=country_options_list, 
-            index=mapped_selection_index, 
-            key="usr_dashboard_country_select",
-            label_visibility="collapsed"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        if chosen_cntry_opt != st.session_state.user_country:
-            query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
-            st.session_state.user_country = chosen_cntry_opt
-            st.rerun()
-                
+        # NOTE: Main ne dropdown (Select Country Region) hata diya hai, ab sirf saved country background mein chali gi.
+
         if st.session_state.selected_panel == "Overview":
             grid_col1, grid_col2 = st.columns(2)
             with grid_col1:
@@ -746,15 +629,47 @@ else:
             with grid_col2:
                 st.markdown(f'<div class="app-grid-purple"><small>Current Contract Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
 
-            # --- VIDEO ASSIGNED TO ACTIVE LEVEL ---
+            # --- VIDEO & 20-SECOND WATCH TO CLAIM TIMER LOGIC ---
             st.markdown("<hr style='border-color:#1d356d; opacity:0.5; margin:15px 0;'>", unsafe_allow_html=True)
             st.markdown(f"<p style='font-size:14px; font-weight:800; color:#ffd700; text-align:center; text-transform:uppercase;'>YOUR EXCLUSIVE {level_tag} VIDEO</p>", unsafe_allow_html=True)
             
+            today_date = time.strftime("%Y-%m-%d")
+            already_watched = query_db("SELECT username FROM ad_logs WHERE username=? AND date=? AND ad_id=?", (st.session_state.current_user, today_date, level_tag), one=True)
+
             vid_data = query_db("SELECT video_url FROM level_videos WHERE level=?", (level_tag,), one=True)
             if vid_data and vid_data[0]:
-                st.video(vid_data[0])
+                # Try to display video directly
+                try:
+                    st.video(vid_data[0])
+                except Exception:
+                    st.error("Admin assigned video link format is invalid.")
+
+                # Watching 20s Logic Check
+                if already_watched:
+                    st.markdown("<div style='color:#38a169; font-weight:bold; text-align:center; padding:10px;'>✅ You have already claimed today's video reward.</div>", unsafe_allow_html=True)
+                else:
+                    if st.session_state.watch_timer == "idle":
+                        if st.button("▶ START WATCHING (Wait 20 Seconds To Claim)", use_container_width=True):
+                            st.session_state.watch_timer = "watching"
+                            st.rerun()
+                            
+                    elif st.session_state.watch_timer == "watching":
+                        with st.spinner("Please watch the video... 20 seconds remaining"):
+                            time.sleep(20)
+                        st.session_state.watch_timer = "ready"
+                        st.rerun()
+                        
+                    elif st.session_state.watch_timer == "ready":
+                        if st.button("🎁 CLAIM DAILY VIDEO REWARD", use_container_width=True):
+                            reward_amt = VIP_LEVELS.get(level_tag, {}).get('ad_pay', 0.50)
+                            query_db("UPDATE users SET balance = balance + ? WHERE username=?", (reward_amt, st.session_state.current_user), commit=True)
+                            query_db("INSERT INTO ad_logs (username, ad_id, date) VALUES (?, ?, ?)", (st.session_state.current_user, level_tag, today_date), commit=True)
+                            st.session_state.watch_timer = "idle"
+                            st.success(f"Claimed {symbol_str} {reward_amt:.2f} successfully!")
+                            st.rerun()
             else:
                 st.markdown("<div style='text-align:center; color:#a4bde6; font-size:12px; font-weight:600; padding:10px; background:#1c3366; border-radius:6px;'>Admin has not assigned any video for this level yet.</div>", unsafe_allow_html=True)
+            
             st.markdown("<hr style='border-color:#1d356d; opacity:0.5; margin:15px 0;'>", unsafe_allow_html=True)
 
 
@@ -791,7 +706,6 @@ else:
             
             # --- FULL LUCKY WHEEL CANVAS INTERFACE ANIMATOR ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffd700; text-align:center; margin-top:20px;'>LUCKY SPIN WHEEL WINNING SLOTS</p>", unsafe_allow_html=True)
-            today_date = time.strftime("%Y-%m-%d")
             already_spun = query_db("SELECT username FROM lucky_spins WHERE username=? AND date=?", (st.session_state.current_user, today_date), one=True)
             
             if already_spun: st.markdown("<div style='color:#e53e3e; font-weight:bold; text-align:center; font-size:13px; padding:10px;'>Spin option completely used for today.</div>", unsafe_allow_html=True)
@@ -890,87 +804,19 @@ else:
                     st.success("Extraction records compiled securely.")
                     st.rerun()
                 else: st.error("Error: Account available balance parameters fail validation checks limits.")
-                    
-        elif st.session_state.selected_panel == "Promote_Video":
-            st.markdown("<h5>ADVERTISING MANAGER PORTAL</h5>", unsafe_allow_html=True)
-            adv_email = st.text_input("Advertiser Email:", value=st.session_state.current_user, key="usr_promo_email_input")
-            video_url = st.text_input("Youtube Target URL String Link:", placeholder="https://www.youtube.com/watch?v=...", key="usr_promo_url_input")
-            views_req = st.number_input("Required Impressions View Limit Count:", min_value=100, step=100, value=100, key="usr_promo_views_input")
-            total_cost = views_req * 0.10
-            st.info(f"Total Campaign Cost Metric Evaluation: **{symbol_str} {total_cost:.2f}**")
-            payment_trx = st.text_input("Enter Wire Payment Receipt TXID Hash Key String:", key="usr_promo_trx_input")
-            
-            if st.button("DEPLOY ADVERTISING CAMPAIGN", use_container_width=True, key="usr_submit_promo_btn"):
-                if adv_email.strip() and video_url.strip() and payment_trx.strip():
-                    query_db("INSERT INTO ad_campaigns (advertiser_email, video_url, target_views, trx_id, status) VALUES (?, ?, ?, ?, 'Pending')", (adv_email.strip(), video_url.strip(), views_req, payment_trx.strip()), commit=True)
-                    st.success("Media promotion packages structured successfully.")
-                else: st.error("Configuration failure: Missing parameters.")
 
         # --- NAVIGATION SYSTEM CONTROLLERS ---
         st.markdown("<hr style='border-color:#1d356d; opacity:0.3;'>", unsafe_allow_html=True)
-        c_nav1, c_nav2, c_nav3, c_nav4 = st.columns(4)
+        c_nav1, c_nav2, c_nav3 = st.columns(3)
         with c_nav1:
             if st.button("DASHBOARD", key="btn_nav_h"): st.session_state.selected_panel = "Overview"; st.rerun()
         with c_nav2:
             if st.button("DEPOSIT", key="btn_nav_d"): st.session_state.selected_panel = "Deposit"; st.rerun()
         with c_nav3:
             if st.button("WITHDRAW", key="btn_nav_w"): st.session_state.selected_panel = "Cashout"; st.rerun()
-        with c_nav4:
-            if st.button("SLOTS PROMO", key="btn_nav_p"): st.session_state.selected_panel = "Promote_Video"; st.rerun()
 
         st.markdown("<hr style='border-color:#e53e3e; opacity:0.4;'>", unsafe_allow_html=True)
         if st.button("LOG OUT", key="usr_single_forced_logout_trigger", use_container_width=True):
             st.session_state.logged_in = False
             st.query_params.clear()
             st.rerun()
-
-# ==============================================================================
-# --- 10. COMPLIANCE HARDENING RE-ALIGNMENT POOL BUFFER CHANNELS (1300+ LINES) ---
-# ==============================================================================
-# Tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# [END OF OPERATIONAL COMPLIANT COMPLETE SOURCE SCRIPT SYSTEM CHANNELS INTERFACES PORTAL ENGINE RUNTIMES CONTROLLERS]
