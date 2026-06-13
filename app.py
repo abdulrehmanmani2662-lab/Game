@@ -45,7 +45,8 @@ SUPPORTED_COUNTRIES = {
     },
     "Malaysia": {
         "currency": "MYR", 
-        "symbol": "RM", "banks": ["Maybank", "CIMB Bank", "Public Bank", "Touch n Go"],
+        "symbol": "RM", 
+        "banks": ["Maybank", "CIMB Bank", "Public Bank", "Touch n Go"],
         "details": {
             "Maybank": {"title": "Global Matrix MY Maybank Terminal", "num": "514012345678"},
             "CIMB Bank": {"title": "Global Matrix MY CIMB Core Node", "num": "706543210987"},
@@ -179,7 +180,6 @@ def init_db():
     for cntry, b_name, a_title, a_num in default_banks:
         cursor.execute("INSERT OR IGNORE INTO regional_banks VALUES (?, ?, ?, ?)", (cntry, b_name, a_title, a_num))
         
-    # FIX FIXED LINE HERE SPECIFYING COLUMNS TO AVOID LEAK/MISMATCH OPERATION ALIGNMENT
     cursor.execute("""
         INSERT OR IGNORE INTO users (username, password, balance, liquidation, active_level, ref_code, referred_by, selected_country) 
         VALUES ('admin', 'admin123', 0.0, 0.0, 'OWNER', 'MASTER', '', 'India')
@@ -537,6 +537,53 @@ st.markdown(f'<a href="{MEGA888_PORTAL_URL}" target="_blank" style="text-decorat
 st.markdown("<hr style='border-color:#1c325c; margin: 25px 0;'>", unsafe_allow_html=True)
 
 # ==============================================================================
+# --- [UPDATED MOVED BLOCK] SHIFTED TO PUBLIC LOBBY PER 1000068644.JPG ---
+# ==============================================================================
+if st.session_state.logged_in and not st.session_state.is_admin:
+    user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code, selected_country FROM users WHERE username=?", (st.session_state.current_user,), one=True)
+    wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country = user_metrics if user_metrics else (0.00, 0.00, 'SVIP LEVEL 1', 'Y999', 'India')
+else:
+    wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country = (4.00, 0.00, 'SVIP LEVEL 1', 'Y999', st.session_state.user_country)
+
+if not saved_user_country or saved_user_country == "Pakistan": saved_user_country = "India"
+st.session_state.user_country = saved_user_country
+
+country_meta = SUPPORTED_COUNTRIES.get(st.session_state.user_country, {"currency": "INR", "symbol": "₹", "banks": ["UPI Gateway"]})
+currency_str = country_meta["currency"]
+symbol_str = country_meta["symbol"]
+available_banks_list = country_meta["banks"]
+
+# Country Dropdown Box Selector Block Frame Custom Layout View
+st.markdown('<div class="highlight-country-selector-box"><div class="highlight-country-label">🌍 SELECT YOUR ACTIVE COUNTRY REGION</div>', unsafe_allow_html=True)
+country_options_list = list(SUPPORTED_COUNTRIES.keys())
+try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
+except ValueError: mapped_selection_index = 0
+    
+chosen_cntry_opt = st.selectbox(
+    "Active Country:", 
+    options=country_options_list, 
+    index=mapped_selection_index, 
+    key="usr_lobby_country_select",
+    label_visibility="collapsed"
+)
+st.markdown('</div>', unsafe_allow_html=True)
+
+if chosen_cntry_opt != st.session_state.user_country:
+    if st.session_state.logged_in:
+        query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
+    st.session_state.user_country = chosen_cntry_opt
+    st.rerun()
+
+# Balanced Dynamic Metrics Layout Grid Block Rows Display
+grid_col1, grid_col2 = st.columns(2)
+with grid_col1:
+    st.markdown(f'<div class="app-grid-coral"><small>Your Total Balance</small><h4>{symbol_str} {wallet_bal:,.2f}</h4></div>', unsafe_allow_html=True)
+with grid_col2:
+    st.markdown(f'<div class="app-grid-purple"><small>Current Contract Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
+
+st.markdown("<hr style='border-color:#1c325c; margin: 20px 0;'>", unsafe_allow_html=True)
+
+# ==============================================================================
 # --- 8. GATEWAY ENTRY FORMS SYSTEM SECURITY AUTHENTICATION SHIELDS ---
 # ==============================================================================
 if not st.session_state.logged_in:
@@ -786,46 +833,9 @@ else:
     # --- 9B. DYNAMIC USER SECURE WORKSPACE SESSIONS ---
     # --------------------------------------------------------------------------
     else:
-        user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code, selected_country FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-        wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country = user_metrics if user_metrics else (0.00, 0.00, 'SVIP LEVEL 1', 'Y999', 'India')
-        
-        if not saved_user_country or saved_user_country == "Pakistan": saved_user_country = "India"
-        st.session_state.user_country = saved_user_country
-        
-        country_meta = SUPPORTED_COUNTRIES.get(st.session_state.user_country, {"currency": "INR", "symbol": "₹", "banks": ["UPI Gateway"]})
-        currency_str = country_meta["currency"]
-        symbol_str = country_meta["symbol"]
-        available_banks_list = country_meta["banks"]
-        
         has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
-        
-        # --- HIGHLIGHTED COUNTRY SELECTOR BORDER INTERFACE (DASHBOARD CENTER) ---
-        st.markdown('<div class="highlight-country-selector-box"><div class="highlight-country-label">🌍 SELECT YOUR ACTIVE COUNTRY REGION</div>', unsafe_allow_html=True)
-        country_options_list = list(SUPPORTED_COUNTRIES.keys())
-        try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
-        except ValueError: mapped_selection_index = 0
-            
-        chosen_cntry_opt = st.selectbox(
-            "Active Country:", 
-            options=country_options_list, 
-            index=mapped_selection_index, 
-            key="usr_dashboard_country_select",
-            label_visibility="collapsed"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        if chosen_cntry_opt != st.session_state.user_country:
-            query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
-            st.session_state.user_country = chosen_cntry_opt
-            st.rerun()
                 
         if st.session_state.selected_panel == "Overview":
-            grid_col1, grid_col2 = st.columns(2)
-            with grid_col1:
-                st.markdown(f'<div class="app-grid-coral"><small>Your Total Balance</small><h4>{symbol_str} {wallet_bal:,.2f}</h4></div>', unsafe_allow_html=True)
-            with grid_col2:
-                st.markdown(f'<div class="app-grid-purple"><small>Current Contract Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
-
             # --- INVESTMENT LEVELS GRID & MANUAL BUY INTERFACE ---
             st.markdown("<p style='font-size:14px; font-weight:700; color:#dfb01a; text-align:center; text-transform:uppercase; margin-top:20px;'>Investment Contract Packages</p>", unsafe_allow_html=True)
             for tier_name, d in VIP_LEVELS.items():
