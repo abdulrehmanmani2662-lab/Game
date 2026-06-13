@@ -20,19 +20,8 @@ st.set_page_config(
 SENDER_EMAIL = "globalmatrixteam.com@gmail.com"
 SENDER_APP_PASSWORD = "higjqwbtxagmvdty"
 
-# Complete Regional Banks Array Matrix Configuration
+# Complete Regional Banks Array Matrix Configuration (PAKISTAN REMOVED)
 SUPPORTED_COUNTRIES = {
-    "Pakistan": {
-        "currency": "PKR", 
-        "symbol": "Rs", 
-        "banks": ["EasyPaisa", "JazzCash", "HBL Bank", "UBL Bank"],
-        "details": {
-            "EasyPaisa": {"title": "Global Matrix PK EasyPaisa Vendor", "num": "03001234567"},
-            "JazzCash": {"title": "Global Matrix PK JazzCash Node", "num": "03017654321"},
-            "HBL Bank": {"title": "Global Matrix Pakistan HBL Main", "num": "12345678901234"},
-            "UBL Bank": {"title": "Global Matrix Pakistan UBL Digital", "num": "98765432109876"}
-        }
-    },
     "India": {
         "currency": "INR", 
         "symbol": "₹", 
@@ -183,7 +172,6 @@ def init_db():
         cursor.execute("INSERT OR IGNORE INTO system_config VALUES (?, ?)", (key, val))
         
     default_banks = [
-        ('Pakistan', 'HBL Bank / JazzCash / EasyPaisa', 'Global Matrix PK Node', '03001234567'),
         ('India', 'SBI Bank / UPI Gateway', 'Global Matrix IN Node', 'matrix@upi'),
         ('Dubai', 'Emirates NBD Terminal', 'Global Matrix UAE Node', 'AE1234567890123456789'),
         ('Malaysia', 'Maybank Berhad Network', 'Global Matrix MY Node', '514012345678'),
@@ -192,7 +180,7 @@ def init_db():
     for cntry, b_name, a_title, a_num in default_banks:
         cursor.execute("INSERT OR IGNORE INTO regional_banks VALUES (?, ?, ?, ?)", (cntry, b_name, a_title, a_num))
         
-    cursor.execute("INSERT OR IGNORE INTO users VALUES ('admin', 'admin123', 0.0, 0.0, 'OWNER', 'MASTER', '', 'Pakistan')")
+    cursor.execute("INSERT OR IGNORE INTO users VALUES ('admin', 'admin123', 0.0, 0.0, 'OWNER', 'MASTER', '', 'India')")
     conn.commit()
     conn.close()
 
@@ -258,7 +246,7 @@ if 'logged_in' not in st.session_state:
 session_keys = {
     'current_user': "", 'is_admin': False, 'selected_panel': "Overview", 
     'auth_mode': "Login", 'reset_step': 1, 'otp_start_time': None, 
-    'reg_verify_code': "", 'temp_reg_ref': "", 'user_country': "Pakistan"
+    'reg_verify_code': "", 'temp_reg_ref': "", 'user_country': "India"
 }
 for key, def_val in session_keys.items():
     if key not in st.session_state:
@@ -323,7 +311,6 @@ html, body, .stApp { background-color: #0c1833 !important; color: #f1f5f9 !impor
     box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.15s; cursor: pointer; text-decoration: none; display: block;
 }
 .casino-mini-logo:hover { transform: scale(1.02); border-color: #ffc800; }
-
 .casino-mini-text { font-size: 10px; font-weight: 800; color: #ffd700; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.1; margin-top: 2px; word-break: break-word; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
 /* Special Sponsored Massive Display Ad Layout Block Frame */
@@ -355,6 +342,19 @@ div.stButton > button {
     text-transform: uppercase; box-shadow: 0 2px 8px rgba(240,165,0,0.3);
 }
 div.stButton > button:hover { transform: scale(1.01); background: #fffa00 !important; }
+
+/* Highlighted Country Selector Border Block Custom Component */
+.highlight-country-selector-box {
+    border: 2px dashed #ffc800 !important;
+    background-color: #11244f !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    margin: 15px 0 !important;
+    box-shadow: 0 0 15px rgba(255, 200, 0, 0.25) !important;
+}
+.highlight-country-label {
+    font-size: 12px; font-weight: 800; color: #ffc800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;
+}
 
 .app-grid-coral { background: linear-gradient(135deg, #e53e3e 0%, #b81d1d 100%) !important; border-radius: 8px; padding: 14px; color: #ffffff !important; }
 .app-grid-purple { background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%) !important; border-radius: 8px; padding: 14px; color: #ffffff !important; }
@@ -461,7 +461,7 @@ if not st.session_state.logged_in:
                         st.session_state.logged_in = True
                         st.session_state.current_user = record[1]
                         st.session_state.is_admin = False
-                        st.session_state.user_country = record[2] if record[2] else "Pakistan"
+                        st.session_state.user_country = record[2] if record[2] else "India"
                         st.session_state.selected_panel = "Overview"
                         st.query_params['persisted_user'] = record[1]
                         st.rerun()
@@ -682,33 +682,37 @@ else:
     # --------------------------------------------------------------------------
     else:
         user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code, selected_country FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-        wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country = user_metrics if user_metrics else (0.00, 0.00, 'SVIP LEVEL 1', 'Y999', 'Pakistan')
+        wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country = user_metrics if user_metrics else (0.00, 0.00, 'SVIP LEVEL 1', 'Y999', 'India')
         
-        if not saved_user_country: saved_user_country = "Pakistan"
+        if not saved_user_country or saved_user_country == "Pakistan": saved_user_country = "India"
         st.session_state.user_country = saved_user_country
         
-        country_meta = SUPPORTED_COUNTRIES.get(st.session_state.user_country, {"currency": "PKR", "symbol": "Rs", "banks": ["EasyPaisa"]})
+        country_meta = SUPPORTED_COUNTRIES.get(st.session_state.user_country, {"currency": "INR", "symbol": "₹", "banks": ["UPI Gateway"]})
         currency_str = country_meta["currency"]
         symbol_str = country_meta["symbol"]
         available_banks_list = country_meta["banks"]
         
         has_approved_deposit = query_db("SELECT id FROM deposits WHERE username=? AND status='Approved'", (st.session_state.current_user,), one=True)
         
-        with st.expander("SELECT ACCOUNT COUNTRY REGION"):
-            country_options_list = list(SUPPORTED_COUNTRIES.keys())
-            try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
-            except ValueError: mapped_selection_index = 0
-                
-            chosen_cntry_opt = st.selectbox(
-                "Select Region Location:", 
-                options=country_options_list, 
-                index=mapped_selection_index, 
-                key="usr_dashboard_country_select"
-            )
-            if chosen_cntry_opt != st.session_state.user_country:
-                query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
-                st.session_state.user_country = chosen_cntry_opt
-                st.rerun()
+        # --- HIGHLIGHTED COUNTRY SELECTOR BORDER INTERFACE (DASHBOARD CENTER) ---
+        st.markdown('<div class="highlight-country-selector-box"><div class="highlight-country-label">🌍 SELECT YOUR ACTIVE COUNTRY REGION</div>', unsafe_allow_html=True)
+        country_options_list = list(SUPPORTED_COUNTRIES.keys())
+        try: mapped_selection_index = country_options_list.index(st.session_state.user_country)
+        except ValueError: mapped_selection_index = 0
+            
+        chosen_cntry_opt = st.selectbox(
+            "Active Country:", 
+            options=country_options_list, 
+            index=mapped_selection_index, 
+            key="usr_dashboard_country_select",
+            label_visibility="collapsed"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        if chosen_cntry_opt != st.session_state.user_country:
+            query_db("UPDATE users SET selected_country=? WHERE username=?", (chosen_cntry_opt, st.session_state.current_user), commit=True)
+            st.session_state.user_country = chosen_cntry_opt
+            st.rerun()
                 
         if st.session_state.selected_panel == "Overview":
             grid_col1, grid_col2 = st.columns(2)
@@ -876,30 +880,6 @@ else:
 # --- 10. COMPLIANCE HARDENING RE-ALIGNMENT POOL BUFFER CHANNELS (1300+ LINES) ---
 # ==============================================================================
 # Tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
-# Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
-# Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
-# Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
-# Synchronizing variables bounds parameters framework layout blocks files structural variables tracking values profiles arrays filters.
-# Core structural block alignments properties cell allocation models indicators components elements tables rows data stack tracking loops parameters indices.
-# Background configurations variables validation sequences layers logs pipeline parameters metrics rows blocks elements databases directories trackers indices.
-# Multi country regional constraints configuration arrays mappings lists tracers hooks path data layers vectors properties fields strings arrays bounds parameters.
-# Execution checks elements validation logic algorithms data processing operations matrices profiles indices traces cells values models tracking properties elements.
-# Database core exceptions boundaries criteria storage parameters matrix parameters framework configurations sequences elements properties lines.
-# Multi state domain boundary tracking variables execution tracers metrics layer vectors processing elements grids.
-# Operational execution traces models variables elements definitions fields properties strings files trackers values indexes maps structures stack.
-# Framework layout synchronization arrays persistent parameter checks tracing loops records properties elements rows variables cells pipelines databases.
 # Mapped records indicators logs configurations data tables indices matrices adjustments handles pipelines nodes registries tables configurations logs.
 # Regional localization directives verification stack pipelines arrays allocation mapping trace indicators validations properties cells trackers.
 # Processing arrays structures alignment storage cell allocation mappings models configurations records indicators storage parameters records matrices.
