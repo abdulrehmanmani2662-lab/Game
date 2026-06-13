@@ -148,6 +148,9 @@ def init_db():
     cursor.execute("CREATE TABLE IF NOT EXISTS withdrawals (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, bank TEXT, account TEXT, amount REAL, status TEXT, country TEXT)")
     cursor.execute("CREATE TABLE IF NOT EXISTS ad_campaigns (id INTEGER PRIMARY KEY AUTOINCREMENT, advertiser_email TEXT, video_url TEXT, target_views INTEGER, trx_id TEXT, status TEXT)")
     
+    # NEW TABLES & COLUMNS FOR UPDATE
+    cursor.execute("CREATE TABLE IF NOT EXISTS level_videos (level TEXT PRIMARY KEY, video_url TEXT)")
+    
     try: cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
     except sqlite3.OperationalError: pass
     try: cursor.execute("ALTER TABLE users ADD COLUMN selected_country TEXT")
@@ -155,6 +158,8 @@ def init_db():
     try: cursor.execute("ALTER TABLE deposits ADD COLUMN country TEXT")
     except sqlite3.OperationalError: pass
     try: cursor.execute("ALTER TABLE withdrawals ADD COLUMN country TEXT")
+    except sqlite3.OperationalError: pass
+    try: cursor.execute("ALTER TABLE users ADD COLUMN level_locked_until REAL DEFAULT 0")
     except sqlite3.OperationalError: pass
 
     configs = [
@@ -180,7 +185,7 @@ def init_db():
     for cntry, b_name, a_title, a_num in default_banks:
         cursor.execute("INSERT OR IGNORE INTO regional_banks VALUES (?, ?, ?, ?)", (cntry, b_name, a_title, a_num))
         
-    cursor.execute("INSERT OR IGNORE INTO users VALUES ('admin', 'admin123', 0.0, 0.0, 'OWNER', 'MASTER', '', 'India')")
+    cursor.execute("INSERT OR IGNORE INTO users (username, password, balance, liquidation, active_level, ref_code, referred_by, selected_country, level_locked_until) VALUES ('admin', 'admin123', 0.0, 0.0, 'OWNER', 'MASTER', '', 'India', 0.0)")
     conn.commit()
     conn.close()
 
@@ -204,7 +209,7 @@ def query_db(query, args=(), one=False, commit=False):
 init_db()
 
 # ==============================================================================
-# --- 3. REFERRAL COMMISSION CALCULATIONS ENGINE ---
+# --- 3. REFERRAL COMMISSION CALCULATIONS ENGINE (KEPT BUT UNUSED) ---
 # ==============================================================================
 def credit_multi_tier_commissions(user, base_reward):
     tier_1_parent = query_db("SELECT referred_by FROM users WHERE username=?", (user,), one=True)
@@ -246,7 +251,7 @@ if 'logged_in' not in st.session_state:
 session_keys = {
     'current_user': "", 'is_admin': False, 'selected_panel': "Overview", 
     'auth_mode': "Login", 'reset_step': 1, 'otp_start_time': None, 
-    'reg_verify_code': "", 'temp_reg_ref': "", 'user_country': "India"
+    'reg_verify_code': "", 'user_country': "India"
 }
 for key, def_val in session_keys.items():
     if key not in st.session_state:
@@ -434,6 +439,9 @@ st.markdown("<hr style='border-color:#1d356d; margin: 25px 0;'>", unsafe_allow_h
 # ==============================================================================
 # --- 8. GATEWAY ENTRY FORMS SYSTEM SECURITY AUTHENTICATION SHIELDS ---
 # ==============================================================================
+def render_otp_countdown_engine():
+    pass # Simple stub for compatibility with original code
+
 if not st.session_state.logged_in:
     st.markdown('<div class="brand-title">GLOBAL MATRIX SYSTEM</div>', unsafe_allow_html=True)
     
@@ -471,7 +479,7 @@ if not st.session_state.logged_in:
         st.markdown('<div class="brand-subtitle">Create Account Vault</div>', unsafe_allow_html=True)
         reg_username = st.text_input("Gmail Address:", placeholder="example@gmail.com", key="reg_user_input")
         reg_password = st.text_input("Choose Password:", type="password", key="reg_pass_input")
-        reg_ref_code = st.text_input("Referral Code (Optional):", placeholder="Optional reference hash", key="reg_ref_input")
+        # REFERRAL CODE REMOVED FROM HERE
         reg_country = st.selectbox("Select Country:", list(SUPPORTED_COUNTRIES.keys()), key="reg_country_select")
         st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
@@ -488,7 +496,6 @@ if not st.session_state.logged_in:
                         if send_verification_email(reg_username.strip(), generated_otp, purpose="Account Creation"):
                             st.session_state.temp_reg_user = reg_username.strip()
                             st.session_state.temp_reg_pass = reg_password.strip()
-                            st.session_state.temp_reg_ref = reg_ref_code.strip()
                             st.session_state.temp_reg_country = reg_country
                             st.session_state.reg_verify_code = generated_otp
                             st.session_state.otp_start_time = time.time()
@@ -508,16 +515,10 @@ if not st.session_state.logged_in:
         
         if st.button("VERIFY ACCOUNT SPACE", use_container_width=True, key="confirm_otp_btn"):
             if typed_code.strip() == st.session_state.reg_verify_code:
-                starting_bonus = 2.00
-                parent_user = ""
-                if st.session_state.temp_reg_ref:
-                    valid_ref = query_db("SELECT username FROM users WHERE ref_code=?", (st.session_state.temp_ref_code,), one=True)
-                    if valid_ref:
-                        starting_bonus += 40.00
-                        parent_user = valid_ref[0]
-                        
-                query_db("INSERT INTO users VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'M' || CAST(ABS(RANDOM()%10000) AS TEXT), ?, ?)", 
-                         (st.session_state.temp_reg_user, st.session_state.temp_reg_pass, starting_bonus, parent_user, st.session_state.temp_reg_country), commit=True)
+                starting_bonus = 2.00 # Fixed starting bonus, no referral check anymore
+                
+                query_db("INSERT INTO users (username, password, balance, liquidation, active_level, ref_code, referred_by, selected_country, level_locked_until) VALUES (?, ?, ?, 0.00, 'SVIP LEVEL 1', 'NONE', '', ?, 0.0)", 
+                         (st.session_state.temp_reg_user, st.session_state.temp_reg_pass, starting_bonus, st.session_state.temp_reg_country), commit=True)
                 st.success(f"Account validated successfully.")
                 st.session_state.auth_mode = "Login"
                 st.rerun()
@@ -660,16 +661,35 @@ else:
                             query_db("UPDATE withdrawals SET status='Rejected' WHERE id=?", (w_item[0],), commit=True)
                             st.rerun()
                             
+        # --- NEW ADMIN PANEL FOR VIDEOS ---
+        elif st.session_state.selected_panel == "Video Manager":
+            st.markdown("##### LEVEL VIDEO LINK MANAGER PORTAL")
+            st.info("Yahan par aap har level ke liye alag video set kar sakte hain.")
+            
+            selected_tier = st.selectbox("Select VIP Level to Update Video:", list(VIP_LEVELS.keys()), key="admin_video_tier_select")
+            current_vid = query_db("SELECT video_url FROM level_videos WHERE level=?", (selected_tier,), one=True)
+            vid_val = current_vid[0] if current_vid else ""
+            
+            new_vid_url = st.text_input("YouTube Video Link for this Level:", value=vid_val, placeholder="https://www.youtube.com/watch?v=...", key="admin_video_link_input")
+            
+            if st.button("SAVE VIDEO TO LEVEL", use_container_width=True, key="admin_save_vid_btn"):
+                query_db("INSERT OR REPLACE INTO level_videos (level, video_url) VALUES (?, ?)", (selected_tier, new_vid_url.strip()), commit=True)
+                st.success(f"Video mapping successfully updated for {selected_tier}!")
+                st.rerun()
+
         st.markdown("<hr style='border-color:#2d3748;'>", unsafe_allow_html=True)
-        ad_c1, ad_c2, ad_c3, ad_c4 = st.columns(4)
+        # ADMIN NAVIGATION CONTROLS UPDATED
+        ad_c1, ad_c2, ad_c3, ad_c4, ad_c5 = st.columns(5)
         with ad_c1:
-            if st.button("DEPOSITS QUEUE", key="adm_bottom_nav_deps"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
+            if st.button("DEPOSITS", key="adm_nav_deps"): st.session_state.selected_panel = "Pending Requests"; st.rerun()
         with ad_c2:
-            if st.button("REGIONAL CONFIG CORE", key="adm_bottom_nav_master"): st.session_state.selected_panel = "Regional Settings Board"; st.rerun()
+            if st.button("REGIONAL", key="adm_nav_master"): st.session_state.selected_panel = "Regional Settings Board"; st.rerun()
         with ad_c3:
-            if st.button("USER VAULT CENTER", key="adm_bottom_nav_userbal"): st.session_state.selected_panel = "User Identity Adjustments Module"; st.rerun()
+            if st.button("USER BAL", key="adm_nav_userbal"): st.session_state.selected_panel = "User Identity Adjustments Module"; st.rerun()
         with ad_c4:
-            if st.button("OUTBOUND RECONCILIATION", key="adm_bottom_nav_with"): st.session_state.selected_panel = "Admin Liquidation Settlements"; st.rerun()
+            if st.button("CASHOUTS", key="adm_nav_with"): st.session_state.selected_panel = "Admin Liquidation Settlements"; st.rerun()
+        with ad_c5:
+            if st.button("VIDEOS", key="adm_nav_vids"): st.session_state.selected_panel = "Video Manager"; st.rerun()
 
         st.markdown("<hr style='border-color:#e53e3e; opacity:0.4;'>", unsafe_allow_html=True)
         if st.button("LOG OUT", key="adm_single_forced_logout_trigger", use_container_width=True):
@@ -681,9 +701,14 @@ else:
     # --- 9B. DYNAMIC USER SECURE WORKSPACE SESSIONS ---
     # --------------------------------------------------------------------------
     else:
-        user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code, selected_country FROM users WHERE username=?", (st.session_state.current_user,), one=True)
-        wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country = user_metrics if user_metrics else (0.00, 0.00, 'SVIP LEVEL 1', 'Y999', 'India')
+        user_metrics = query_db("SELECT balance, liquidation, active_level, ref_code, selected_country, level_locked_until FROM users WHERE username=?", (st.session_state.current_user,), one=True)
         
+        if user_metrics:
+            wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country, locked_until = user_metrics
+            if locked_until is None: locked_until = 0.0
+        else:
+            wallet_bal, liquid_bal, level_tag, reference_hash, saved_user_country, locked_until = (0.00, 0.00, 'SVIP LEVEL 1', 'NONE', 'India', 0.0)
+            
         if not saved_user_country or saved_user_country == "Pakistan": saved_user_country = "India"
         st.session_state.user_country = saved_user_country
         
@@ -721,25 +746,48 @@ else:
             with grid_col2:
                 st.markdown(f'<div class="app-grid-purple"><small>Current Contract Rank Tier</small><h4>{level_tag}</h4></div>', unsafe_allow_html=True)
 
-            # --- INVESTMENT LEVELS GRID & MANUAL BUY INTERFACE ---
+            # --- VIDEO ASSIGNED TO ACTIVE LEVEL ---
+            st.markdown("<hr style='border-color:#1d356d; opacity:0.5; margin:15px 0;'>", unsafe_allow_html=True)
+            st.markdown(f"<p style='font-size:14px; font-weight:800; color:#ffd700; text-align:center; text-transform:uppercase;'>YOUR EXCLUSIVE {level_tag} VIDEO</p>", unsafe_allow_html=True)
+            
+            vid_data = query_db("SELECT video_url FROM level_videos WHERE level=?", (level_tag,), one=True)
+            if vid_data and vid_data[0]:
+                st.video(vid_data[0])
+            else:
+                st.markdown("<div style='text-align:center; color:#a4bde6; font-size:12px; font-weight:600; padding:10px; background:#1c3366; border-radius:6px;'>Admin has not assigned any video for this level yet.</div>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#1d356d; opacity:0.5; margin:15px 0;'>", unsafe_allow_html=True)
+
+
+            # --- INVESTMENT LEVELS GRID & MANUAL BUY INTERFACE (WITH 7-DAY LOCK) ---
             st.markdown("<p style='font-size:14px; font-weight:700; color:#ffd700; text-align:center; text-transform:uppercase; margin-top:20px;'>Investment Contract Packages</p>", unsafe_allow_html=True)
+            
+            current_time = time.time()
+            
             for tier_name, d in VIP_LEVELS.items():
-                col_t1, col_t2, col_t3 = st.columns([2, 2, 1])
+                col_t1, col_t2, col_t3 = st.columns([2, 2, 1.5])
                 with col_t1:
                     st.markdown(f"<div style='padding:5px; font-weight:700; color:#ffffff;'>{tier_name}</div>", unsafe_allow_html=True)
                 with col_t2:
-                    st.markdown(f"<div style='padding:5px; color:#ffd700;'>Req: {symbol_str} {d['price']:.2f} | Daily: {symbol_str} {d['ad_pay']:.2f}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='padding:5px; color:#ffd700; font-size:12px;'>Req: {symbol_str} {d['price']:.0f} | Daily: {symbol_str} {d['ad_pay']:.2f}</div>", unsafe_allow_html=True)
                 with col_t3:
                     if level_tag == tier_name:
-                        st.markdown("<span style='color:#38a169; font-weight:700; font-size:12px;'>ACTIVE</span>", unsafe_allow_html=True)
+                        if current_time < locked_until:
+                            days_left = int((locked_until - current_time) / 86400) + 1
+                            st.markdown(f"<div style='color:#38a169; font-weight:800; font-size:11px; margin-top:5px;'>ACTIVE<br><span style='color:#e53e3e;'>Locked {days_left} Days</span></div>", unsafe_allow_html=True)
+                        else:
+                            st.markdown("<div style='color:#38a169; font-weight:800; font-size:12px; margin-top:5px;'>ACTIVE</div>", unsafe_allow_html=True)
                     else:
-                        if st.button("BUY", key=f"buy_btn_action_{tier_name}"):
-                            if wallet_bal >= d['price']:
-                                query_db("UPDATE users SET active_level=? WHERE username=?", (tier_name, st.session_state.current_user), commit=True)
-                                st.success(f"Successfully activated {tier_name} contract!")
-                                st.rerun()
-                            else:
-                                st.error("Insufficient balance parameters.")
+                        if current_time < locked_until:
+                            st.markdown("<div style='color:#718096; font-weight:800; font-size:11px; margin-top:5px;'>LOCKED</div>", unsafe_allow_html=True)
+                        else:
+                            if st.button("BUY", key=f"buy_btn_action_{tier_name}"):
+                                if wallet_bal >= d['price']:
+                                    new_lock_time = current_time + (7 * 24 * 60 * 60) # 7 Days Lock
+                                    query_db("UPDATE users SET active_level=?, level_locked_until=? WHERE username=?", (tier_name, new_lock_time, st.session_state.current_user), commit=True)
+                                    st.success(f"Successfully activated {tier_name} contract! Changes locked for 7 days.")
+                                    st.rerun()
+                                else:
+                                    st.error("Insufficient balance parameters.")
             
             # --- FULL LUCKY WHEEL CANVAS INTERFACE ANIMATOR ---
             st.markdown("<p style='font-family:\"Inter\"; font-weight:700; font-size:14px; color:#ffd700; text-align:center; margin-top:20px;'>LUCKY SPIN WHEEL WINNING SLOTS</p>", unsafe_allow_html=True)
